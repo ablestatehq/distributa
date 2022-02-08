@@ -1,4 +1,5 @@
-import {useState, useRef, useEffect} from 'react'
+import { useState, useRef, useEffect } from 'react'
+import HowTo from './HowTo'
 import { currencyFormatter } from './currency.formatter'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
@@ -81,7 +82,7 @@ function App() {
     const theTotal = calculateTotal()
     const totalPercentage = calculateTotalPercentage()
     if (theTotal > amount) {
-      setError('Its not allowed for Distribution to exceed pool Amount')
+      setError('Distributed can not to exceed Amount to be shared!')
     } else {
       setTotal(theTotal)
       setTotalPercentage(totalPercentage)
@@ -96,7 +97,7 @@ function App() {
     const name = nameFieldUpdate.current.value
     const percentage = percentageFieldUpdate.current.value
     if (name == '' || percentage == '') {
-      setError('Please enter a name and percentage')
+      setError('Name and Percentage are required!')
       return
     }
 
@@ -116,8 +117,8 @@ function App() {
             <Col className="d-flex text-center justify-content-center p-4">
                 <FloatingLabel
                   controlId="floatingInput"
-                  label="ADD AMOUNT TO POOL"
-                  className="w-25"
+                  label="Enter Amount to be shared"
+                  className="col-md-3"
                 >
                     <Form.Control
                     placeholder="UGX 1,000,000"
@@ -159,7 +160,7 @@ function App() {
       </Container>
       <Container className="d-flex flex-column align-items-center mt-150">
           {error && <Alert variant="danger">{error}</Alert>}
-          {amount > 0 && <Form onSubmit={handleAdd}>
+          {amount > 0 ? <Form onSubmit={handleAdd}>
             <div className="input-group">
               <FloatingLabel
                 controlId="floatingInput"
@@ -187,7 +188,9 @@ function App() {
                 Add
               </Button>
             </div>
-          </Form>
+        </Form>
+          :
+          <HowTo />
           }
       </Container>
       <Container className="d-flex justify-content-center">
@@ -262,7 +265,7 @@ function App() {
                 <th></th>
               </tr>
             </tfoot>
-          </Table>
+        </Table>
         }
       </Container>
     </>
