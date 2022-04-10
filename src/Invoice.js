@@ -1,6 +1,8 @@
 import React from "react";
 import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
-import { Row, Col, Table } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
+import PDFDoc from "./PDFDoc";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 const initialValues = {
 	sender: "",
 	receiver: "",
@@ -22,47 +24,26 @@ const initialValues = {
 
 const Invoice = () => (
 	<div>
-		<h1>Simple Invoice Generator</h1>
+		<h2>Generate Invoice</h2>
 		<Formik
 			initialValues={initialValues}
 			onSubmit={async (values) => {
 				await new Promise((r) => setTimeout(r, 500));
-				alert(JSON.sRowingify(values, null, 2));
+				alert(JSON.stringify(values, null, 2));
 			}}>
 			{({ values }) => (
 				<Form>
 					<Row>
 						<Col md="9">
 							<Row className="mt-4 mb-4">
-								<Col>
+								<Col className="d-flex flex-column justify-content-end">
 									Logo
 									<Field
 										as="textarea"
 										placeholder="Sender's information"
-										className="form-control"
+										className="form-control mb-4"
 										name="sender"
 									/>
-								</Col>
-								<Col></Col>
-								<Col className="d-flex justify-content-end">
-									<label htmlFor="date">
-										Date
-										</label>
-										<Field
-											type="date"
-											name="date"
-											className="p-0 form-control"
-										/>
-									<label htmlFor="date">Due Date</label>
-									<Field
-										type="text"
-										name="due_date"
-										className="p-1 form-control"
-									/>
-								</Col>
-							</Row>
-							<Row className="mt-4 mb-4">
-								<Col>
 									<Field
 										as="textarea"
 										placeholder="Receiver's information"
@@ -70,28 +51,60 @@ const Invoice = () => (
 										name="receiver"
 									/>
 								</Col>
-								<Col>
+								<Col className="d-flex flex-column justify-content-end">
 									<Field
 										as="textarea"
-										placeholder="Shiping details"
+										placeholder="Shipping details"
 										className="form-control"
-										name="shiping"
+										name="shipping"
 									/>
 								</Col>
 								<Col className="d-flex flex-column justify-content-end">
-									<label htmlFor="terms">Terms</label>
+									<div className="d-flex flex-row justify-content-between">
+										<label htmlFor="bill_number">Number</label>
+										<Field
+											type="text"
+											name="bill_number"
+											className="p-0 form-control"
+										/>
+									</div>
+									<div className="d-flex flex-row justify-content-between">
+
+									<label htmlFor="date">Date</label>
 									<Field
-										type="type"
-										name="terms"
+										type="date"
+										name="date"
+										className="p-0 form-control"
+									/>
+									</div>
+									<div className="d-flex flex-row justify-content-between">
+
+									<label htmlFor="date">Due Date</label>
+									<Field
+										type="text"
+										name="due_date"
 										className="p-1 form-control"
 									/>
-									<label htmlFor="terms">PO Box</label>
-									<Field
-										type="type"
-										name="po_number"
-										className="p-1 form-control"
-									/>
-								</Col>
+									</div>
+									<div className="d-flex flex-row justify-content-between">
+
+										<label htmlFor="terms">Terms</label>
+										<Field
+											type="type"
+											name="terms"
+											className="p-1 form-control"
+										/>
+										</div>
+										<div className="d-flex flex-row justify-content-between">
+
+										<label htmlFor="terms">PO Box</label>
+										<Field
+											type="type"
+											name="po_number"
+											className="p-1 form-control"
+										/>
+									</div>
+									</Col>
 							</Row>
 							<Row className="bg-dark text-light rounded">
 								<Col md="7">Title</Col>
@@ -199,7 +212,10 @@ const Invoice = () => (
 							</div>
 						</Col>
 						<Col md="3">
-							<button type="submit">Generate</button>
+							{/* <button type="submit">Download</button> */}
+							{values.items.reduce((accumulator, item) => accumulator + item.amount,0) > 0 && <PDFDownloadLink document={<PDFDoc data={values}/>} fileName={`#${values?.bill_number}.pdf` || '#invoice.pdf'}>
+								{({loading}) => (loading ? "Loading document" : "Download")}
+							</PDFDownloadLink> }
 						</Col>
 					</Row>
 				</Form>
