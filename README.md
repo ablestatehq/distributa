@@ -19,24 +19,23 @@ You don't need to spend money to send an invoice. Distributa gives you the super
 
 ## Want to contribute?
 Without your hand there is no way this tool can go far. If there is anyway you can contribute let me know through raising an issue.
-You can also give it a star, that way I get to know that this is important and I give it more time.
+You can also give it a star. This will help me put more resources into this project.
 
-### Contribute with code/writing
-1. Fork
-2. Clone to your computer
-3. Navigate to the project directory and excute yarn add or npm install
-4. Execute yarn start or npm start
-5. Add and test your code
-6. Push the code to your repo
+### Coding/Documentation
+1. Create a Fork
+2. Clone Fork to your computer
+3. Navigate to the project directory then execute
+    - ```yarn add``` or ```npm install```
+    - ```yarn start``` or ```npm start```
+5. Check if your code works
+6. Push to your repo
 7. Send me a PR
-8. Sitback and relax, you will get my response once I merge your code or if I have questions.
-9. Check distributa.vercel.app to see how the app works.
+8. You will get my response as soon as possible.
 
 ## Why contribute
 1. As the initiator of this project I will be motivated to continue working on it and adding more features.
-2. If this is a tech stack and project you're interested in, it gives you the opportunity to add your effort to it.
-3. If you're looking to gain experience and have some working tool on your portfolio why not go for it.
-4. It motivates others to use this tool and join us.
+2. If the Tech Stack I used is in your area of interest, then this is an opportunity create an impact with your coding skills.
+3. If you're looking to gain experience and have some work in your Portfolio.
 
 ## Tech stack used
 -> React.JS
