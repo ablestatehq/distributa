@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import HowTo from "./HowTo";
 import { currencyFormatter } from "./currency.formatter";
-import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -10,7 +9,6 @@ import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
 import FormControl from "react-bootstrap/FormControl";
-import { Link } from "react-router-dom";
 
 function Distribute() {
 	const [amount, setAmount] = useState(0);
@@ -146,10 +144,10 @@ function Distribute() {
 				<Col md="9">
 					<div >
 						{!amount && (
-							<FloatingLabel
+							<><FloatingLabel
 								controlId="floatingInput"
 								label="Enter Amount to be shared"
-								className="col-md-6">
+								className="col-md-12">
 								<Form.Control
 									placeholder="UGX 1,000,000"
 									onBlur={(e) => setAmount(e.target.value)}
@@ -160,6 +158,10 @@ function Distribute() {
 									}}
 								/>
 							</FloatingLabel>
+							<div className="d-grid col-12 mt-2">
+								<Button variant="primary">Enter </Button>
+							</div>
+							</>
 						)}
 					</div>
 					{error && <Alert variant="danger">{error}</Alert>}

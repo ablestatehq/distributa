@@ -4,6 +4,7 @@ import { Row, Col } from "react-bootstrap";
 import PDFDoc from "./PDFDoc";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 const initialValues = {
+	logo:null,
 	sender: "",
 	receiver: "",
 	shipping_address: "",
@@ -14,11 +15,11 @@ const initialValues = {
 	po_number: "",
 	other_terms: "",
 	notes: "",
-	discount:"",
-	tax:"",
-	shipping:"",
-	paid:"",
-	balance_due:"",
+	discount: "",
+	tax: "",
+	shipping: "",
+	paid: "",
+	balance_due: "",
 	items: [
 		{
 			title: "",
@@ -31,13 +32,34 @@ const initialValues = {
 
 const subTotal = (values) => {
 	return values.items.reduce((acc, curr) => {
-		return (acc + parseInt(curr.amount));
+		return acc + parseInt(curr.amount);
 	}, 0);
 };
+const getBase64 = file => {
+    return new Promise(resolve => {
+      let fileInfo;
+      let baseURL = "";
+      // Make new FileReader
+      let reader = new FileReader();
 
-const Invoice = () => {
+      // Convert the file to base64 text
+      reader.readAsDataURL(file);
+
+      // on reader load somthing...
+      reader.onload = () => {
+        // Make a fileInfo Object
+        // console.log("Called", reader);
+        baseURL = reader.result;
+        // console.log(baseURL);
+        resolve(baseURL);
+      };
+    //   console.log(fileInfo);
+    });
+}
+
+  const Invoice = () => {
 	return (
-		<div>
+		<>
 			<h2>Generate Invoice</h2>
 			<Formik
 				initialValues={initialValues}
@@ -45,13 +67,28 @@ const Invoice = () => {
 					await new Promise((r) => setTimeout(r, 500));
 					alert(JSON.stringify(values, null, 2));
 				}}>
-				{({ values }) => (
+				{({ values, setFieldValue}) => (
 					<Form>
 						<Row>
 							<Col md="9">
 								<Row className="mt-4 mb-4">
-									<Col className="d-flex flex-column justify-content-end">
-										Logo
+									<Col className="d-flex flex-column justify-content-end ps-0">
+										<img src={values.logo} />
+										<input
+											type="file"
+											accept="image/*"
+											name="logo"
+											className="form-control"
+											placeholder="Logo"
+											onChange={(e) => {
+												// setFieldValue("logo", e.currentTarget.files[0].name);
+												getBase64(e.currentTarget.files[0]).then(base64 => {
+													setFieldValue("logo", base64);
+													// console.log(base64)
+												});
+												// console.log(e.currentTarget.files[0].name)
+											}}
+										/>
 										<Field
 											as="textarea"
 											placeholder="Sender's information"
@@ -73,52 +110,86 @@ const Invoice = () => {
 											name="shipping_address"
 										/>
 									</Col>
-									<Col className="d-flex flex-column justify-content-end">
-										<div className="d-flex flex-row justify-content-between">
-											<label htmlFor="bill_number">
-												Number
-											</label>
-											<Field
-												type="text"
-												name="bill_number"
-												className="p-0 form-control"
-											/>
+									<Col className="d-flex flex-column justify-content-end pe-0">
+										<div className="hstack mb-1">
+											<div className="w-50">
+												<label
+													htmlFor="bill_number"
+													className="fs-6 text-muted d-block text-end fw-lighter pe-2">
+													Number #.
+												</label>
+											</div>
+											<div className="w-50">
+												<Field
+													type="text"
+													name="bill_number"
+													className="p-1 form-control"
+												/>
+											</div>
 										</div>
-										<div className="d-flex flex-row justify-content-between">
-											<label htmlFor="date">Date</label>
-											<Field
-												type="date"
-												name="on_date"
-												className="p-0 form-control"
-											/>
+										<div className="hstack mb-1">
+											<div className="w-50">
+												<label
+													htmlFor="date"
+													className="fs-6 text-muted d-block text-end fw-lighter pe-2">
+													Date
+												</label>
+											</div>
+											<div className="w-50">
+												<Field
+													type="date"
+													name="on_date"
+													className="p-0 form-control"
+												/>
+											</div>
 										</div>
-										<div className="d-flex flex-row justify-content-between">
-											<label htmlFor="date">
-												Due Date
-											</label>
-											<Field
-												type="text"
-												name="due_date"
-												className="p-1 form-control"
-											/>
+										<div className="hstack mb-1">
+											<div className="w-50">
+												<label
+													htmlFor="due_date"
+													className="fs-6 text-muted d-block text-end fw-lighter pe-2">
+													Due Date
+												</label>
+											</div>
+											<div className="w-50">
+												<Field
+													type="text"
+													name="due_date"
+													className="p-1 form-control"
+												/>
+											</div>
 										</div>
-										<div className="d-flex flex-row justify-content-between">
-											<label htmlFor="terms">Terms</label>
-											<Field
-												type="type"
-												name="terms"
-												className="p-1 form-control"
-											/>
+										<div className="hstack mb-1">
+											<div className="w-50">
+												<label
+													htmlFor="terms"
+													className="fs-6 text-muted d-block text-end fw-lighter pe-2">
+													Terms
+												</label>
+											</div>
+											<div className="w-50">
+												<Field
+													type="type"
+													name="terms"
+													className="p-1 form-control mw-50"
+												/>
+											</div>
 										</div>
-										<div className="d-flex flex-row justify-content-between">
-											<label htmlFor="terms">
-												PO Box
-											</label>
-											<Field
-												type="type"
-												name="po_number"
-												className="p-1 form-control"
-											/>
+										<div className="hstack">
+											<div className="w-50">
+												<label
+													htmlFor="terms"
+													className="fs-6 text-muted d-block text-end fw-lighter pe-2">
+													PO Box
+												</label>
+											</div>
+											<div className="w-50">
+												<Field
+													type="type"
+													name="po_number"
+													className="p-1 form-control"
+												/>
+											</div>
 										</div>
 									</Col>
 								</Row>
@@ -138,7 +209,7 @@ const Invoice = () => {
 															key={index}
 															className="my-1">
 															<Col
-																md="7"
+																md="6"
 																className="px-0">
 																<Field
 																	name={`items.${index}.title`}
@@ -192,15 +263,18 @@ const Invoice = () => {
 																		item.rate *
 																		item.qty)
 																}
+																</Col>
+																<Col md="1">
+																{values.items.length > 1 &&
 																<span
-																	className="secondary"
+																	className="text-danger btn btn-sm d-block text-end"
 																	onClick={() =>
 																		remove(
 																			index
 																		)
 																	}>
 																	X
-																</span>
+																</span>}
 															</Col>
 														</Row>
 													)
@@ -208,7 +282,7 @@ const Invoice = () => {
 											<Row>
 												<Col className="p-0">
 													<span
-														className="secondary"
+														className="btn btn-sm btn-success"
 														onClick={() =>
 															push({
 																title: "",
@@ -217,24 +291,31 @@ const Invoice = () => {
 																amount: "",
 															})
 														}>
-														Add item
+														+ Add item
 													</span>
 												</Col>
 											</Row>
 										</>
 									)}
 								</FieldArray>
-								<Row>
-									<Col>
-										<label htmlFor="notes">Notes</label>
+								<Row className="mt-5">
+									<Col className="p-0 m-0 pe-3">
+										<p><label
+											htmlFor="notes"
+											className="text-secondary fw-lighter">
+											Notes
+										</label>
 										<Field
 											name="notes"
 											id="notes"
 											placeholder="Notes"
 											as="textarea"
 											className="form-control"
-										/>
-										<label htmlFor="other_terms">
+										/></p>
+										<p className="mt-2">
+										<label
+											htmlFor="other_terms"
+											className="text-secondary fw-lighter">
 											Terms
 										</label>
 										<Field
@@ -244,62 +325,94 @@ const Invoice = () => {
 											as="textarea"
 											className="form-control"
 										/>
-									</Col>
-									<Col>
-										<div>
-											Sub Total
-											{subTotal(values) || 0}
-
-										</div>
-										<label htmlFor="discount">
-											Discount
-										</label>
-										<Field
-											name="discount"
-											id="discount"
-											type="text"
-											className="form-control"
-										/>
-										<label htmlFor="tax">
-											Tax
-										</label>
-										<Field
-											name="tax"
-											id="tax"
-											type="text"
-											className="form-control"
-										/>
-										<label htmlFor="shipping">
-											Shipping
-										</label>
-										<Field
-											name="shipping"
-											id="shipping"
-											type="text"
-											className="form-control"
-										/>
-										<p>
-											Total
 										</p>
-										<label htmlFor="paid">
-											Paid
-										</label>
-										<Field
-											name="paid"
-											id="paid"
-											type="text"
-											className="form-control"
-										/>
-										<p>
-											Balance Due
+									</Col>
+									<Col className="p-0 m-0">
+										<p className="text-secondary fw-lighter text-end ">
+											Sub Total {subTotal(values) || 0}
+										</p>
+										<p className="hstack mb-1">
+											<span className="w-50">
+												<label
+													htmlFor="discount"
+													className="d-block pe-2 text-secondary fw-lighter text-end">
+													Discount
+												</label>
+											</span>
+											<span className="w-50">
+												<Field
+													name="discount"
+													id="discount"
+													type="text"
+													className="form-control p-1"
+												/>
+											</span>
+										</p>
+										<p className="hstack mb-1">
+											<span className="w-50">
+												<label
+													htmlFor="tax"
+													className="d-block pe-2 text-secondary fw-lighter text-end">
+													Tax
+												</label>
+											</span>
+											<span className="w-50">
+												<Field
+													name="tax"
+													id="tax"
+													type="text"
+													className="form-control p-1"
+												/>
+											</span>
+										</p>
+										<p className="hstack mb-1">
+											<span className="w-50">
+												<label
+													htmlFor="shipping"
+													className="d-block pe-2 text-secondary fw-lighter text-end">
+													Shipping
+												</label>
+											</span>
+											<span className="w-50">
+												<Field
+													name="shipping"
+													id="shipping"
+													type="text"
+													className="form-control p-1"
+												/>
+											</span>
+										</p>
+										<p className="text-secondary fw-lighter text-end ">
+											Total {subTotal(values) || 0}
+										</p>
+										<p className="hstack mb-1">
+											<span className="w-50">
+												<label
+													htmlFor="paid"
+													className="d-block pe-2 text-secondary fw-lighter text-end">
+													Amount Paid
+												</label>
+											</span>
+											<span className="w-50">
+												<Field
+													name="paid"
+													id="paid"
+													type="text"
+													className="form-control p-1"
+												/>
+											</span>
+										</p>
+										<p className="text-secondary fw-lighter text-end ">
+											Balance due {subTotal(values) || 0}
 										</p>
 									</Col>
 								</Row>
 							</Col>
 							<Col md="3">
-								{/* <button type="submit">Download</button> */}
-								{ subTotal(values) > 0 && (
+								<button type="submit">Download</button>
+								{subTotal(values) > 0 && (
 									<PDFDownloadLink
+										className="btn btn-primary"
 										document={<PDFDoc data={values} />}
 										fileName={
 											`#${values?.bill_number}.pdf` ||
@@ -308,7 +421,7 @@ const Invoice = () => {
 										{({ loading }) =>
 											loading
 												? "Loading document"
-												: "Download"
+												: "↓ Download PDF"
 										}
 									</PDFDownloadLink>
 								)}
@@ -317,7 +430,7 @@ const Invoice = () => {
 					</Form>
 				)}
 			</Formik>
-		</div>
+		</>
 	);
 };
 

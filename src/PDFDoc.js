@@ -1,5 +1,5 @@
 import React from 'react';
-import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+import { Page, Text, Image,View, Document, StyleSheet } from '@react-pdf/renderer';
 
 // Create styles
 const styles = StyleSheet.create({
@@ -26,7 +26,7 @@ const PDFDoc = ({data}) => {
   return (<Document>
     <Page size={size} orientation={orientation} style={styles.page}>
       <View style={styles.section}>
-        <Text>Section #1</Text>
+        <Text><Image src={data.logo} /></Text>
       </View>
       <View style={styles.section}>
         <Text>Section #2</Text>
@@ -35,6 +35,8 @@ const PDFDoc = ({data}) => {
         data.items.map((item, index) => (
           <View key={index} style={styles.section}>
             <Text>{item.title}</Text>
+            <Text>{item.qty}</Text>
+            <Text>{item.rate}</Text>
             <Text>{item.amount}</Text>
           </View>
         ))
