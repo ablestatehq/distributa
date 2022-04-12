@@ -66,21 +66,17 @@ const Invoice = () => {
 				{({ values, setFieldValue }) => (
 					<Form>
 						<Row>
-							<Col>
+							<Col className="hstack">
 								<Field as="select" name="paper_size">
 									<option value="-">- Paper size -</option>
 									<option value="A4">A4</option>
 									<option value="Letter">Letter</option>
 								</Field>
-							</Col>
-							<Col>
 								<Field as="select" name="orientation">
 									<option value="-">- Oritentation -</option>
 									<option value="Portrait">Portrait</option>
 									<option value="Landscape">Landscape</option>
 								</Field>
-							</Col>
-							<Col>
 								<Field as="select" name="currency">
 									<option value="-">- Currency -</option>
 									<option value="Ush">
