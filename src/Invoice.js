@@ -101,6 +101,7 @@ const Invoice = () => {
 												src={values.logo}
 												width="100"
 												height="100"
+												alt="Logo"
 											/>
 										)}
 										<input
@@ -109,7 +110,6 @@ const Invoice = () => {
 											name="logo"
 											className="form-control"
 											placeholder="Logo"
-											value={values.logo}
 											onChange={(e) => {
 												getBase64(
 													e.currentTarget.files[0]
