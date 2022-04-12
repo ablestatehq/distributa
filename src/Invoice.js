@@ -4,7 +4,7 @@ import { Row, Col } from "react-bootstrap";
 import PDFDoc from "./PDFDoc";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 const initialValues = {
-	logo:null,
+	logo: "",
 	sender: "",
 	receiver: "",
 	shipping_address: "",
@@ -20,11 +20,14 @@ const initialValues = {
 	shipping: "",
 	paid: "",
 	balance_due: "",
+	paper_size: "A4",
+	orientation: "portrait",
+	currency: "USD",
 	items: [
 		{
 			title: "",
-			qty: "",
-			rate: "",
+			quantity: "",
+			price: "",
 			amount: "",
 		},
 	],
@@ -35,29 +38,22 @@ const subTotal = (values) => {
 		return acc + parseInt(curr.amount);
 	}, 0);
 };
-const getBase64 = file => {
-    return new Promise(resolve => {
-      let fileInfo;
-      let baseURL = "";
-      // Make new FileReader
-      let reader = new FileReader();
+const getBase64 = (file) => {
+	return new Promise((resolve) => {
+		let baseURL = "";
+		let reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = () => {
+			baseURL = reader.result;
+			resolve(baseURL);
+		};
+		reader.onerror = (error) => {
+			console.log("Error: ", error);
+		};
+	});
+};
 
-      // Convert the file to base64 text
-      reader.readAsDataURL(file);
-
-      // on reader load somthing...
-      reader.onload = () => {
-        // Make a fileInfo Object
-        // console.log("Called", reader);
-        baseURL = reader.result;
-        // console.log(baseURL);
-        resolve(baseURL);
-      };
-    //   console.log(fileInfo);
-    });
-}
-
-  const Invoice = () => {
+const Invoice = () => {
 	return (
 		<>
 			<h2>Generate Invoice</h2>
@@ -67,26 +63,66 @@ const getBase64 = file => {
 					await new Promise((r) => setTimeout(r, 500));
 					alert(JSON.stringify(values, null, 2));
 				}}>
-				{({ values, setFieldValue}) => (
+				{({ values, setFieldValue }) => (
 					<Form>
+						<Row>
+							<Col>
+								<Field as="select" name="paper_size">
+									<option value="-">- Paper size -</option>
+									<option value="A4">A4</option>
+									<option value="Letter">Letter</option>
+								</Field>
+							</Col>
+							<Col>
+								<Field as="select" name="orientation">
+									<option value="-">- Oritentation -</option>
+									<option value="Portrait">Portrait</option>
+									<option value="Landscape">Landscape</option>
+								</Field>
+							</Col>
+							<Col>
+								<Field as="select" name="currency">
+									<option value="-">- Currency -</option>
+									<option value="Ush">
+										Uganda Shillings
+									</option>
+									<option value="Ksh">Kenya Shillings</option>
+									<option value="USD">
+										United States Dollar
+									</option>
+									<option value="GBP">
+										Great Britain Pound
+									</option>
+								</Field>
+							</Col>
+						</Row>
 						<Row>
 							<Col md="9">
 								<Row className="mt-4 mb-4">
 									<Col className="d-flex flex-column justify-content-end ps-0">
-										<img src={values.logo} />
+										{values?.logo && (
+											<img
+												src={values.logo}
+												width="100"
+												height="100"
+											/>
+										)}
 										<input
 											type="file"
 											accept="image/*"
 											name="logo"
 											className="form-control"
 											placeholder="Logo"
+											value={values.logo}
 											onChange={(e) => {
-												// setFieldValue("logo", e.currentTarget.files[0].name);
-												getBase64(e.currentTarget.files[0]).then(base64 => {
-													setFieldValue("logo", base64);
-													// console.log(base64)
+												getBase64(
+													e.currentTarget.files[0]
+												).then((base64) => {
+													setFieldValue(
+														"logo",
+														base64
+													);
 												});
-												// console.log(e.currentTarget.files[0].name)
 											}}
 										/>
 										<Field
@@ -194,9 +230,13 @@ const getBase64 = file => {
 									</Col>
 								</Row>
 								<Row className="bg-dark text-light rounded">
-									<Col md="7">Title</Col>
-									<Col md="1">Qty</Col>
-									<Col md="2">Rate</Col>
+									<Col md="6">Title</Col>
+									<Col md="1" className="p-1">
+										Quantity
+									</Col>
+									<Col md="2" className="p-1">
+										Price
+									</Col>
 									<Col md="2">Amount</Col>
 								</Row>
 								<FieldArray name="items">
@@ -227,13 +267,13 @@ const getBase64 = file => {
 																md="1"
 																className="px-0">
 																<Field
-																	name={`items.${index}.qty`}
+																	name={`items.${index}.quantity`}
 																	placeholder="ex:4"
 																	type="text"
 																	className="p-1 form-control"
 																/>
 																<ErrorMessage
-																	name={`items.${index}.qty`}
+																	name={`items.${index}.quantity`}
 																	component="div"
 																	className="field-error"
 																/>
@@ -242,13 +282,13 @@ const getBase64 = file => {
 																md="2"
 																className="px-0">
 																<Field
-																	name={`items.${index}.rate`}
+																	name={`items.${index}.price`}
 																	placeholder="400"
 																	type="text"
 																	className="p-1 form-control"
 																/>
 																<ErrorMessage
-																	name={`items.${index}.rate`}
+																	name={`items.${index}.price`}
 																	component="div"
 																	className="field-error"
 																/>
@@ -260,21 +300,24 @@ const getBase64 = file => {
 																	(values.items[
 																		index
 																	].amount =
-																		item.rate *
-																		item.qty)
+																		item.price *
+																		item.quantity)
 																}
-																</Col>
-																<Col md="1">
-																{values.items.length > 1 &&
-																<span
-																	className="text-danger btn btn-sm d-block text-end"
-																	onClick={() =>
-																		remove(
-																			index
-																		)
-																	}>
-																	X
-																</span>}
+															</Col>
+															<Col md="1">
+																{values.items
+																	.length >
+																	1 && (
+																	<span
+																		className="text-danger btn btn-sm d-block text-end"
+																		onClick={() =>
+																			remove(
+																				index
+																			)
+																		}>
+																		X
+																	</span>
+																)}
 															</Col>
 														</Row>
 													)
@@ -286,8 +329,8 @@ const getBase64 = file => {
 														onClick={() =>
 															push({
 																title: "",
-																qty: "",
-																rate: "",
+																quantity: "",
+																price: "",
 																amount: "",
 															})
 														}>
@@ -300,31 +343,33 @@ const getBase64 = file => {
 								</FieldArray>
 								<Row className="mt-5">
 									<Col className="p-0 m-0 pe-3">
-										<p><label
-											htmlFor="notes"
-											className="text-secondary fw-lighter">
-											Notes
-										</label>
-										<Field
-											name="notes"
-											id="notes"
-											placeholder="Notes"
-											as="textarea"
-											className="form-control"
-										/></p>
+										<p>
+											<label
+												htmlFor="notes"
+												className="text-secondary fw-lighter">
+												Notes
+											</label>
+											<Field
+												name="notes"
+												id="notes"
+												placeholder="Notes"
+												as="textarea"
+												className="form-control"
+											/>
+										</p>
 										<p className="mt-2">
-										<label
-											htmlFor="other_terms"
-											className="text-secondary fw-lighter">
-											Terms
-										</label>
-										<Field
-											name="other_terms"
-											id="other_terms"
-											placeholder="Terms"
-											as="textarea"
-											className="form-control"
-										/>
+											<label
+												htmlFor="other_terms"
+												className="text-secondary fw-lighter">
+												Terms
+											</label>
+											<Field
+												name="other_terms"
+												id="other_terms"
+												placeholder="Terms"
+												as="textarea"
+												className="form-control"
+											/>
 										</p>
 									</Col>
 									<Col className="p-0 m-0">
@@ -383,7 +428,11 @@ const getBase64 = file => {
 											</span>
 										</p>
 										<p className="text-secondary fw-lighter text-end ">
-											Total {subTotal(values) || 0}
+											Total{" "}
+											{subTotal(values) -
+												Number(values?.discount) +
+												Number(values?.tax) +
+												Number(values?.shipping) || 0}
 										</p>
 										<p className="hstack mb-1">
 											<span className="w-50">
@@ -403,7 +452,12 @@ const getBase64 = file => {
 											</span>
 										</p>
 										<p className="text-secondary fw-lighter text-end ">
-											Balance due {subTotal(values) || 0}
+											Balance due{" "}
+											{subTotal(values) -
+												Number(values?.discount) +
+												Number(values?.tax) +
+												Number(values?.shipping) -
+												Number(values?.paid) || 0}
 										</p>
 									</Col>
 								</Row>
