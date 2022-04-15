@@ -56,6 +56,10 @@ const getBase64 = (file) => {
 };
 
 const Invoice = () => {
+	const logoPicker = React.useRef();
+	const triggerLogoPicker = () => {
+		logoPicker.current.click();
+	};
 	return (
 		<>
 			<h2>Generate Invoice</h2>
@@ -117,19 +121,27 @@ const Invoice = () => {
 								<Row className="mt-4 mb-4">
 									<Col className="d-flex flex-column justify-content-end ps-0">
 										{values?.logo ? (
-											<img
+											<a href="#">
+												<span style={{cursor:'pointer'}} className="cursor-pointer" onClick={
+													() => {
+														setFieldValue('logo', null)
+													}
+												}>x</span>
+												<img
 												src={values.logo}
 												width="100"
 												height="100"
 												alt="Logo"
 											/>
+											</a>
 										):(
-										<input
+										<><input
 											type="file"
 											accept="image/*"
 											name="logo"
 											className="form-control"
 											placeholder="Logo"
+											ref={logoPicker}
 											onChange={(e) => {
 												getBase64(
 													e.currentTarget.files[0]
@@ -140,7 +152,12 @@ const Invoice = () => {
 													);
 												});
 											}}
-										/>)}
+											hidden
+										/>
+										<button type="button" className="btn btn-primary mb-3"
+										onClick={triggerLogoPicker}
+										>Add logo</button>
+										</>)}
 										<Field
 											as="textarea"
 											placeholder="Sender's information"
@@ -308,7 +325,7 @@ const Invoice = () => {
 															</Col>
 															<Col
 																md="2"
-																className="p-2">
+																className="p-2 hstack">
 																{
 																	currencyFormatter((values.items[
 																		index
@@ -316,8 +333,6 @@ const Invoice = () => {
 																		item.price *
 																		item.quantity), values.currency)
 																}
-															</Col>
-															<Col md="1">
 																{values.items
 																	.length >
 																	1 && (
