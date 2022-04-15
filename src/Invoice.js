@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
 import { Row, Col } from "react-bootstrap";
+import { currencyFormatter } from "./currency.formatter";
 import PDFDoc from "./PDFDoc";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 const initialValues = {
@@ -27,6 +28,7 @@ const initialValues = {
 		{
 			title: "",
 			quantity: "",
+			measurement:"",
 			price: "",
 			amount: "",
 		},
@@ -69,20 +71,22 @@ const Invoice = () => {
 							<Col className="hstack">
 								<Field as="select" name="paper_size">
 									<option value="-">- Paper size -</option>
+									<option value="A6">A6</option>
+									<option value="A5">A5</option>
 									<option value="A4">A4</option>
 									<option value="Letter">Letter</option>
 								</Field>
 								<Field as="select" name="orientation">
 									<option value="-">- Oritentation -</option>
-									<option value="Portrait">Portrait</option>
-									<option value="Landscape">Landscape</option>
+									<option value="portrait">Portrait</option>
+									<option value="landscape">Landscape</option>
 								</Field>
 								<Field as="select" name="currency">
 									<option value="-">- Currency -</option>
-									<option value="Ush">
+									<option value="UGX">
 										Uganda Shillings
 									</option>
-									<option value="Ksh">Kenya Shillings</option>
+									<option value="KES">Kenya Shillings</option>
 									<option value="USD">
 										United States Dollar
 									</option>
@@ -90,20 +94,36 @@ const Invoice = () => {
 										Great Britain Pound
 									</option>
 								</Field>
+								{subTotal(values) > 0 && (
+									<PDFDownloadLink
+										className="btn btn-primary"
+										document={<PDFDoc data={values} />}
+										fileName={
+											`#${values?.bill_number}.pdf` ||
+											"#invoice.pdf"
+										}>
+										{({ loading }) =>
+											loading
+												? "Loading document"
+												: "↓ Download PDF"
+										}
+									</PDFDownloadLink>
+								)}
+
 							</Col>
 						</Row>
 						<Row>
-							<Col md="9">
+							<Col>
 								<Row className="mt-4 mb-4">
 									<Col className="d-flex flex-column justify-content-end ps-0">
-										{values?.logo && (
+										{values?.logo ? (
 											<img
 												src={values.logo}
 												width="100"
 												height="100"
 												alt="Logo"
 											/>
-										)}
+										):(
 										<input
 											type="file"
 											accept="image/*"
@@ -120,7 +140,7 @@ const Invoice = () => {
 													);
 												});
 											}}
-										/>
+										/>)}
 										<Field
 											as="textarea"
 											placeholder="Sender's information"
@@ -137,7 +157,7 @@ const Invoice = () => {
 									<Col className="d-flex flex-column justify-content-end">
 										<Field
 											as="textarea"
-											placeholder="Shipping details"
+											placeholder="Shipping Address"
 											className="form-control"
 											name="shipping_address"
 										/>
@@ -230,6 +250,9 @@ const Invoice = () => {
 									<Col md="1" className="p-1">
 										Quantity
 									</Col>
+									<Col md="1" className="p-1">
+										Units
+									</Col>
 									<Col md="2" className="p-1">
 										Price
 									</Col>
@@ -253,11 +276,6 @@ const Invoice = () => {
 																	type="text"
 																	className="p-1 form-control"
 																/>
-																<ErrorMessage
-																	name={`items.${index}.title`}
-																	component="div"
-																	className="field-error"
-																/>
 															</Col>
 															<Col
 																md="1"
@@ -268,10 +286,13 @@ const Invoice = () => {
 																	type="text"
 																	className="p-1 form-control"
 																/>
-																<ErrorMessage
-																	name={`items.${index}.quantity`}
-																	component="div"
-																	className="field-error"
+															</Col>
+															<Col md="1">
+															<Field
+																	name={`items.${index}.measurement`}
+																	placeholder="ex:Lbs"
+																	type="text"
+																	className="p-1 form-control"
 																/>
 															</Col>
 															<Col
@@ -283,21 +304,17 @@ const Invoice = () => {
 																	type="text"
 																	className="p-1 form-control"
 																/>
-																<ErrorMessage
-																	name={`items.${index}.price`}
-																	component="div"
-																	className="field-error"
-																/>
+
 															</Col>
 															<Col
 																md="2"
 																className="p-2">
 																{
-																	(values.items[
+																	currencyFormatter((values.items[
 																		index
 																	].amount =
 																		item.price *
-																		item.quantity)
+																		item.quantity), values.currency)
 																}
 															</Col>
 															<Col md="1">
@@ -326,6 +343,7 @@ const Invoice = () => {
 															push({
 																title: "",
 																quantity: "",
+																measurement:"",
 																price: "",
 																amount: "",
 															})
@@ -370,7 +388,7 @@ const Invoice = () => {
 									</Col>
 									<Col className="p-0 m-0">
 										<p className="text-secondary fw-lighter text-end ">
-											Sub Total {subTotal(values) || 0}
+											Sub Total {currencyFormatter(subTotal(values) || 0, values.currency)}
 										</p>
 										<p className="hstack mb-1">
 											<span className="w-50">
@@ -425,10 +443,10 @@ const Invoice = () => {
 										</p>
 										<p className="text-secondary fw-lighter text-end ">
 											Total{" "}
-											{subTotal(values) -
+											{currencyFormatter(subTotal(values) -
 												Number(values?.discount) +
 												Number(values?.tax) +
-												Number(values?.shipping) || 0}
+												Number(values?.shipping) || 0, values.currency)}
 										</p>
 										<p className="hstack mb-1">
 											<span className="w-50">
@@ -449,16 +467,16 @@ const Invoice = () => {
 										</p>
 										<p className="text-secondary fw-lighter text-end ">
 											Balance due{" "}
-											{subTotal(values) -
+											{currencyFormatter(subTotal(values) -
 												Number(values?.discount) +
 												Number(values?.tax) +
 												Number(values?.shipping) -
-												Number(values?.paid) || 0}
+												Number(values?.paid) || 0, values.currency)}
 										</p>
 									</Col>
 								</Row>
 							</Col>
-							<Col md="3">
+							{/* <Col md="3">
 								<button type="submit">Download</button>
 								{subTotal(values) > 0 && (
 									<PDFDownloadLink
@@ -476,7 +494,7 @@ const Invoice = () => {
 									</PDFDownloadLink>
 								)}
 							</Col>
-						</Row>
+ */}						</Row>
 					</Form>
 				)}
 			</Formik>
