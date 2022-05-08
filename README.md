@@ -57,14 +57,14 @@ Thank you 👍🏽
 
 **Additions**
 
-    -- Custom bill title
+    - Custom bill title
 
 **Bugfixes**
 
-    -- Remove need for 2 terms
+    - Remove need for 2 terms
 
-    -- Change date to issue date
+    - Change date to issue date
 
-    -- Download pdf without logo
+    - Download pdf without logo
 
-    -- Print title in pdf
+    - Print title in pdf
