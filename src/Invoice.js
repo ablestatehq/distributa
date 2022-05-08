@@ -9,12 +9,11 @@ const initialValues = {
 	sender: "",
 	receiver: "",
 	shipping_address: "",
+	title: "",
 	bill_number: "",
-	on_date: "",
-	terms: "",
+	issue_date: "",
 	due_date: "",
-	po_number: "",
-	other_terms: "",
+	terms: "",
 	notes: "",
 	discount: "",
 	tax: "",
@@ -28,7 +27,7 @@ const initialValues = {
 		{
 			title: "",
 			quantity: "",
-			measurement:"",
+			measurement: "",
 			price: "",
 			amount: "",
 		},
@@ -60,9 +59,19 @@ const Invoice = () => {
 	const triggerLogoPicker = () => {
 		logoPicker.current.click();
 	};
+	const saveInvoice = (values) => {
+		console.log("save invoice");
+		const getInvoices = localStorage.getItem("invoices");
+		const oldInvoices = JSON.parse(getInvoices);
+		const newInvoices =
+			oldInvoices?.length > 0 ? [...oldInvoices, values] : [values];
+		localStorage.setItem("invoices", JSON.stringify(newInvoices));
+		console.log(newInvoices);
+	};
+
 	return (
 		<>
-			<h2>Generate Invoice</h2>
+			<h2>Generate Bill</h2>
 			<Formik
 				initialValues={initialValues}
 				onSubmit={async (values) => {
@@ -113,7 +122,12 @@ const Invoice = () => {
 										}
 									</PDFDownloadLink>
 								)}
-
+								<button
+									className="btn btn-info"
+									type="button"
+									onClick={() => saveInvoice(values)}>
+									Save
+								</button>
 							</Col>
 						</Row>
 						<Row>
@@ -122,42 +136,56 @@ const Invoice = () => {
 									<Col className="d-flex flex-column justify-content-end ps-0">
 										{values?.logo ? (
 											<a href="#">
-												<span style={{cursor:'pointer'}} className="cursor-pointer" onClick={
-													() => {
-														setFieldValue('logo', null)
-													}
-												}>x</span>
+												<span
+													style={{
+														cursor: "pointer",
+													}}
+													className="cursor-pointer"
+													onClick={() => {
+														setFieldValue(
+															"logo",
+															null
+														);
+													}}>
+													x
+												</span>
 												<img
-												src={values.logo}
-												width="100"
-												height="100"
-												alt="Logo"
-											/>
+													src={values.logo}
+													width="100"
+													height="100"
+													alt="Logo"
+												/>
 											</a>
-										):(
-										<><input
-											type="file"
-											accept="image/*"
-											name="logo"
-											className="form-control"
-											placeholder="Logo"
-											ref={logoPicker}
-											onChange={(e) => {
-												getBase64(
-													e.currentTarget.files[0]
-												).then((base64) => {
-													setFieldValue(
-														"logo",
-														base64
-													);
-												});
-											}}
-											hidden
-										/>
-										<button type="button" className="btn btn-primary mb-3"
-										onClick={triggerLogoPicker}
-										>Add logo</button>
-										</>)}
+										) : (
+											<>
+												<input
+													type="file"
+													accept="image/*"
+													name="logo"
+													className="form-control"
+													placeholder="Logo"
+													ref={logoPicker}
+													onChange={(e) => {
+														getBase64(
+															e.currentTarget
+																.files[0]
+														).then((base64) => {
+															setFieldValue(
+																"logo",
+																base64
+															);
+														});
+													}}
+													hidden
+												/>
+												<button
+													type="button"
+													className="btn btn-primary mb-3"
+													onClick={triggerLogoPicker}>
+													Add logo
+												</button>
+											</>
+										)}
 										<Field
 											as="textarea"
 											placeholder="Sender's information"
@@ -180,6 +208,14 @@ const Invoice = () => {
 										/>
 									</Col>
 									<Col className="d-flex flex-column justify-content-end pe-0">
+										<div className="mb-1">
+											<Field
+												type="text"
+												name="title"
+												placeholder="Title"
+												className="p-1 form-control"
+											/>
+										</div>
 										<div className="hstack mb-1">
 											<div className="w-50">
 												<label
@@ -196,18 +232,19 @@ const Invoice = () => {
 												/>
 											</div>
 										</div>
+
 										<div className="hstack mb-1">
 											<div className="w-50">
 												<label
-													htmlFor="date"
+													htmlFor="issue_date"
 													className="fs-6 text-muted d-block text-end fw-lighter pe-2">
-													Date
+													Issue Date
 												</label>
 											</div>
 											<div className="w-50">
 												<Field
 													type="date"
-													name="on_date"
+													name="issue_date"
 													className="p-0 form-control"
 												/>
 											</div>
@@ -222,40 +259,8 @@ const Invoice = () => {
 											</div>
 											<div className="w-50">
 												<Field
-													type="text"
+													type="date"
 													name="due_date"
-													className="p-1 form-control"
-												/>
-											</div>
-										</div>
-										<div className="hstack mb-1">
-											<div className="w-50">
-												<label
-													htmlFor="terms"
-													className="fs-6 text-muted d-block text-end fw-lighter pe-2">
-													Terms
-												</label>
-											</div>
-											<div className="w-50">
-												<Field
-													type="type"
-													name="terms"
-													className="p-1 form-control mw-50"
-												/>
-											</div>
-										</div>
-										<div className="hstack">
-											<div className="w-50">
-												<label
-													htmlFor="terms"
-													className="fs-6 text-muted d-block text-end fw-lighter pe-2">
-													PO Box
-												</label>
-											</div>
-											<div className="w-50">
-												<Field
-													type="type"
-													name="po_number"
 													className="p-1 form-control"
 												/>
 											</div>
@@ -305,7 +310,7 @@ const Invoice = () => {
 																/>
 															</Col>
 															<Col md="1">
-															<Field
+																<Field
 																	name={`items.${index}.measurement`}
 																	placeholder="ex:Lbs"
 																	type="text"
@@ -321,18 +326,18 @@ const Invoice = () => {
 																	type="text"
 																	className="p-1 form-control"
 																/>
-
 															</Col>
 															<Col
 																md="2"
 																className="p-2 hstack">
-																{
-																	currencyFormatter((values.items[
+																{currencyFormatter(
+																	(values.items[
 																		index
 																	].amount =
 																		item.price *
-																		item.quantity), values.currency)
-																}
+																		item.quantity),
+																	values.currency
+																)}
 																{values.items
 																	.length >
 																	1 && (
@@ -358,7 +363,7 @@ const Invoice = () => {
 															push({
 																title: "",
 																quantity: "",
-																measurement:"",
+																measurement: "",
 																price: "",
 																amount: "",
 															})
@@ -388,13 +393,13 @@ const Invoice = () => {
 										</p>
 										<p className="mt-2">
 											<label
-												htmlFor="other_terms"
+												htmlFor="terms"
 												className="text-secondary fw-lighter">
 												Terms
 											</label>
 											<Field
-												name="other_terms"
-												id="other_terms"
+												name="terms"
+												id="terms"
 												placeholder="Terms"
 												as="textarea"
 												className="form-control"
@@ -403,7 +408,11 @@ const Invoice = () => {
 									</Col>
 									<Col className="p-0 m-0">
 										<p className="text-secondary fw-lighter text-end ">
-											Sub Total {currencyFormatter(subTotal(values) || 0, values.currency)}
+											Sub Total{" "}
+											{currencyFormatter(
+												subTotal(values) || 0,
+												values.currency
+											)}
 										</p>
 										<p className="hstack mb-1">
 											<span className="w-50">
@@ -458,10 +467,14 @@ const Invoice = () => {
 										</p>
 										<p className="text-secondary fw-lighter text-end ">
 											Total{" "}
-											{currencyFormatter(subTotal(values) -
-												Number(values?.discount) +
-												Number(values?.tax) +
-												Number(values?.shipping) || 0, values.currency)}
+											{currencyFormatter(
+												subTotal(values) -
+													Number(values?.discount) +
+													Number(values?.tax) +
+													Number(values?.shipping) ||
+													0,
+												values.currency
+											)}
 										</p>
 										<p className="hstack mb-1">
 											<span className="w-50">
@@ -482,11 +495,14 @@ const Invoice = () => {
 										</p>
 										<p className="text-secondary fw-lighter text-end ">
 											Balance due{" "}
-											{currencyFormatter(subTotal(values) -
-												Number(values?.discount) +
-												Number(values?.tax) +
-												Number(values?.shipping) -
-												Number(values?.paid) || 0, values.currency)}
+											{currencyFormatter(
+												subTotal(values) -
+													Number(values?.discount) +
+													Number(values?.tax) +
+													Number(values?.shipping) -
+													Number(values?.paid) || 0,
+												values.currency
+											)}
 										</p>
 									</Col>
 								</Row>
@@ -509,7 +525,8 @@ const Invoice = () => {
 									</PDFDownloadLink>
 								)}
 							</Col>
- */}						</Row>
+ */}{" "}
+						</Row>
 					</Form>
 				)}
 			</Formik>
