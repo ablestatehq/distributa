@@ -46,17 +46,25 @@ You can also give it a star. This will help me put more resources into this proj
 ## Tech stack used
 
 -> React.JS
+
 -> Bootstrap
+
 -> Vercel.com deployment
 
 Thank you 👍🏽
 
 ### Change log
 
--   **Additions**
+**Additions**
+
     -- Custom bill title
--   **Bugfixes**
+
+**Bugfixes**
+
     -- Remove need for 2 terms
+
     -- Change date to issue date
+
     -- Download pdf without logo
+
     -- Print title in pdf
