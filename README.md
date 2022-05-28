@@ -1,6 +1,6 @@
-# Distributa 💰
+# Distributa
 
-An Open Source Tool generate FREE Unlimited Invoices.
+An Open Source Tool help you generate FREE Unlimited Invoices.
 
 ## How it works
 
