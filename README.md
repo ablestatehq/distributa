@@ -1,19 +1,19 @@
 # Distributa 💰
 
-Allocate Income to Team members in < 2mins using this Open Source tool.
+An Open Source Tool generate FREE Unlimited Invoices.
 
 ## How it works
 
 ### Share Earnings
 
-1. Enter the Amount
+1. Enter the Amount to be shared.
 2. Add a benecificiary and portion in percentage.
-3. See what everyone gets in real time
-4. What to allocated a different amount? Reset and start afresh.
+3. See what everyone gets in real time.
+4. Reset to share more.
 
-### Invoice
+### Generate Invoice
 
-You don't need to spend money to send an invoice. Distributa gives you the super powers for free.
+Generate unlimited invoices for FREE.
 
 1. Click Invoice
 2. Enter details
@@ -25,37 +25,53 @@ You don't need to spend money to send an invoice. Distributa gives you the super
 Without your hand there is no way this tool can go far. If there is anyway you can contribute let me know through raising an issue.
 You can also give it a star. This will help me put more resources into this project.
 
-### Coding/Documentation
+### How to Contribute
 
-1. Create a Fork
-2. Clone Fork to your computer
-3. Navigate to the project directory then execute
-    - `yarn add` or `npm install`
-    - `yarn start` or `npm start`
-4. Check if your code works
-5. Push to your repo
-6. Send me a PR
-7. You will get my response as soon as possible.
+**Code and Technical contributions**
 
-## Why contribute
+1. Fork to get your copy.
+2. Clone Fork to your computer.
+3. Navigate to the project directory and:-
+    - Run `yarn add` or `npm install`
+    - Run `yarn start` or `npm start`
+4. Test your code and make sure it works.
+5. Commit and use a concise commit message.
+6. Push to your repo.
+7. Send a PR.
+8. Wait for PR review.
+9. Your contribution will go live in a few days after approval.
+10. If not approved you will get response.
 
-1. As the initiator of this project I will be motivated to continue working on it and adding more features.
-2. If the Tech Stack I used is in your area of interest, then this is an opportunity create an impact with your coding skills.
-3. If you're looking to gain experience and have some work in your Portfolio.
+**Other contributions**
 
-## Tech stack used
+1. You can contribute by using the app and sharing your feedback via the Github issues tab
+2. You can suggest features
 
--> React.JS
+## Why should you Contribute?
 
--> Bootstrap
+1. It motivates me and other contributors.
+2. Take the opportunity to create the impact doing what you love.
+3. Gain experience.
+4. Increase your Github commits.
+5. Increase your chances of landing a job as a Developer.
+6. It helps to learn from you.
+7. Add your voice to Open Source.
+8. Receive credit through mentions.
 
--> Vercel.com deployment
+## Tech Stack
+
+    → React.JS
+
+    → Bootstrap
+    
+    → Vercel.com deployment
 
 Thank you 👍🏽
 
 ### Change log
+------------------
 
-**Additions**
+**Added**
 
     - Custom bill title
 
