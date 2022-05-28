@@ -57,6 +57,7 @@ You can also give it a star. This will help me put more resources into this proj
 6. It helps to learn from you.
 7. Add your voice to Open Source.
 8. Receive credit through mentions.
+9. Use the code to build your own SaaS project.
 
 ## Tech Stack
 
