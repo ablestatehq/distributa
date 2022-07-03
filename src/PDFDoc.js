@@ -145,17 +145,17 @@ const PDFDoc = ({ data }) => {
 							) : null}
 						</View>
 						<View style={styles.header_col_content}>
-							<Text
+							{/* 					<Text
 								style={[styles.header_heading, styles.fw_bold]}>
 								From
-							</Text>
+							</Text> */}
 							<Text>{sender}</Text>
 						</View>
 						<View style={styles.header_col_content}>
-							<Text
+							{/* 	<Text
 								style={[styles.header_heading, styles.fw_bold]}>
 								To
-							</Text>
+							</Text> */}
 							<Text>{receiver}</Text>
 						</View>
 					</View>
