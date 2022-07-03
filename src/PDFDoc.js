@@ -190,9 +190,12 @@ const PDFDoc = ({ data }) => {
 						<Text style={[styles.marginBottom, styles.textRight]}>
 							Date: {issue_date}
 						</Text>
-						<Text style={[styles.marginBottom, styles.textRight]}>
-							Due date: {due_date}
-						</Text>
+						{due_date ? (
+							<Text
+								style={[styles.marginBottom, styles.textRight]}>
+								Due date: {due_date}
+							</Text>
+						) : null}
 					</View>
 				</View>
 				<View style={styles.items_header}>
@@ -241,20 +244,30 @@ const PDFDoc = ({ data }) => {
 				})}
 				<View style={styles.footer}>
 					<View style={[styles.flex_1, styles.col, styles.itemsDown]}>
-						<View style={styles.marginBottom}>
-							<Text
-								style={[styles.marginBottom, styles.textLeft]}>
-								Notes
-							</Text>
-							<Text style={[styles.textLeft]}>{notes}</Text>
-						</View>
-						<View>
-							<Text
-								style={[styles.marginBottom, styles.textLeft]}>
-								Terms
-							</Text>
-							<Text style={[styles.textLeft]}>{terms}</Text>
-						</View>
+						{notes ? (
+							<View style={styles.marginBottom}>
+								<Text
+									style={[
+										styles.marginBottom,
+										styles.textLeft,
+									]}>
+									Notes
+								</Text>
+								<Text style={[styles.textLeft]}>{notes}</Text>
+							</View>
+						) : null}
+						{terms ? (
+							<View>
+								<Text
+									style={[
+										styles.marginBottom,
+										styles.textLeft,
+									]}>
+									Terms
+								</Text>
+								<Text style={[styles.textLeft]}>{terms}</Text>
+							</View>
+						) : null}
 					</View>
 					<View style={[styles.flex_1, styles.col, styles.itemsDown]}>
 						<View style={[styles.marginBottom]}>
