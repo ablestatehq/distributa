@@ -436,7 +436,7 @@ const Invoice = () => {
 												<label
 													htmlFor="tax"
 													className="d-block pe-2 text-secondary fw-lighter text-end">
-													Tax
+													Tax <button></button>
 												</label>
 											</span>
 											<span className="w-50">
