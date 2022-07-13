@@ -12,6 +12,7 @@ import FormControl from "react-bootstrap/FormControl";
 
 function Distribute() {
 	const [amount, setAmount] = useState(0);
+	const [project, setProject] = useState("");
 	const [total, setTotal] = useState(0);
 	const [totalPercentage, setTotalPercentage] = useState(0);
 	const [balance, setBalance] = useState(0);
@@ -37,11 +38,25 @@ function Distribute() {
 		if (error) return;
 
 		const myAmount = (parseInt(percentage) / 100) * parseInt(amount);
-		setBreakdown([...breakdown, { name, percentage, amount: myAmount }]);
+		setBreakdown([
+			...breakdown,
+			{ name, percentage, amount: myAmount, received: false },
+		]);
 		nameField.current.value = "";
 		percentageField.current.value = "";
 	};
-
+	const submitToServer = (e) => {
+		e.preventDefault();
+		setError(null);
+		const data = {
+			project,
+			total,
+			totalPercentage,
+			balance,
+			breakdown,
+		};
+		console.log(data);
+	};
 	const calculateTotal = () => {
 		return breakdown.reduce((acc, curr) => {
 			return (acc += parseInt(curr.amount));
@@ -74,12 +89,22 @@ function Distribute() {
 		setError(null);
 		setEdit(e.target.getAttribute("data-edit-index"));
 	};
+	const handleReceived = (e) => {
+		setError(null);
+		const index = e.target.getAttribute("data-received-index");
+		console.log(index);
+		const myBreakdown = [...breakdown];
+		const received = myBreakdown[index].received;
+		console.log(received);
+		myBreakdown[index].received = !received;
+		setBreakdown(myBreakdown);
+	};
 
 	useEffect(() => {
 		const theTotal = calculateTotal();
 		const totalPercentage = calculateTotalPercentage();
 		if (theTotal > amount) {
-			setError("Distributed can not to exceed Amount to be shared!");
+			setError("Shared Amount can not to exceed Amount to be shared!");
 		} else {
 			setTotal(theTotal);
 			setTotalPercentage(totalPercentage);
@@ -140,60 +165,83 @@ function Distribute() {
 					</Button>
 				</Col>
 			</Row> */}
+
 			<Row className="mt-4">
 				<Col md="9">
-					<div >
-						{!amount && (
-							<><FloatingLabel
-								controlId="floatingInput"
-								label="Enter Amount to be shared"
-								className="col-md-12">
-								<Form.Control
-									placeholder="UGX 1,000,000"
-									onBlur={(e) => setAmount(e.target.value)}
-									onKeyDown={(e) => {
-										if (e.key == "Enter") {
-											setAmount(e.target.value);
+					{!amount && (
+						<>
+							<Row>
+								<FloatingLabel
+									controlId="floatingInput"
+									label="What is the source of the money?"
+									className="col-md-6">
+									<Form.Control
+										placeholder="Project title"
+										onBlur={(e) =>
+											setProject(e.target.value)
 										}
-									}}
-								/>
-							</FloatingLabel>
+										onKeyDown={(e) => {
+											if (e.key == "Enter") {
+												setProject(e.target.value);
+											}
+										}}
+									/>
+								</FloatingLabel>
+								<FloatingLabel
+									controlId="floatingInput"
+									label="Enter Amount to be shared"
+									className="col-md-6">
+									<Form.Control
+										placeholder="UGX 1,000,000"
+										onBlur={(e) =>
+											setAmount(e.target.value)
+										}
+										onKeyDown={(e) => {
+											if (e.key == "Enter") {
+												setAmount(e.target.value);
+											}
+										}}
+									/>
+								</FloatingLabel>
+							</Row>
 							<div className="d-grid col-12 mt-2">
 								<Button variant="primary">Enter </Button>
 							</div>
-							</>
-						)}
-					</div>
+						</>
+					)}
+
 					{error && <Alert variant="danger">{error}</Alert>}
 					{amount > 0 && (
-            <div className="p-2 bg-light border rounded">
-              <h4 className="text-secondary">Add Benecificiaries </h4>
-              <p>Beneficiary name and portion in percentage</p>
-						<Form onSubmit={handleAdd}>
-							<div className="input-group">
-								<FloatingLabel
-									controlId="floatingInput"
-									label="Name">
-									<Form.Control
-										ref={nameField}
-										placeholder="e.g John Doe"
-									/>
-								</FloatingLabel>
-								<FloatingLabel
-									controlId="floatingInput"
-									label="Percentage">
-									<Form.Control
-										ref={percentageField}
-										placeholder="10%"
-										required
-									/>
-								</FloatingLabel>
-								<Button type="submit" onClick={handleAdd}>
-									Add
-								</Button>
-							</div>
-						</Form>
-            </div>
+						<div className="p-2 bg-light border rounded">
+							<h4 className="text-secondary">
+								Add Benecificiaries{" "}
+							</h4>
+							<p>Beneficiary name and portion in percentage</p>
+							<Form onSubmit={handleAdd}>
+								<div className="input-group">
+									<FloatingLabel
+										controlId="floatingInput"
+										label="Name">
+										<Form.Control
+											ref={nameField}
+											placeholder="e.g John Doe"
+										/>
+									</FloatingLabel>
+									<FloatingLabel
+										controlId="floatingInput"
+										label="Percentage">
+										<Form.Control
+											ref={percentageField}
+											placeholder="10%"
+											required
+										/>
+									</FloatingLabel>
+									<Button type="submit" onClick={handleAdd}>
+										Add
+									</Button>
+								</div>
+							</Form>
+						</div>
 					)}
 					{breakdown.length > 0 && (
 						<Table
@@ -261,9 +309,32 @@ function Distribute() {
 													data-edit-index={index}
 													onClick={handleEdit}
 													variant="outline-info"
+													className="me-1"
 													size="sm">
 													Edit
 												</Button>
+												{person.received && (
+													<Button
+														data-received-index={
+															index
+														}
+														onClick={handleReceived}
+														variant="outline-info"
+														size="sm">
+														Cashback
+													</Button>
+												)}
+												{!person.received && (
+													<Button
+														data-received-index={
+															index
+														}
+														onClick={handleReceived}
+														variant="outline-info"
+														size="sm">
+														Give Cash
+													</Button>
+												)}
 											</td>
 										</tr>
 									);
@@ -294,10 +365,15 @@ function Distribute() {
 				</Col>
 				<Col md="3">
 					<div className="p-2 bg-light border rounded">
-            <h5>Summary</h5>
-            <hr/>
+						<h5>Summary</h5>
+						<hr />
 						<p>
-							<span className="text-muted">Pool Initiated with</span>
+							<span className="text-muted">Project</span>
+							<br />
+							{project}
+						</p>
+						<p>
+							<span className="text-muted">Shared Amount</span>
 							<br />
 							<span className="text-dark">
 								{currencyFormatter(amount)}
@@ -311,14 +387,18 @@ function Distribute() {
 							</span>
 						</p>
 						<p>
-							<span className="text-muted">Going to</span>
+							<span className="text-muted">
+								Number of beneficiaries
+							</span>
 							<br />
 							<span className="text-dark">
 								{breakdown?.length} Beneficiaries
 							</span>
 						</p>
 						<p>
-							<span className="text-muted font-italic">Remaining</span>
+							<span className="text-muted font-italic">
+								Unshared Amount
+							</span>
 							<br />
 							<span className="text-dark">
 								{currencyFormatter(
@@ -328,13 +408,26 @@ function Distribute() {
 							</span>
 						</p>
 
-						<Button
-							type="reset"
-							onClick={handleReset}
-							variant="warning"
-							className="w-100 mx-auto">
-							Reset
-						</Button>
+						<Row>
+							<Col md="6">
+								<Button
+									type="reset"
+									onClick={handleReset}
+									variant="warning"
+									className="w-100 mx-auto">
+									Reset
+								</Button>
+							</Col>
+							<Col md="6">
+								<Button
+									type="submit"
+									onClick={submitToServer}
+									variant="success"
+									className="w-100 mx-auto">
+									Save
+								</Button>
+							</Col>
+						</Row>
 					</div>
 				</Col>
 			</Row>
