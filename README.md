@@ -48,8 +48,13 @@ In the env file replace your-api-key, your-project-id, and your-project-endpoint
 - Use these variables exclusively under the server environment.
 
 3. Run the shell script to set up the Appwrite database:
-Execute the provided shell script to set up the Appwrite database. This script will create the necessary database and collections for Distributa.
+Execute shell script *setup-appwrite-database.sh* using the command:
+```bash
+./setup-appwrite-database.sh
+```
+This script will create the necessary database and collections for Distributa.
 Once the script completes execution, it will create the distributa database, invoices collection, and distributions collection in your Appwrite instance.
+
 4. Set environment variables for React:
 In your project's environment configuration file (e.g., .env.local or .env.development), add the following lines:
 ```dotenv
