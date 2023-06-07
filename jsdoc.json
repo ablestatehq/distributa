@@ -1,6 +1,7 @@
 {
     "source": {
         "include": ["."],
+        "exclude": ["./node_modules", "./docs", "./test", "./custom-template"],
         "includePattern": ".js$",
         "excludePattern": "(node_modules/|docs)"
     },
@@ -12,6 +13,7 @@
     "opts": {
         "recurse": true,
         "destination": "./docs/",
+        "readme": "./README.md",
         "template":"custom-template"
     }
 }
