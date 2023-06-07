@@ -82,8 +82,6 @@ REACT_APP_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=your-distributions-collection-id
 Your inital Project configuartion is now set is now ready! Voilà! Let's distribute:
 With the configurations in place, you can use Distributa to distribute earnings, generate invoices, and perform other application-specific actions.
 
-For developer [docs](./docs/index.html) visit 
-
 ### Prerequisites
 
 1. Clone the project 
