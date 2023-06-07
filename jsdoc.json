@@ -13,7 +13,7 @@
     "opts": {
         "recurse": true,
         "destination": "./docs/",
-        "readme": "./README.md",
+        "readme": "./docs/home.md",
         "template":"custom-template"
     }
 }
