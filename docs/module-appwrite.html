@@ -121,7 +121,7 @@
         
             <li>module:node-appwrite.Databases</li>
         
-            <li>module:node-appwrite.Account</li>
+            <li>module:node-appwrite.Users</li>
         
             <li>module:node-appwrite.Teams</li>
         
@@ -552,218 +552,6 @@
     
 
     
-    <h4 class="name" id="~createAccount"><span class="type-signature">(async, inner) </span>createAccount<span class="signature">(email, password)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    <p>Creates an user account in appwrite</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>email</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>password</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_appwrite.js.html">helpers/appwrite.js</a>, <a href="helpers_appwrite.js.html#line126">line 126</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="https://appwrite.io/docs/server/account">https://appwrite.io/docs/server/account</a></li>
-        </ul>
-    </dd>
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise.&lt;Object></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>const userAccount = await createAccount("user@gmail.com", "password");
-// {
-//   "$id": "5e5ea5c16897e",
-//   "$createdAt": "2020-10-15T06:38:00.000+00:00",
-//   "$updatedAt": "2020-10-15T06:38:00.000+00:00",
-//   "name": " ",
-//   "password": "$argon2id$v=19$m=2048,t=4,p=3$aUZjLnliVWRINmFNTWMudg$5S+x+7uA31xFnrHFT47yFwcJeaP0w92L\/4LdgrVRXxE",
-//   "hash": "argon2",
-//   "hashOptions": {
-//       "type": "argon2",
-//       "memoryCost": 65536,
-//       "timeCost": 4,
-//       "threads": 3
-//   },
-//   "registration": "2020-10-15T06:38:00.000+00:00",
-//   "status": true,
-//   "passwordUpdate": "2020-10-15T06:38:00.000+00:00",
-//   "email": "user@gmail.com",
-//   "phone": "+4930901820",
-//   "emailVerification": true,
-//   "phoneVerification": true,
-//   "prefs": {}
-// }</code></pre>
-
-
-
-        
-            
-
-    
-
-    
     <h4 class="name" id="~createCollections"><span class="type-signature">(async, inner) </span>createCollections<span class="signature">(databaseID, collection)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
     
 
@@ -888,7 +676,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_appwrite.js.html">helpers/appwrite.js</a>, <a href="helpers_appwrite.js.html#line91">line 91</a>
+        <a href="helpers_appwrite.js.html">helpers/appwrite.js</a>, <a href="helpers_appwrite.js.html#line95">line 95</a>
     </li></ul></dd>
     
 
@@ -1208,7 +996,7 @@ console.log(database);
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_appwrite.js.html">helpers/appwrite.js</a>, <a href="helpers_appwrite.js.html#line164">line 164</a>
+        <a href="helpers_appwrite.js.html">helpers/appwrite.js</a>, <a href="helpers_appwrite.js.html#line168">line 168</a>
     </li></ul></dd>
     
 
@@ -1388,7 +1176,7 @@ console.log(database);
 
             
 
-            <td class="description last"><p>[] - [&quot;user&quot;, &quot;admin&quot;]</p></td>
+            <td class="description last"><p>An array of roles for the user in the team</p></td>
         </tr>
 
     
@@ -1429,7 +1217,7 @@ console.log(database);
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="helpers_appwrite.js.html">helpers/appwrite.js</a>, <a href="helpers_appwrite.js.html#line195">line 195</a>
+        <a href="helpers_appwrite.js.html">helpers/appwrite.js</a>, <a href="helpers_appwrite.js.html#line199">line 199</a>
     </li></ul></dd>
     
 
@@ -1478,6 +1266,218 @@ console.log(database);
 
 
         
+            
+
+    
+
+    
+    <h4 class="name" id="~createUser"><span class="type-signature">(async, inner) </span>createUser<span class="signature">(email, password)</span><span class="type-signature"> &rarr; {Promise.&lt;Object>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Creates an user account in appwrite</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>email</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>password</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="helpers_appwrite.js.html">helpers/appwrite.js</a>, <a href="helpers_appwrite.js.html#line130">line 130</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://appwrite.io/docs/server/account">https://appwrite.io/docs/server/account</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;Object></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>const createUser = await createUser("user@gmail.com", "password");
+// {
+//   "$id": "5e5ea5c16897e",
+//   "$createdAt": "2020-10-15T06:38:00.000+00:00",
+//   "$updatedAt": "2020-10-15T06:38:00.000+00:00",
+//   "name": " ",
+//   "password": "$argon2id$v=19$m=2048,t=4,p=3$aUZjLnliVWRINmFNTWMudg$5S+x+7uA31xFnrHFT47yFwcJeaP0w92L\/4LdgrVRXxE",
+//   "hash": "argon2",
+//   "hashOptions": {
+//       "type": "argon2",
+//       "memoryCost": 65536,
+//       "timeCost": 4,
+//       "threads": 3
+//   },
+//   "registration": "2020-10-15T06:38:00.000+00:00",
+//   "status": true,
+//   "passwordUpdate": "2020-10-15T06:38:00.000+00:00",
+//   "email": "user@gmail.com",
+//   "phone": "+4930901820",
+//   "emailVerification": true,
+//   "phoneVerification": true,
+//   "prefs": {}
+// }</code></pre>
+
+
+
+        
     
 
     
@@ -1499,7 +1499,7 @@ console.log(database);
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Jun 07 2023 20:10:30 GMT+0300 (East Africa Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Wed Jun 07 2023 20:17:28 GMT+0300 (East Africa Time)
 </footer>
 
 <script> prettyPrint(); </script>
