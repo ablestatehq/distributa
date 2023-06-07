@@ -4,6 +4,7 @@
  * It then writes the credentials to a file.
  * The file is used by the appwrite.js helper file.
  * @file setup.js
+ * @author David Derrick Anyuru
  * @module setup
  * @requires fs
  * @requires path
@@ -25,6 +26,30 @@ const {
 } = require("./database");
 const generatePassword = require("./helpers/generatePassword");
 
+/**
+ * @function setup
+ * @returns {Promise<Object>}
+ * @description Creates a database, a team, two accounts, two team memberships and two collections.
+ * @example
+ * const data = await setup();
+ * // {
+ * //   admin: {
+ * //     email: "admin@distributa",
+ * //     password: "password"
+ * //   },
+ * //   user: {
+ * //     email: "user@distributa",
+ * //     password: "password"
+ * //   },
+ * //   systemTeamID: "5f9c0f0c5c6f5",
+ * //   adminMembershipID: "5f9c0f0c5c6f5",
+ * //   userMembershipID: "5f9c0f0c5c6f5",
+ * //   databaseID: "5f9c0f0c5c6f5",
+ * //   invoicesCollectionID: "5f9c0f0c5c6f5",
+ * //   distributionsCollectionID: "5f9c0f0c5c6f5",
+ * // }
+ * 
+ */
 const setup = async () => {
   try {
     const userPassword = generatePassword();
