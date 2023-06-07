@@ -1,3 +1,4 @@
+require("dotenv").config();
 /**
  * @author David Derrick Anyuru <davidderrickanyuru@gmail.com>
  * @file appwrite.js
@@ -16,7 +17,6 @@
  * @see https://appwrite.io/docs/server/teams
  * @see https://appwrite.io/docs/server/storage
  */
-require("dotenv").config();
 const ID = require("node-appwrite").ID;
 const Databases = require("node-appwrite").Databases;
 const Account = require("node-appwrite").Account;
@@ -84,8 +84,8 @@ const teams = new Teams(client);
  * // }
  */
 const createDatabase = async () => {
-  const database = await databases.create(ID.unique(), "Distributa");
-  return database;
+    const database = await databases.create(ID.unique(), "Distributa");
+    return database;
 };
 
 /**
@@ -203,9 +203,9 @@ const createTeamMembership = async (teamID, userEmail, roles) => {
 };
 
 module.exports = {
-    createDatabase,
-    createCollection,
-    createAccount,
-    createTeam,
-    createTeamMembership
-}
+  createDatabase,
+  createCollection,
+  createAccount,
+  createTeam,
+  createTeamMembership,
+};
