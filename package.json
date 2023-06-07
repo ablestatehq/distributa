@@ -18,7 +18,7 @@
     "react-bootstrap": "^2.1.2",
     "react-dom": "^18.2.0",
     "react-router-bootstrap": "^0.26.1",
-    "react-router-dom": "^6.3.0",
+    "react-router-dom": "^6.12.0",
     "react-scripts": "^5.0.1",
     "web-vitals": "^3.3.2"
   },
@@ -26,7 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "doc": "jsdoc -c jsdoc.json"
   },
   "eslintConfig": {
     "extends": [
@@ -45,5 +46,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "jsdoc": "^4.0.2"
   }
 }

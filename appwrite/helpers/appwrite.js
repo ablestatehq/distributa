@@ -114,11 +114,11 @@ const createDatabase = async () => {
  * //   "indexes": []
  * // }
  */
-const createCollection = async (databaseID, collection) => {
+const createCollection = async (databaseID, collectionName) => {
   const collection = await databases.createCollection(
     databaseID,
     ID.unique(),
-    collection
+    collectionName
   );
   return collection;
 };
