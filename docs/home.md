@@ -1,4 +1,3 @@
-# Distributa
 
 An Open Source Tool helps you to generate Unlimited Invoices for FREE.
 
@@ -64,8 +63,8 @@ Execute shell script *setup-appwrite-database.sh* using the command:
 chmod u+x ./database/setup-appwrite-database.sh
 ./setup-appwrite-database.sh
 ```
-This script will create initial project configuration for Distributa.
-Once the script completes execution, the distributa database, invoices collection, and distributions collection will be created the project whose ID is specified in the project of your Appwrite instance.
+This script will create the necessary database and collections for Distributa.
+Once the script completes execution, it will create the distributa database, invoices collection, and distributions collection in your Appwrite instance.
 
 6. Set environment variables for React:
 In your project's environment configuration file (e.g., .env.local or .env.development), add the following lines:
@@ -79,10 +78,8 @@ REACT_APP_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=your-distributions-collection-id
 
 - Replace your-project-endpoint, your-distributa-database-id, your-invoices-collection-id, and your-distributions-collection-id with the actual values obtained from the previous steps.
 
-Your inital Project configuartion is now set is now ready! Voilà! Let's distribute:
+Your database is now ready! Voilà! Let's distribute:
 With the configurations in place, you can use Distributa to distribute earnings, generate invoices, and perform other application-specific actions.
-
-For developer [docs](./docs/index.html) visit 
 
 ### Prerequisites
 
