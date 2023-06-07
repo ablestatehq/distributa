@@ -7,7 +7,7 @@ require("dotenv").config();
  * @requires node-appwrite
  * @requires node-appwrite.ID
  * @requires node-appwrite.Databases
- * @requires node-appwrite.Account
+ * @requires node-appwrite.Users
  * @requires node-appwrite.Teams
  * @requires node-appwrite.Client
  * @description Setup your appwrite server
@@ -19,7 +19,7 @@ require("dotenv").config();
  */
 const ID = require("node-appwrite").ID;
 const Databases = require("node-appwrite").Databases;
-const Account = require("node-appwrite").Account;
+const Users = require("node-appwrite").Users;
 const Teams = require("node-appwrite").Teams;
 const Client = require("node-appwrite").Client;
 
@@ -64,7 +64,7 @@ client
  */
 
 const databases = new Databases(client);
-const account = new Account(client);
+const users = new Users(client);
 const teams = new Teams(client);
 /**
  * @author David Derrick Anyuru <davidderrickanyuru@gmail.com>
@@ -84,8 +84,12 @@ const teams = new Teams(client);
  * // }
  */
 const createDatabase = async () => {
-    const database = await databases.create(ID.unique(), "Distributa");
-    return database;
+    try {
+        const database = await databases.create(ID.unique(), "Distributa");
+        return database;
+    } catch ( error ) {
+        console.log("Error creating database", error)
+    }
 };
 
 /**
@@ -125,14 +129,14 @@ const createCollection = async (databaseID, collectionName) => {
 
 /**
  * @async
- * @function createAccount
+ * @function createUser
  * @param {string} email
  * @param {string} password
  * @returns {Promise<Object>}
  * @description Creates an user account in appwrite
  * @see https://appwrite.io/docs/server/account
  * @example
- * const userAccount = await createAccount("user@gmail.com", "password");
+ * const createUser = await createUser("user@gmail.com", "password");
  * // {
  * //   "$id": "5e5ea5c16897e",
  * //   "$createdAt": "2020-10-15T06:38:00.000+00:00",
@@ -156,9 +160,9 @@ const createCollection = async (databaseID, collectionName) => {
  * //   "prefs": {}
  * // }
  */
-const createAccount = async (email, password) => {
-  const userAccount = await account.create(ID.unique(), email, password, " ");
-  return userAccount;
+const createUser = async (email, password) => {
+  const user = await users.create(ID.unique(), email, password, " ");
+  return user;
 };
 
 /**
@@ -202,10 +206,16 @@ const createTeamMembership = async (teamID, userEmail, roles) => {
   return membership;
 };
 
+const deleteDatabase = async (databaseID) => {
+  const database = await databases.delete(databaseID);
+  return database;
+};
+
 module.exports = {
   createDatabase,
+  deleteDatabase,
   createCollection,
-  createAccount,
+  createUser,
   createTeam,
   createTeamMembership,
 };
