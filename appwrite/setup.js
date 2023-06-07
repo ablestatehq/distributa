@@ -12,15 +12,15 @@
  * @requires database
  * @requires helpers/appwrite
  * @requires cli-progress
- * @requires chalk
+ *
  * @see https://appwrite.io/docs/server/database
  * @see https://appwrite.io/docs/server/teams
  * @see https://appwrite.io/docs/server/account
  */
 
 const { writeFileSync } = require("fs");
-const { singleBar } = require("cli-progress");
-const chalk = require("chalk");
+const cliProgress = require("cli-progress");
+const colors = require("ansi-colors");
 const path = require("path");
 const {
   createDatabase,
@@ -31,7 +31,6 @@ const {
   createCollection,
 } = require("./helpers/appwrite");
 const generatePassword = require("./helpers/generatePassword");
-const { error } = require("console");
 
 /**
  * @function setup
@@ -62,51 +61,54 @@ const setup = async () => {
     const userPassword = generatePassword();
     const adminPassword = generatePassword();
     const adminEmail = "admin@distributa.com";
-    const userEmail = "user@distribute.com";
+    const userEmail = "user@distributa.com";
     const progressSteps = [
-        'creating database',
-        'creating system team',
-        'creating admin account',
-        'creating user account',
-        'creating admin team membership',
-        'creating user team membership',
-        'creating invoices collection',
-        'creating distributions collection'
-    ]
+      "creating database",
+      "creating system team",
+      "creating admin account",
+      "creating user account",
+      "creating admin team membership",
+      "creating user team membership",
+      "creating invoices collection",
+      "creating distributions collection",
+    ];
 
-    const progressBar = new singleBar({
-        format: 'Progress |' + chalk.green('{bar}') + '| {percentage}% || {value}/{total} Steps || {step}',
-        barCompleteChar: '\u2588',
-        barIncompleteChar: '\u2591',
-        hideCursor: true
+    const progressBar = new cliProgress.SingleBar({
+      format:
+        "Progress |" +
+        colors.cyan("{bar}") +
+        "| {percentage}% || {value}/{total} Steps || {step}",
+      barCompleteChar: "\u2588",
+      barIncompleteChar: "\u2591",
+      hideCursor: true,
     });
 
-    const updateProgress = (step) => {
-        progressBar.update(stepIndex + 1, { step: progressSteps[stepIndex] });
-    }
+
+    const updateProgress = (stepIndex) => {
+      progressBar.update(stepIndex + 1, { step: progressSteps[stepIndex] });
+    };
 
     progressBar.start(progressSteps.length, 0, { step: progressSteps[0] });
     const database = await createDatabase();
     updateProgress(0);
 
-
     const systemTeam = await createTeam("system");
     updateProgress(1);
 
-    const admin = await createAccount(adminEmail, adminPassword);
+    const admin = await createUser(adminEmail, adminPassword);
     updateProgress(2);
 
     const user = await createUser(userEmail, userPassword);
     updateProgress(3);
 
-    const adminMembership = createTeamMembership(systemTeam.$id, admin.email, [
+    const adminMembership = await  createTeamMembership(systemTeam.$id, admin.email, [
       "admin",
       "user",
       "owner",
     ]);
     updateProgress(4);
 
-    const userMembership = createTeamMembership(systemTeam.$id, user.email, [
+    const userMembership = await createTeamMembership(systemTeam.$id, user.email, [
       "user",
     ]);
     updateProgress(5);
@@ -121,7 +123,7 @@ const setup = async () => {
     updateProgress(7);
     progressBar.stop();
 
-    return {
+    const data = {
       admin: {
         email: adminEmail,
         password: adminPassword,
@@ -137,19 +139,14 @@ const setup = async () => {
       invoicesCollectionID: invoicesCollection.$id,
       distributionsCollectionID: distributionsCollection.$id,
     };
+
+    const filePath = path.join(__dirname, "./databaseCredentials.json");
+    writeFileSync(filePath, JSON.stringify(data, null, 4));
+
+    return;
   } catch (error) {
     console.log(error);
   }
 };
 
-setup()
-  .then((data) => {
-    const filePath = path.join(__dirname, "./databaseCredentials.json");
-    writeFileSync(filePath, JSON.stringify(data));
-  })
-  .catch((error) => console.log(error));
-
-
-// createDatabase("6480898a7a795426d789").then((data) => console.log(data)).catch(error => console.log(error))
-
-
+setup().catch((error) => console.log(error));

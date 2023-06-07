@@ -84,12 +84,12 @@ const teams = new Teams(client);
  * // }
  */
 const createDatabase = async () => {
-    try {
-        const database = await databases.create(ID.unique(), "Distributa");
-        return database;
-    } catch ( error ) {
-        console.log("Error creating database", error)
-    }
+  try {
+    const database = await databases.create(ID.unique(), "Distributa");
+    return database;
+  } catch (error) {
+    console.log("Error creating database", error);
+  }
 };
 
 /**
@@ -161,7 +161,7 @@ const createCollection = async (databaseID, collectionName) => {
  * // }
  */
 const createUser = async (email, password) => {
-  const user = await users.create(ID.unique(), email, password, " ");
+  const user = await users.createArgon2User(ID.unique(), email, password);
   return user;
 };
 
@@ -192,16 +192,17 @@ const createTeam = async (name) => {
  *
  * @param {string} teamID - The id of the team
  * @param {string} userEmail - The email of the user
- * @param {array} roles - [] - ["user", "admin"]
+ * @param {array} roles - An array of roles for the user in the team
  * @returns {Promise<Object>}
  * @description Creates a team membership in appwrite
  */
 const createTeamMembership = async (teamID, userEmail, roles) => {
+  console.log("Here: ", { teamID, userEmail, roles, redirectUrl });
   const membership = await teams.createMembership(
     teamID,
-    userEmail,
     roles,
-    redirectUrl
+    redirectUrl,
+    userEmail
   );
   return membership;
 };
