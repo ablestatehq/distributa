@@ -23,7 +23,7 @@ const {
   createAccount,
   createTeamMembership,
   createCollection,
-} = require("./database");
+} = require("./helpers/appwrite");
 const generatePassword = require("./helpers/generatePassword");
 
 /**
@@ -98,4 +98,5 @@ const setup = async () => {
 setup().then((data) => {
   const filePath = path.join(__dirname, "./databaseCredentials.json");
   writeFileSync(filePath, JSON.stringify(data));
-});
+})
+.catch(error => console.log(error));
