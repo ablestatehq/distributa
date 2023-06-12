@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css";
 // import "./custom.css";
 import "./index.css";
 import Routing from "./Routing";
