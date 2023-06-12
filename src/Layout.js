@@ -1,33 +1,18 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import { Container } from "react-bootstrap";
-import Nav from 'react-bootstrap/Nav'
-import Navbar from 'react-bootstrap/Navbar'
-import {LinkContainer} from 'react-router-bootstrap'
+import { Outlet, NavLink } from "react-router-dom";
 
 const Layout = () => {
-	return (
+  return (
     <>
-		<Navbar bg="dark" variant="dark">
-			<Container>
-        <LinkContainer to="/">
-          <Navbar.Brand>Distributa</Navbar.Brand>
-        </LinkContainer>
-				<Nav className="me-auto">
-          <LinkContainer to="/">
-					  <Nav.Link>Share</Nav.Link>
-          </LinkContainer>
-          <LinkContainer to="/invoice">
-					<Nav.Link>Invoice</Nav.Link>
-          </LinkContainer>
-				</Nav>
-			</Container>
-		</Navbar>
-    <Container>
-      <Outlet/>
-    </Container>
+      <div className="w-screen xs:px-5 sm:px-10 md:px-20 bg-[#212529] flex items-center">
+        <NavLink to="/" className="text-lg text-white cursor-pointer mr-2 py-2">Distributa</NavLink>
+        <NavLink to="/" className="mr-2 text-[#C7C8C9] text-sm py-2">Share</NavLink>
+        <NavLink to="/invoice" className="mr-2 text-[#C7C8C9] text-sm py-2">Invoice</NavLink>
+      </div>
+      <div className="w-screen">
+        <Outlet />
+      </div>
     </>
-	);
+  );
 };
 
 export default Layout;

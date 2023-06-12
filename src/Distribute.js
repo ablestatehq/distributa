@@ -9,6 +9,10 @@ import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
 import FormControl from "react-bootstrap/FormControl";
 
+// Form handling
+// import { Formik, Form, Field } from "formik";
+import { Input } from "./components/Input";
+
 function Distribute() {
   const [amount, setAmount] = useState(0);
   const [project, setProject] = useState("");
@@ -164,18 +168,17 @@ function Distribute() {
 				</Col>
 			</Row> */}
 
-      <Row className="mt-4">
-        <Col md="9">
+      <div className="grid md:grid-cols-12 xs:mx-5 sm:mx-10 md:mx-20 rounded-sm md:gap-5 mt-4">
+        <div className="md:col-span-9">
           {!amount && (
             <>
-              <Row>
-                <FloatingLabel
-                  controlId="floatingInput"
-                  label="What is the source of the money?"
-                  className="col-md-6"
-                >
-                  <Form.Control
-                    placeholder="Project title"
+              <div className="grid md:grid-cols-2 md:gap-5 sm:gap-2 mb-2">
+                <div class="relative inline">
+                  <input
+                    type="text"
+                    id="floating_outlined"
+                    class="border block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    placeholder=" "
                     onBlur={(e) => setProject(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
@@ -183,14 +186,20 @@ function Distribute() {
                       }
                     }}
                   />
-                </FloatingLabel>
-                <FloatingLabel
-                  controlId="floatingInput"
-                  label="Enter Amount to be shared"
-                  className="col-md-6"
-                >
-                  <Form.Control
-                    placeholder="UGX 1,000,000"
+                  <label
+                    for="floating_outlined border border-red-500"
+                    class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
+                  >
+                    What is the source of your money?
+                  </label>
+                </div>
+
+                <div class="relative inline">
+                  <input
+                    type="text"
+                    id="floating_outlined"
+                    class="border px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    placeholder=" "
                     onBlur={(e) => setAmount(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
@@ -198,13 +207,17 @@ function Distribute() {
                       }
                     }}
                   />
-                </FloatingLabel>
-              </Row>
-              <div className="d-grid col-12 mt-2">
-                <button className="w-full text-md py-2 text-white rounded-md bg-[#007BFF] hover:bg-[#0B5ED7]">
-                  Enter
-                </button>
+                  <label
+                    for="floating_outlined border border-red-500"
+                    class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
+                  >
+                    Enter amount to be shared
+                  </label>
+                </div>
               </div>
+              <button className="w-full text-md py-2 text-white rounded-md bg-[#007BFF] hover:bg-[#0B5ED7]">
+                Enter
+              </button>
             </>
           )}
 
@@ -339,37 +352,39 @@ function Distribute() {
               </tfoot>
             </Table>
           )}
-        </Col>
-        <Col md="3">
-          <div className="p-2 bg-light border rounded">
-            <h5>Summary</h5>
+        </div>
+        <div className="md:col-span-3">
+          <div className="p-2 bg-[#F8F9FA] border rounded-md">
+            <h5 className="font-semibold text-lg mb-2 text-gray-700">
+              Summary
+            </h5>
             <hr />
-            <p>
-              <span className="text-muted">Project</span>
+            <p className="font-light text-sm py-2">
+              <span className="text-[#798088]">Project</span>
               <br />
               {project}
             </p>
-            <p>
-              <span className="text-muted">Shared Amount</span>
+            <p className="font-light text-sm py-2">
+              <span className="text-[#798088]">Shared Amount</span>
               <br />
               <span className="text-dark">{currencyFormatter(amount)}</span>
             </p>
-            <p>
-              <span className="text-muted">Distributed</span>
+            <p className="font-light text-sm py-2">
+              <span className="text-[#798088]">Distributed</span>
               <br />
               <span className="text-dark">
                 {currencyFormatter(total)} / {totalPercentage}%
               </span>
             </p>
-            <p>
-              <span className="text-muted">Number of beneficiaries</span>
+            <p className="font-light text-sm py-2">
+              <span className="text-[#798088]">Number of beneficiaries</span>
               <br />
               <span className="text-dark">
                 {breakdown?.length} Beneficiaries
               </span>
             </p>
-            <p>
-              <span className="text-muted font-italic">Unshared Amount</span>
+            <p className="font-light text-sm py-2">
+              <span className="text-[#798088]">Unshared Amount</span>
               <br />
               <span className="text-dark">
                 {currencyFormatter(breakdown?.length === 0 ? amount : balance)}{" "}
@@ -377,31 +392,26 @@ function Distribute() {
               </span>
             </p>
 
-            <Row>
-              <Col md="6">
-                <button
-                  type="reset"
-                  onClick={handleReset}
-                  variant="warning"
-                  className="w-100 mx-auto"
-                >
-                  Reset
-                </button>
-              </Col>
-              <Col md="6">
-                <button
-                  type="submit"
-                  onClick={submitToServer}
-                  variant="success"
-                  className=""
-                >
-                  Save
-                </button>
-              </Col>
-            </Row>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="reset"
+                onClick={handleReset}
+                className="bg-yellow-500 hover:bg-yellow-400 text-black py-2 px-2 rounded-md"
+              >
+                Reset
+              </button>
+
+              <button
+                type="submit"
+                onClick={submitToServer}
+                className="bg-green-700 hover:bg-green-800 text-white rounded-md"
+              >
+                Save
+              </button>
+            </div>
           </div>
-        </Col>
-      </Row>
+        </div>
+      </div>
     </>
   );
 }

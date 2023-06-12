@@ -20,10 +20,12 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.1.2",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.9.0",
     "react-router-bootstrap": "^0.26.1",
     "react-router-dom": "^6.12.1",
     "react-scripts": "^5.0.1",
-    "web-vitals": "^3.3.2"
+    "web-vitals": "^3.3.2",
+    "yup": "^1.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
