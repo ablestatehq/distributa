@@ -1,27 +1,33 @@
-import React from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 
 function HowTo() {
-    return <Container className="py-3">
-        <p>This Free app will save your time. Determines how much each team member will get from a shareable amount.</p>
-        <p><b>3 Simple steps.</b></p>
-        <Row className="justify-content-between">
-            <Col className="col-md-4 p-4 bg-light border border-light">
-                <h4 className="text-muted">1. Initiate Pool</h4>
-                <p>Add amount you want to share.</p>
-            </Col>
-            <Col className="bg-light p-4 col-md-4 border border-light">
-                <h4 className="text-muted">2. Beneficiaries</h4>
-                <p>Enter the Name and Percentage of each person. Made a mistake? No worries you can edit or delete.</p>
-            </Col>
-            <Col className="bg-light p-4 col-md-4 border border-light">
-                <h4 className="text-muted">3. Breakdown</h4>
-                <p>See the breakdown of the amount. Click Reset to start a fresh.</p>
-            </Col>
-        </Row>
-  </Container>;
+  return (
+    <div className="py-3">
+      <p className="py-2">
+        This Free app will save your time. Determines how much each team member
+        will get from a shareable amount.
+      </p>
+      <p className="font-bold mt-2 mb-4 text-lg">
+        3 Simple steps
+      </p>
+      <div className="flex justify-between bg-[#F8F9FA]">
+        <div className="p-4">
+          <h4 className="text-2xl text-[#6B7280]">1. Initiate Pool</h4>
+          <p className="py-1">Add amount you want to share.</p>
+        </div>
+        <div className="p-4 col-md-4">
+          <h4 className="text-2xl text-[#6B7280]">2. Beneficiaries</h4>
+          <p className="py-1">
+            Enter the Name and Percentage of each person. Made a mistake? No
+            worries you can edit or delete.
+          </p>
+        </div>
+        <div className="p-4 col-md-4">
+          <h4 className="text-2xl text-[#6B7280]">3. Breakdown</h4>
+          <p className="py-1">See the breakdown of the amount. Click Reset to start a fresh.</p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default HowTo;
