@@ -6,5 +6,5 @@ export const Server = {
   invoicesCollectionID: process.env.REACT_APP_APPWRITE_INVOICES_COLLECTION_ID,
   distributionsCollectionID:
     process.env.REACT_APP_APPWRITE_DISTRIBUTIONS_COLLECTION_ID,
-  logosBucketID: process.env.REACT_APP_APPWRITE_LOGOS_BUCKET_ID,
+//   logosBucketID: process.env.REACT_APP_APPWRITE_LOGOS_BUCKET_ID,
 };

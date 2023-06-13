@@ -172,7 +172,7 @@ function Distribute() {
         <div className="md:col-span-9">
           {!amount && (
             <>
-              <div className="grid md:grid-cols-2 md:gap-5 sm:gap-2 mb-2">
+              <div className="grid md:grid-cols-2 md:gap-5 sm:gap-2 sm:gap-y-2 xs:gap-y-2 mb-2">
                 <div class="relative inline">
                   <input
                     type="text"
@@ -215,7 +215,7 @@ function Distribute() {
                   </label>
                 </div>
               </div>
-              <button className="w-full text-md py-2 text-white rounded-md bg-[#007BFF] hover:bg-[#0B5ED7]">
+              <button className="w-full text-md py-2 text-white rounded-md bg-[#007BFF] hover:bg-[#0B5ED7] mb-5">
                 Enter
               </button>
             </>
@@ -353,7 +353,7 @@ function Distribute() {
             </Table>
           )}
         </div>
-        <div className="md:col-span-3">
+        <div className="md:col-span-3 sm:mb-5 xs:mb-5 md:mb-5">
           <div className="p-2 bg-[#F8F9FA] border rounded-md">
             <h5 className="font-semibold text-lg mb-2 text-gray-700">
               Summary
