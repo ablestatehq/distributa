@@ -61,8 +61,7 @@ In the env file replace your-api-key, your-project-id, and your-project-endpoint
 Execute shell script *setup-appwrite-database.sh* using the command:
 
 ```bash
-chmod u+x ./database/setup-appwrite-database.sh
-./setup-appwrite-database.sh
+chmod u+x ./setup-appwrite-database.sh
 ```
 This script will create initial project configuration for Distributa.
 Once the script completes execution, the distributa database, invoices collection, and distributions collection will be created the project whose ID is specified in the project of your Appwrite instance.
