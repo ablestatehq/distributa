@@ -7,7 +7,7 @@ An Open Source Tool helps you to generate Unlimited Invoices for FREE.
 ### Share Earnings
 
 1. Enter the Amount to be shared.
-2. Add a benecificiary and portion in percentage.
+2. Add a beneficiary and portion in percentage.
 3. See what everyone gets in real time.
 4. Reset to share more.
 
