@@ -38,7 +38,7 @@ Open a web browser and navigate to your Appwrite instance's URL. Login to the Ap
 In the Appwrite console, create a project or select an existing project create an API key for the project:
 Navigate to your project in the Appwrite console and find the "API Keys" section and create a new API key.
 - Provide a name for the API key and choose the necessary permissions for your project.
-- Give the API key access to the following scopes: users, databases, accounts, databases, and teams.
+- Give the API key access to the following scopes: auth, databases, functions, storage and others.
 - The redirect url for redirecting the user on accepting team membership.
 
 After creating the API key, make sure to copy and store the API key, project ID, and project endpoint in a .env file:
@@ -57,12 +57,10 @@ In the env file replace your-api-key, your-project-id, and your-project-endpoint
 - Keep the .env file secret, as it contains sensitive information.
 - Use these variables exclusively under the server environment.
 
-5. Run the shell script to set up the Appwrite database:
-Execute shell script *setup-appwrite-database.sh* using the command:
+5. Run the shell script to set up the Appwrite database.
 
 ```bash
-chmod u+x ./database/setup-appwrite-database.sh
-./setup-appwrite-database.sh
+chmod u+x ./setup-appwrite-database.sh
 ```
 This script will create initial project configuration for Distributa.
 Once the script completes execution, the distributa database, invoices collection, and distributions collection will be created the project whose ID is specified in the project of your Appwrite instance.
