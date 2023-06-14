@@ -1,4 +1,3 @@
-# Distributa
 
 An Open Source Tool helps you to generate Unlimited Invoices for FREE.
 
@@ -38,7 +37,7 @@ Open a web browser and navigate to your Appwrite instance's URL. Login to the Ap
 In the Appwrite console, create a project or select an existing project create an API key for the project:
 Navigate to your project in the Appwrite console and find the "API Keys" section and create a new API key.
 - Provide a name for the API key and choose the necessary permissions for your project.
-- Give the API key access to the following scopes: auth, databases, functions, storage and others.
+- Give the API key access to the following scopes: users, databases, accounts, databases, and teams.
 - The redirect url for redirecting the user on accepting team membership.
 
 After creating the API key, make sure to copy and store the API key, project ID, and project endpoint in a .env file:
@@ -64,8 +63,8 @@ Execute shell script *setup-appwrite-database.sh* using the command:
 chmod u+x ./database/setup-appwrite-database.sh
 ./setup-appwrite-database.sh
 ```
-This script will create initial project configuration for Distributa.
-Once the script completes execution, the distributa database, invoices collection, and distributions collection will be created the project whose ID is specified in the project of your Appwrite instance.
+This script will create the necessary database and collections for Distributa.
+Once the script completes execution, it will create the distributa database, invoices collection, and distributions collection in your Appwrite instance.
 
 6. Set environment variables for React:
 In your project's environment configuration file (e.g., .env.local or .env.development), add the following lines:
@@ -79,7 +78,7 @@ REACT_APP_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=your-distributions-collection-id
 
 - Replace your-project-endpoint, your-distributa-database-id, your-invoices-collection-id, and your-distributions-collection-id with the actual values obtained from the previous steps.
 
-Your inital Project configuartion is now set is now ready! Voilà! Let's distribute:
+Your database is now ready! Voilà! Let's distribute:
 With the configurations in place, you can use Distributa to distribute earnings, generate invoices, and perform other application-specific actions.
 
 ### Prerequisites
