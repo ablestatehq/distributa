@@ -57,8 +57,7 @@ In the env file replace your-api-key, your-project-id, and your-project-endpoint
 - Keep the .env file secret, as it contains sensitive information.
 - Use these variables exclusively under the server environment.
 
-5. Run the shell script to set up the Appwrite database:
-Execute shell script *setup-appwrite-database.sh* using the command:
+5. Run the shell script to set up the Appwrite database.
 
 ```bash
 chmod u+x ./setup-appwrite-database.sh
