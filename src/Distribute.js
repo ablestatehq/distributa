@@ -215,7 +215,7 @@ function Distribute() {
 
 			<Row className="mt-4">
 				<Col md="9">
-					{distributeId}
+					{/* {distributeId} */}
 					{!amount && (
 						<>
 							<Row>
