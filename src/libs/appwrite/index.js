@@ -1,5 +1,5 @@
 import {
-  Client as Appwrite,
+  Client as appwrite,
   Account,
   Databases,
   ID,
@@ -7,7 +7,8 @@ import {
   Storage,
   Functions,
 } from "appwrite";
-import { Server } from "../appwrite/config";
+import { API_ENDPOINT, PROJECT_ID, SYSTEM_TEAM_ID, DATABASE_ID, INVOICES_COLLECTION_ID, DISTRIBUTIONS_COLLECTION_ID, LOGOS_BUCKET_ID } from "../data/constants";
+import { Server } from "./config";
 
 let api = {
   sdk: null,
@@ -17,11 +18,11 @@ let api = {
       return api.sdk;
     }
 
-    let appwrite = new Appwrite();
-    appwrite.setEndpoint(Server.endpoint).setProject(Server.project);
+    let appwrite = new appwrite();
+    appwrite.setEndpoint(API_ENDPOINT).setProject(PROJECT_ID);
 
     const account = new Account(appwrite);
-    const database = new Databases(appwrite, Server.databaseID);
+    const database = new Databases(appwrite, DATABASE_ID);
     const teams = new Teams(appwrite);
     const storage = new Storage(appwrite);
     const functions = new Functions(appwrite);
@@ -32,7 +33,7 @@ let api = {
 
   /**
    * @function createAccount
-   * @description Creates an account using the Appwrite API
+   * @description Creates an account using the appwrite API
    * @see https://appwrite.io/docs/client/account
    * @param {Object} values An object containing the credentials for account creation
    * @param {String} provider The provider to use for account creation
@@ -50,7 +51,7 @@ let api = {
 
   /**
    * @function getAccount
-   * @description Gets the account object using the Appwrite API
+   * @description Gets the account object using the appwrite API
    * @see https://appwrite.io/docs/client/account
    * @returns <Promise> A promise that resolves to the account object
    */
@@ -62,7 +63,7 @@ let api = {
 
   /**
    * @function getAccountPrefs
-   * @description Gets the account preferences object using the Appwrite API
+   * @description Gets the account preferences object using the appwrite API
    * @see https://appwrite.io/docs/client/account
    * @returns <Promise> A promise that resolves to the account object
    */
@@ -73,7 +74,7 @@ let api = {
 
   /**
    * @function listLogs
-   * @description Gets the account logs object using the Appwrite API
+   * @description Gets the account logs object using the appwrite API
    * @see https://appwrite.io/docs/client/account
    * @returns <Promise> A promise that resolves to the account logs object
    */
@@ -84,7 +85,7 @@ let api = {
 
   /**
    * @function createSession
-   * @description Creates a session using the Appwrite API
+   * @description Creates a session using the appwrite API
    * @see https://appwrite.io/docs/client/account
    * @param {String} email
    * @param {String} pass
@@ -97,7 +98,7 @@ let api = {
 
   /**
    * @function getSession
-   * @description Gets the current session using the Appwrite API
+   * @description Gets the current session using the appwrite API
    * @see https://appwrite.io/docs/client/account
    * @returns <Promise> A promise that resolves to the session object or null if the user does not have a session
    */
@@ -117,7 +118,7 @@ let api = {
 
   /**
    * @function updatepass
-   * @description Updates the user's pass details using the Appwrite API
+   * @description Updates the user's pass details using the appwrite API
    * @param {pass} pass
    * @returns <Promise> A promise that resolves to the user object.
    */
@@ -127,7 +128,7 @@ let api = {
 
   /**
    * @function updateEmail
-   * @description Updates the user's email details using the Appwrite API
+   * @description Updates the user's email details using the appwrite API
    * @param {String} email
    * @returns <Promise> A promise that resolves to the user object.
    */
@@ -146,7 +147,7 @@ let api = {
 
   /**
    * @function createCollection
-   * @description Creates a collection using the Appwrite API
+   * @description Creates a collection using the appwrite API
    * @param {String} databaseId The id of the database
    * @param {String} collectionId The id of the new collection
    * @param {Object} data The data to be stored in the collection
@@ -169,7 +170,7 @@ let api = {
 
   /**
    * @function listCollections
-   * @description Lists all collections in a database using the Appwrite API
+   * @description Lists all collections in a database using the appwrite API
    * @param {String} databaseId
    * @param {String} collectionId
    * @returns <Promise> A promise that resolves to the collections object
@@ -196,7 +197,7 @@ let api = {
 
   /**
    * @function updateDocument
-   * @description Updates a document in a collection using the Appwrite API
+   * @description Updates a document in a collection using the appwrite API
    * @param {String} databaseId
    * @param {String} collectionId
    * @param {String} documentId
@@ -212,7 +213,7 @@ let api = {
 
   /**
    * @function deleteDocument
-   * @description Deletes a document in a collection using the Appwrite API
+   * @description Deletes a document in a collection using the appwrite API
    * @param {String} databaseId
    * @param {String} collectionId
    * @param {String} documentId
@@ -227,7 +228,7 @@ let api = {
 
   /**
    * @function listMemberships
-   * @description Lists all memberships in a team using the Appwrite API
+   * @description Lists all memberships in a team using the appwrite API
    * @param {String} teamId
    * @returns <Promise> A promise that resolves to the memberships object
    * @see https://appwrite.io/docs/client/teams
@@ -244,7 +245,7 @@ let api = {
    * @param {String} teamName The name of the team
    * @returns <Promise> A promise that resolves to the team object
    * @see https://appwrite.io/docs/client/teams
-   * @description Creates a team using the Appwrite API
+   * @description Creates a team using the appwrite API
    */
   createTeam: (teamName) => {
     return api.provider().teams.create("unique()", teamName);
@@ -252,7 +253,7 @@ let api = {
 
   /**
    * @function listTeams
-   * @description Lists all teams using the Appwrite API
+   * @description Lists all teams using the appwrite API
    * @returns <Promise> A promise that resolves to the team object
    * @see https://appwrite.io/docs/client/teams
    */
@@ -263,7 +264,7 @@ let api = {
 
   /**
    * @function createFile
-   * @description Creates a file using the Appwrite API
+   * @description Creates a file using the appwrite API
    * @param {Object} file
    * @param {String} bucketID
    * @returns <Promise> A promise that resolves to the file object
@@ -276,7 +277,7 @@ let api = {
 
   /**
    * @function getFileForView
-   * @description Gets a file for viewing using the Appwrite API
+   * @description Gets a file for viewing using the appwrite API
    * @param {String} fileID
    * @param {String} bucketID
    * @returns <Promise> A promise that resolves to the file object
@@ -288,7 +289,7 @@ let api = {
 
   /**
    * @function createFunctionExecution
-   * @description Creates a function execution using the Appwrite API
+   * @description Creates a function execution using the appwrite API
    * @param {String} functionID
    * @param {Object} data
    * @param {Boolean} async
@@ -301,7 +302,7 @@ let api = {
 
   /**
    * @function getExecution
-   * @description Gets a function execution using the Appwrite API
+   * @description Gets a function execution using the appwrite API
    * @param {String} functionID
    * @param {String} executionID
    * @returns <Promise> A promise that resolves to the function execution object

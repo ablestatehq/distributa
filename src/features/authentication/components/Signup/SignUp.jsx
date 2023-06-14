@@ -1,7 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
 
-function Login() {
+function SignUp() {
   const initialValues = {
     email: "",
     password: "",
@@ -19,7 +19,7 @@ function Login() {
           return (
             <Form className="shadow-md rounded-sm px-10 w-fit py-5">
               <h2 className="font-semibold text-center mt-3 text-xl text-gray-900">
-                Login
+                Sign Up
               </h2>
               <div className="mb-5">
                 <label htmlFor="email" className="font-light text-sm">
@@ -49,13 +49,13 @@ function Login() {
                 className="text-white bg-[#007BFF] hover:bg-[#0B5ED7] text-sm py-2 rounded-sm cursor-pointer mb-3 w-full duration-200 ease-in-out"
                 type="submit"
               >
-                Login
+                Sign Up
               </button>
               <div className="text-sm mb-5">
-                <span className="font-light">Don't have an account?</span>
+                <span className="font-light">Already have an account?</span>
                 {"  "}
-                <Link to="/signup" className="underline text-blue-500">
-                  Sign Up
+                <Link to="/login" className="underline text-blue-500">
+                  Login
                 </Link>
               </div>
             </Form>
@@ -66,4 +66,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default SignUp;

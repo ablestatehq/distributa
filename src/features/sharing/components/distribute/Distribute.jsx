@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import HowTo from "./HowTo";
-import { currencyFormatter } from "./currency.formatter";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import HowTo from "../howto";
+import { currencyFormatter } from "../../../../utils/currency.formatter";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
@@ -11,7 +9,6 @@ import FormControl from "react-bootstrap/FormControl";
 
 // Form handling
 // import { Formik, Form, Field } from "formik";
-import { Input } from "./components/Input";
 
 function Distribute() {
   const [amount, setAmount] = useState(0);
@@ -137,37 +134,6 @@ function Distribute() {
   return (
     <>
       {!amount && <HowTo />}
-      {/* 			<Row className="w-75 mx-auto py-4">
-				<Col>
-					<p className="text-white">Pool</p>
-					<h3 className="text-white">{currencyFormatter(amount)}</h3>
-				</Col>
-				<Col>
-					<p className="text-white">Distributed {totalPercentage}%</p>
-					<h3 className="text-white">{currencyFormatter(total)}</h3>
-				</Col>
-				<Col>
-					<p className="text-white">
-						Undistributed {100 - totalPercentage}%
-					</p>
-					<h3 className="text-white">
-						{" "}
-						{currencyFormatter(
-							breakdown?.length === 0 ? amount : balance
-						)}
-					</h3>
-				</Col>
-				<Col>
-					<Button
-						type="reset"
-						onClick={handleReset}
-						variant="warning"
-						className="w-50 mx-auto">
-						Reset
-					</Button>
-				</Col>
-			</Row> */}
-
       <div className="grid md:grid-cols-12 xs:mx-5 sm:mx-10 md:mx-20 rounded-sm md:gap-5 mt-4">
         <div className="md:col-span-9">
           {!amount && (
