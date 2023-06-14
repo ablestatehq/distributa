@@ -10,9 +10,10 @@ import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
 import FormControl from "react-bootstrap/FormControl";
 
-import { supabase } from "./helpers/functions";
+import { supabase, uniqueDateStringId } from "./helpers/functions";
 
 function Distribute() {
+	const [distributeId, setDistributionId] = useState(uniqueDateStringId());
 	const [amount, setAmount] = useState(0);
 	const [project, setProject] = useState("");
 	const [phone, setPhone] = useState("");
@@ -77,11 +78,19 @@ function Distribute() {
 		setError(null);
 		let invoicesInLocalStorage =
 			JSON.parse(localStorage.getItem("invoices")) || [];
-		// if (invoicesInLocalStorage) {
-		// 	invoicesInLocalStorage = JSON.parse(invoicesInLocalStorage);
-		// }
 
-		const data = {
+		if (invoicesInLocalStorage) {
+			console.log(invoicesInLocalStorage);
+			console.log(invoicesInLocalStorage[distributeId]);
+			invoicesInLocalStorage[distributeId]["breakdown"] = breakdown;
+			const newInvoices = JSON.stringify(invoicesInLocalStorage);
+			localStorage.setItem("invoices", newInvoices);
+
+			return;
+		}
+		let data = {};
+
+		data[distributeId] = {
 			project,
 			total,
 			totalPercentage,
@@ -90,7 +99,7 @@ function Distribute() {
 			remote_id: null,
 		};
 
-		let newInvoices = JSON.stringify([data, ...invoicesInLocalStorage]);
+		const newInvoices = JSON.stringify(data);
 		localStorage.setItem("invoices", newInvoices);
 	};
 
@@ -206,6 +215,7 @@ function Distribute() {
 
 			<Row className="mt-4">
 				<Col md="9">
+					{distributeId}
 					{!amount && (
 						<>
 							<Row>
