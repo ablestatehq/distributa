@@ -38,7 +38,7 @@ Open a web browser and navigate to your Appwrite instance's URL. Login to the Ap
 In the Appwrite console, create a project or select an existing project create an API key for the project:
 Navigate to your project in the Appwrite console and find the "API Keys" section and create a new API key.
 - Provide a name for the API key and choose the necessary permissions for your project.
-- Give the API key access to the following scopes: users, databases, accounts, databases, and teams.
+- Give the API key access to the following scopes: auth, databases, functions, storage and others.
 - The redirect url for redirecting the user on accepting team membership.
 
 After creating the API key, make sure to copy and store the API key, project ID, and project endpoint in a .env file:
