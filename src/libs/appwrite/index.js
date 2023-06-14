@@ -7,8 +7,15 @@ import {
   Storage,
   Functions,
 } from "appwrite";
-import { API_ENDPOINT, PROJECT_ID, SYSTEM_TEAM_ID, DATABASE_ID, INVOICES_COLLECTION_ID, DISTRIBUTIONS_COLLECTION_ID, LOGOS_BUCKET_ID } from "../data/constants";
-import { Server } from "./config";
+import {
+  API_ENDPOINT,
+  PROJECT_ID,
+  SYSTEM_TEAM_ID,
+  DATABASE_ID,
+  INVOICES_COLLECTION_ID,
+  DISTRIBUTIONS_COLLECTION_ID,
+  LOGOS_BUCKET_ID,
+} from "../data/constants";
 
 let api = {
   sdk: null,
@@ -234,9 +241,7 @@ let api = {
    * @see https://appwrite.io/docs/client/teams
    */
   listMemberships: () => {
-    const memberships = api
-      .provider()
-      .teams.listMemberships(Server.systemTeamID);
+    const memberships = api.provider().teams.listMemberships(SYSTEM_TEAM_ID);
     return memberships;
   },
 
