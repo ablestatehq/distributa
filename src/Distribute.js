@@ -10,9 +10,13 @@ import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
 import FormControl from "react-bootstrap/FormControl";
 
+import { supabase, uniqueDateStringId } from "./helpers/functions";
+
 function Distribute() {
+	const [distributeId, setDistributionId] = useState(uniqueDateStringId());
 	const [amount, setAmount] = useState(0);
 	const [project, setProject] = useState("");
+	const [phone, setPhone] = useState("");
 	const [total, setTotal] = useState(0);
 	const [totalPercentage, setTotalPercentage] = useState(0);
 	const [balance, setBalance] = useState(0);
@@ -55,8 +59,51 @@ function Distribute() {
 			balance,
 			breakdown,
 		};
-		console.log(data);
+		// console.log(data);
+		supabase
+			.from("distributa_histories")
+			.insert({ phonenumber: phone, history: data })
+			.then((response) => {
+				console.log(response);
+				setEdit(null);
+			})
+			.catch((error) => {
+				console.log(error);
+				setError(error.message);
+			});
 	};
+
+	const saveToLocal = (e) => {
+		e.preventDefault();
+		setError(null);
+		let invoicesInLocalStorage =
+			JSON.parse(localStorage.getItem("invoices")) || [];
+
+		if (invoicesInLocalStorage) {
+			console.log(invoicesInLocalStorage);
+			console.log(invoicesInLocalStorage[distributeId]);
+			invoicesInLocalStorage[distributeId]["breakdown"] = breakdown;
+			const newInvoices = JSON.stringify(invoicesInLocalStorage);
+			localStorage.setItem("invoices", newInvoices);
+
+			return;
+		}
+		let data = {};
+
+		data[distributeId] = {
+			project,
+			total,
+			totalPercentage,
+			balance,
+			breakdown,
+			remote_id: null,
+		};
+
+		const newInvoices = JSON.stringify(data);
+		localStorage.setItem("invoices", newInvoices);
+	};
+
+	const sendToServer = () => {};
 	const calculateTotal = () => {
 		return breakdown.reduce((acc, curr) => {
 			return (acc += parseInt(curr.amount));
@@ -135,7 +182,7 @@ function Distribute() {
 	return (
 		<>
 			{!amount && <HowTo />}
-			{/* 			<Row className="w-75 mx-auto py-4">
+			{/* <Row className="w-75 mx-auto py-4">
 				<Col>
 					<p className="text-white">Pool</p>
 					<h3 className="text-white">{currencyFormatter(amount)}</h3>
@@ -168,6 +215,7 @@ function Distribute() {
 
 			<Row className="mt-4">
 				<Col md="9">
+					{distributeId}
 					{!amount && (
 						<>
 							<Row>
@@ -407,7 +455,20 @@ function Distribute() {
 								/ {100 - totalPercentage}%
 							</span>
 						</p>
-
+						<FloatingLabel
+							controlId="floatingInput"
+							label="Phone number"
+							className="col-md-6">
+							<Form.Control
+								placeholder="Phone number"
+								onBlur={(e) => setPhone(e.target.value)}
+								onKeyDown={(e) => {
+									if (e.key == "Enter") {
+										setPhone(e.target.value);
+									}
+								}}
+							/>
+						</FloatingLabel>
 						<Row>
 							<Col md="6">
 								<Button
@@ -421,7 +482,7 @@ function Distribute() {
 							<Col md="6">
 								<Button
 									type="submit"
-									onClick={submitToServer}
+									onClick={saveToLocal}
 									variant="success"
 									className="w-100 mx-auto">
 									Save
