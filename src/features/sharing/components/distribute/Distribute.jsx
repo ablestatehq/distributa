@@ -24,7 +24,7 @@ function Distribute() {
 	const percentageField = useRef();
 	const nameFieldUpdate = useRef();
 	const percentageFieldUpdate = useRef();
-
+	const [distributions, setDistributions] = useState(null);
 	const handleAdd = (e) => {
 		e.preventDefault();
 		setError(null);
@@ -111,6 +111,7 @@ function Distribute() {
 			setTotalPercentage(totalPercentage);
 			setBalance(amount - theTotal);
 		}
+		retrieveFromLocal();
 	}, [breakdown, error]);
 
 	const handleSave = () => {
@@ -137,14 +138,23 @@ function Distribute() {
 		e.preventDefault();
 		setError(null);
 		let invoicesInLocalStorage =
-			JSON.parse(localStorage.getItem("invoices")) || [];
+			JSON.parse(localStorage.getItem("distributions")) || [];
 
 		if (invoicesInLocalStorage) {
 			console.log(invoicesInLocalStorage);
 			console.log(invoicesInLocalStorage[distributeId]);
-			invoicesInLocalStorage[distributeId]["breakdown"] = breakdown;
+			invoicesInLocalStorage = {
+				[distributeId]: {
+					project,
+					amount: Number(amount),
+					breakdown: [...breakdown],
+					remote_id: null,
+				},
+				...invoicesInLocalStorage,
+			};
+			console.log(invoicesInLocalStorage);
 			const newInvoices = JSON.stringify(invoicesInLocalStorage);
-			localStorage.setItem("invoices", newInvoices);
+			localStorage.setItem("distributions", newInvoices);
 
 			return;
 		}
@@ -161,6 +171,11 @@ function Distribute() {
 
 		const newInvoices = JSON.stringify(data);
 		localStorage.setItem("invoices", newInvoices);
+	};
+	const retrieveFromLocal = () => {
+		const distributions = localStorage.getItem("distributions");
+		console.log(distributions);
+		setDistributions(distributions);
 	};
 	return (
 		<>
@@ -372,6 +387,8 @@ function Distribute() {
 							</tfoot>
 						</Table>
 					)}
+					<h2>History</h2>
+					{}
 				</div>
 				<div className="md:col-span-3 sm:mb-5 xs:mb-5 md:mb-5">
 					<div className="p-2 bg-[#F8F9FA] border rounded-md">
