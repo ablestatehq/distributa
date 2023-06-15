@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { loginSchema } from "../../utils/validator";
 import { useAuth } from "../../../../hooks";
 import { useNavigate, useLocation } from "react-router-dom";
-import { appwrite } from "../../../../services";
+import { AppwriteService as appwrite } from "../../../../services";
 
 function Login() {
   const { setSession } = useAuth();
@@ -29,7 +29,7 @@ function Login() {
               navigate(from, { replace: true });
             }
           } catch (error) {
-            console.log("Error: ", error)
+            console.log("Error: ", error);
           } finally {
             setSubmitting(false);
             resetForm({ values: { email: "", password: "" } });
