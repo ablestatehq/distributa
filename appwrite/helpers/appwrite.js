@@ -22,7 +22,6 @@ const Databases = require("node-appwrite").Databases;
 const Users = require("node-appwrite").Users;
 const Teams = require("node-appwrite").Teams;
 const Client = require("node-appwrite").Client;
-​
 /**
  * @constant {string} projectEndpoint
  * @description Your API Endpoint
@@ -51,18 +50,15 @@ const apiKey = process.env.API_KEY;
  */
 const redirectUrl = process.env.REDIRECT_URL;
 const client = new Client();
-​
 client
-  .setEndpoint(projectEndpoint) // Your API Endpoint
-  .setProject(projectID) // Your project ID
-  .setKey(apiKey); // Your secret API key
-​
+	.setEndpoint(projectEndpoint) // Your API Endpoint
+	.setProject(projectID) // Your project ID
+	.setKey(apiKey); // Your secret API key
 /**
  * @constant {Object} databases
  * @description Your appwrite database
  * @see https://appwrite.io/docs/client/database
  */
-​
 const databases = new Databases(client);
 const users = new Users(client);
 const teams = new Teams(client);
@@ -84,14 +80,13 @@ const teams = new Teams(client);
  * // }
  */
 const createDatabase = async () => {
-  try {
-    const database = await databases.create(ID.unique(), "Distributa");
-    return database;
-  } catch (error) {
-    console.log("Error creating database", error);
-  }
+	try {
+		const database = await databases.create(ID.unique(), "Distributa");
+		return database;
+	} catch (error) {
+		console.log("Error creating database", error);
+	}
 };
-​
 /**
  * @async
  * @function createCollections
@@ -119,14 +114,13 @@ const createDatabase = async () => {
  * // }
  */
 const createCollection = async (databaseID, collectionName) => {
-  const collection = await databases.createCollection(
-    databaseID,
-    ID.unique(),
-    collectionName
-  );
-  return collection;
+	const collection = await databases.createCollection(
+		databaseID,
+		ID.unique(),
+		collectionName
+	);
+	return collection;
 };
-​
 /**
  * @async
  * @function createUser
@@ -152,10 +146,9 @@ const createCollection = async (databaseID, collectionName) => {
  * // }
  */
 const createUser = async (email, pass) => {
-  const user = await users.createArgon2User(ID.unique(), email, pass);
-  return user;
+	const user = await users.createArgon2User(ID.unique(), email, pass);
+	return user;
 };
-​
 /**
  * @async
  * @function createTeam
@@ -175,10 +168,9 @@ const createUser = async (email, pass) => {
  * // }
  */
 const createTeam = async (name) => {
-  const team = await teams.create(ID.unique(), name);
-  return team;
+	const team = await teams.create(ID.unique(), name);
+	return team;
 };
-​
 /**
  *
  * @param {string} teamID - The id of the team
@@ -188,26 +180,25 @@ const createTeam = async (name) => {
  * @description Creates a team membership in appwrite
  */
 const createTeamMembership = async (teamID, userEmail, roles) => {
-  console.log("Here: ", { teamID, userEmail, roles, redirectUrl });
-  const membership = await teams.createMembership(
-    teamID,
-    roles,
-    redirectUrl,
-    userEmail
-  );
-  return membership;
+	console.log("Here: ", { teamID, userEmail, roles, redirectUrl });
+	const membership = await teams.createMembership(
+		teamID,
+		roles,
+		redirectUrl,
+		userEmail
+	);
+	return membership;
 };
-​
 const deleteDatabase = async (databaseID) => {
-  const database = await databases.delete(databaseID);
-  return database;
+	const database = await databases.delete(databaseID);
+	return database;
 };
-​
+
 module.exports = {
-  createDatabase,
-  deleteDatabase,
-  createCollection,
-  createUser,
-  createTeam,
-  createTeamMembership,
+	createDatabase,
+	deleteDatabase,
+	createCollection,
+	createUser,
+	createTeam,
+	createTeamMembership,
 };
