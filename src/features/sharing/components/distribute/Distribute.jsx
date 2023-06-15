@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import HowTo from "../howto";
 import { currencyFormatter } from "../../../../utils/currency.formatter";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -12,6 +12,8 @@ import { uniqueDateStringId } from "../../../../utils/unique.date.id";
 // import { Formik, Form, Field } from "formik";
 
 function Distribute() {
+	const params = useParams();
+
 	const [distributeId, setDistributeId] = useState(uniqueDateStringId());
 	const [amount, setAmount] = useState(0);
 	const [project, setProject] = useState("");
@@ -26,6 +28,7 @@ function Distribute() {
 	const nameFieldUpdate = useRef();
 	const percentageFieldUpdate = useRef();
 	const [distributions, setDistributions] = useState(null);
+	const [selectedDistribution, setSelectedDistribution] = useState(null);
 	const handleAdd = (e) => {
 		e.preventDefault();
 		setError(null);
@@ -114,7 +117,8 @@ function Distribute() {
 		}
 
 		retrieveFromLocal();
-	}, [breakdown, error]);
+		selectDistribution();
+	}, [breakdown, params, error]);
 
 	const handleSave = () => {
 		setError(null);
@@ -179,6 +183,16 @@ function Distribute() {
 		console.log(distributions);
 		if (distributions) {
 			setDistributions(JSON.parse(distributions));
+		}
+	};
+
+	const selectDistribution = () => {
+		if (params?.id && distributions?.length) {
+			setSelectedDistribution(
+				distributions.filter(
+					(distribution) => distribution.id === params.id
+				)[0]
+			);
 		}
 	};
 
@@ -392,14 +406,92 @@ function Distribute() {
 							</tfoot>
 						</Table>
 					)}
-					<h2>History</h2>
-					{distributions?.length &&
-						distributions.map((distribution) => (
-							<Link to={`/distribution/${distribution.id}`}>
-								{distribution.id} | {distribution.project} |{" "}
-								{distribution.amount}
-							</Link>
-						))}
+
+					{selectedDistribution && (
+						<>
+							<h2>Details of Expenditure</h2>
+							<p>Project: {selectedDistribution.project}</p>
+							<p>Income: {selectedDistribution.amount}</p>
+							<table className="border-collapse border-slate-400 border table-bordered">
+								<thead>
+									<tr>
+										<th className="border-slate-300 border p-2">
+											Name
+										</th>
+										<th className="border-slate-300 border p-2">
+											Percentage
+										</th>
+										<th className="border-slate-300 border p-2">
+											Amount
+										</th>
+										<th className="border-slate-300 border p-2">
+											Received
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									{selectedDistribution.breakdown.map(
+										(bdown) => (
+											<tr>
+												<td className="border-slate-300 border p-2">
+													{bdown.name}
+												</td>
+												<td className="border-slate-300 border p-2">
+													{bdown.percentage}
+												</td>
+												<td className="border-slate-300 border p-2">
+													{bdown.amount}
+												</td>
+												<td className="border-slate-300 border p-2">
+													Status
+												</td>
+											</tr>
+										)
+									)}
+								</tbody>
+							</table>
+						</>
+					)}
+					{distributions?.length && (
+						<table className="table-auto border-collapse border border-slate-400">
+							<caption>
+								<h2>History</h2>
+							</caption>
+							<thead>
+								<tr>
+									<th className="border border-slate-300 p-2">
+										Project
+									</th>
+									<th className="border border-slate-300 p-2">
+										Income
+									</th>
+									<th className="border border-slate-300 p-2">
+										Spent to
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								{distributions.map((distribution) => (
+									<tr>
+										<td className="border border-slate-300 p-2">
+											<Link to={`/${distribution.id}`}>
+												{distribution.project}
+											</Link>
+										</td>
+										<td className="border border-slate-300 p-2">
+											<Link to={`/${distribution.id}`}>
+												{distribution.amount}
+											</Link>
+										</td>
+										<td className="border border-slate-300 p-2">
+											{distribution.breakdown?.length ||
+												0}
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					)}
 				</div>
 				<div className="md:col-span-3 sm:mb-5 xs:mb-5 md:mb-5">
 					<div className="p-2 bg-[#F8F9FA] border rounded-md">
