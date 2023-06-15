@@ -1,8 +1,16 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
 import { loginSchema } from "../../utils/validator";
+import { useAuth } from "../../../../hooks";
+import { useNavigate, useLocation } from "react-router-dom";
+import { appwrite } from "../../../../services";
 
 function Login() {
+  const { setSession } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.from ?? "/";
+
   const initialValues = {
     email: "",
     password: "",
@@ -13,8 +21,19 @@ function Login() {
       <Formik
         initialValues={initialValues}
         validationSchema={loginSchema}
-        onSubmit={(values, { resetForm }) => {
-          console.log("values", values);
+        onSubmit={async ({ email, password }, { resetForm, setSubmitting }) => {
+          try {
+            const session = await appwrite.createSession(email, password);
+            if (session) {
+              setSession(session);
+              navigate(from, { replace: true });
+            }
+          } catch (error) {
+            console.log("Error: ", error)
+          } finally {
+            setSubmitting(false);
+            resetForm({ values: { email: "", password: "" } });
+          }
         }}
       >
         {() => {
@@ -36,7 +55,11 @@ function Login() {
                 ></Field>
                 <div className="h-5">
                   <ErrorMessage name="email">
-                    {(msg) => <div className="text-red-500 text-xs font-light">{msg}</div>}
+                    {(msg) => (
+                      <div className="text-red-500 text-xs font-light">
+                        {msg}
+                      </div>
+                    )}
                   </ErrorMessage>
                 </div>
               </div>
@@ -53,7 +76,11 @@ function Login() {
                 ></Field>
                 <div className="h-5">
                   <ErrorMessage name="password">
-                    {(msg) => <div className="text-red-500 text-xs font-light">{msg}</div>}
+                    {(msg) => (
+                      <div className="text-red-500 text-xs font-light">
+                        {msg}
+                      </div>
+                    )}
                   </ErrorMessage>
                 </div>
               </div>
