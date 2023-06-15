@@ -1,11 +1,32 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
 import { signUpSchema } from "../../utils/validator";
+import { useAuth } from "../../../../hooks";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function SignUp() {
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.from ?? "/dashboard";
   const initialValues = {
     email: "",
     password: "",
+  };
+
+  const handleSignUp = async (
+    { email, password },
+    { resetForm, setSubmitting }
+  ) => {
+    try {
+      const session = await signUp(email, password);
+      if (session) navigate(from, { replace: true });
+    } catch (error) {
+      console.log("Error: ", error);
+    } finally {
+      setSubmitting(false);
+      resetForm({ values: { email: "", password: "" } });
+    }
   };
 
   return (
@@ -13,9 +34,7 @@ function SignUp() {
       <Formik
         initialValues={initialValues}
         validationSchema={signUpSchema}
-        onSubmit={(values, { resetForm }) => {
-          console.log("values", values);
-        }}
+        onSubmit={handleSignUp}
       >
         {() => {
           return (

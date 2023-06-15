@@ -8,7 +8,7 @@ function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location?.state?.from ?? "/";
+  const from = location?.state?.from ?? "/dashboard";
 
   const initialValues = {
     email: "",
