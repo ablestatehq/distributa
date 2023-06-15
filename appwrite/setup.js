@@ -122,25 +122,32 @@ const setup = async () => {
     );
     updateProgress(7);
     progressBar.stop();
+    
+    const userCreadentails = `
+    User Credentails
+    Email: ${userEmail}
+    Password: ${userPassword}
 
-    const data = {
-      admin: {
-        email: adminEmail,
-        password: adminPassword,
-      },
-      user: {
-        email: userEmail,
-        password: userPassword,
-      },
-      systemTeamID: systemTeam.$id,
-      adminMembershipID: adminMembership.$id,
-      userMembershipID: userMembership.$id,
-      databaseID: database.$id,
-      invoicesCollectionID: invoicesCollection.$id,
-      distributionsCollectionID: distributionsCollection.$id,
-    };
+    Admin Credentails
+    Email: ${adminEmail}
+    Password: ${adminPassword}
 
-    const filePath = path.join(__dirname, "./databaseCredentials.json");
+    Project Credentails
+    Project ID: ${process.env.APPWRITE_PROJECT}
+    Endpoint: ${process.env.APPWRITE_ENDPOINT}
+
+    Database Credentails
+    Database ID: ${database.$id}
+    Invoices Collection ID: ${invoicesCollection.$id}
+    Distributions Collection ID: ${distributionsCollection.$id}
+
+    Team Credentails
+    System Team ID: ${systemTeam.$id}
+    Admin Membership ID: ${adminMembership.$id}
+    User Membership ID: ${userMembership.$id}
+    `
+
+    const filePath = path.join(__dirname, "./environments.txt");
     writeFileSync(filePath, JSON.stringify(data, null, 4));
 
     return;
