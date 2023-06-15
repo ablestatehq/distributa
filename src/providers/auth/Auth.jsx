@@ -1,14 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthContext from "../../contexts/Auth";
+import { AppwriteService } from "../../services";
 
 function Auth({ children }) {
+  const appwrite = new AppwriteService();
   const [user, setUser] = useState(null);
-  const [session, setSession] = useState(null);
+  const login = async (email, password) => {
+    const session = await appwrite.createSession(email, password);
+    return session;
+  };
+
+  const logout = async () => {
+    const session = await appwrite.deleteCurrentSession();
+    return session;
+  };
+
+  const signUp = async (email, password) => {
+    await appwrite.createAccount(email, password);
+    const session = await appwrite.createSession(email, password);
+    return session;
+  };
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await appwrite.getAccount();
+      setUser(user);
+    };
+
+    getUser();
+
+    appwrite.client.subscribe("account", getUser());
+
+    return () => {
+      appwrite.client.unsubscribe();
+    };
+  }, []);
   const values = {
     user,
-    session,
     setUser,
-    setSession,
+    login,
+    logout,
+    signUp,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
