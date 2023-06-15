@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 import HowTo from "../howto";
 import { currencyFormatter } from "../../../../utils/currency.formatter";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
@@ -111,6 +112,7 @@ function Distribute() {
 			setTotalPercentage(totalPercentage);
 			setBalance(amount - theTotal);
 		}
+
 		retrieveFromLocal();
 	}, [breakdown, error]);
 
@@ -140,25 +142,25 @@ function Distribute() {
 		let invoicesInLocalStorage =
 			JSON.parse(localStorage.getItem("distributions")) || [];
 
-		if (invoicesInLocalStorage) {
-			console.log(invoicesInLocalStorage);
-			console.log(invoicesInLocalStorage[distributeId]);
-			invoicesInLocalStorage = {
-				[distributeId]: {
-					project,
-					amount: Number(amount),
-					breakdown: [...breakdown],
-					remote_id: null,
-				},
-				...invoicesInLocalStorage,
-			};
-			console.log(invoicesInLocalStorage);
-			const newInvoices = JSON.stringify(invoicesInLocalStorage);
-			localStorage.setItem("distributions", newInvoices);
+		console.log(invoicesInLocalStorage);
 
-			return;
-		}
-		let data = {};
+		invoicesInLocalStorage = [
+			{
+				id: distributeId,
+				project,
+				amount: Number(amount),
+				breakdown: [...breakdown],
+				remote_id: null,
+			},
+			...invoicesInLocalStorage,
+		];
+
+		console.log(invoicesInLocalStorage);
+		const newInvoices = JSON.stringify(invoicesInLocalStorage);
+		localStorage.setItem("distributions", newInvoices);
+
+		return;
+		/*let data = {};
 
 		data[distributeId] = {
 			project,
@@ -170,13 +172,16 @@ function Distribute() {
 		};
 
 		const newInvoices = JSON.stringify(data);
-		localStorage.setItem("invoices", newInvoices);
+		localStorage.setItem("invoices", newInvoices); */
 	};
 	const retrieveFromLocal = () => {
 		const distributions = localStorage.getItem("distributions");
 		console.log(distributions);
-		setDistributions(distributions);
+		if (distributions) {
+			setDistributions(JSON.parse(distributions));
+		}
 	};
+
 	return (
 		<>
 			{!amount && <HowTo />}
@@ -388,7 +393,13 @@ function Distribute() {
 						</Table>
 					)}
 					<h2>History</h2>
-					{}
+					{distributions?.length &&
+						distributions.map((distribution) => (
+							<Link to={`/distribution/${distribution.id}`}>
+								{distribution.id} | {distribution.project} |{" "}
+								{distribution.amount}
+							</Link>
+						))}
 				</div>
 				<div className="md:col-span-3 sm:mb-5 xs:mb-5 md:mb-5">
 					<div className="p-2 bg-[#F8F9FA] border rounded-md">
