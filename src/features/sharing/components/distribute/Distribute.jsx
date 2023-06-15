@@ -208,7 +208,9 @@ function Distribute() {
 									<input
 										type="text"
 										id="floating_outlined"
-										className="border block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+										className="border block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none dark:text-gray-200 dark:border-gray-600 dark:focus:border-gray-900
+										dark: bg-gray-500
+										focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 										placeholder=" "
 										onBlur={(e) =>
 											setProject(e.target.value)
@@ -221,7 +223,10 @@ function Distribute() {
 									/>
 									<label
 										htmlFor="floating_outlined border border-red-500"
-										className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
+										className="absolute text-sm text-gray-500 dark:text-gray-100 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-500 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-gray-100
+										peer-focus:dark:bg-gray-400
+										peer-placeholder-shown:scale-100
+										peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
 										What is the source of your money?
 									</label>
 								</div>
@@ -230,7 +235,9 @@ function Distribute() {
 									<input
 										type="text"
 										id="floating_outlined"
-										className="border px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+										className="border block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-2 border-gray-300 appearance-none dark:text-gray-200 dark:border-gray-600 dark:focus:border-gray-900
+										dark: bg-gray-500
+										focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 										placeholder=" "
 										onBlur={(e) =>
 											setAmount(e.target.value)
@@ -243,7 +250,10 @@ function Distribute() {
 									/>
 									<label
 										htmlFor="floating_outlined border border-red-500"
-										className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
+										className="absolute text-sm text-gray-500 dark:text-gray-100 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white dark:bg-gray-500 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-gray-100
+										peer-focus:dark:bg-gray-400
+										peer-placeholder-shown:scale-100
+										peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
 										Enter amount to be shared
 									</label>
 								</div>
