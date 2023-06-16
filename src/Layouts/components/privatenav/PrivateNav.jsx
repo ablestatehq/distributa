@@ -19,7 +19,7 @@ function PrivateNav() {
     <div className="w-screen xs:px-5 sm:px-10 md:px-20 bg-gray-100 flex items-center justify-between">
       <nav className="flex gap-x-2 items-center">
         <NavLink
-          to="/"
+          to="/dashboard"
           className="text-lg cursor-pointer py-2 text-gray-800 transition-all duration-200"
           onMouseEnter={() => handleMouseEnter("/")}
           onMouseLeave={handleMouseLeave}
