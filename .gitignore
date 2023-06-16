@@ -23,6 +23,7 @@
 # jsdoc.json
 # docs
 databaseCredentials.json
+environments.txt
 
 npm-debug.log*
 yarn-debug.log*
