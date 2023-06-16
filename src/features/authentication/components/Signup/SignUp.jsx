@@ -18,9 +18,15 @@ function SignUp() {
     { email, password },
     { resetForm, setSubmitting }
   ) => {
-    signUp(email, password);
-    setSubmitting(false);
-    resetForm({ values: initialValues });
+    try {
+      const session = await signUp(email, password);
+      if (session) navigate(from, { replace: true });
+    } catch (error) {
+      console.log("Error: ", error);
+    } finally {
+      setSubmitting(false);
+      resetForm({ values: { email: "", password: "" } });
+    }
   };
 
   return (
@@ -49,11 +55,7 @@ function SignUp() {
                 ></Field>
                 <div className="h-5">
                   <ErrorMessage name="email">
-                    {(msg) => (
-                      <div className="text-red-500 text-xs font-light">
-                        {msg}
-                      </div>
-                    )}
+                    {(msg) => <div className="text-red-500 text-xs font-light">{msg}</div>}
                   </ErrorMessage>
                 </div>
               </div>
@@ -70,11 +72,7 @@ function SignUp() {
                 ></Field>
                 <div className="h-5">
                   <ErrorMessage name="password">
-                    {(msg) => (
-                      <div className="text-red-500 text-xs font-light">
-                        {msg}
-                      </div>
-                    )}
+                    {(msg) => <div className="text-red-500 text-xs font-light">{msg}</div>}
                   </ErrorMessage>
                 </div>
               </div>

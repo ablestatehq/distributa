@@ -1,26 +1,13 @@
 import { useState, useEffect } from "react";
 import AuthContext from "../../contexts/Auth";
 import { AppwriteService } from "../../services";
-import { useLocation, useNavigate } from "react-router-dom";
 
 function Auth({ children }) {
-  const location = useLocation();
-  const navigate = useNavigate();
   const appwrite = new AppwriteService();
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const redirect = location?.state?.from ?? "/dashboard";
   const login = async (email, password) => {
-    try {
-      setLoading(true);
-      const session = await appwrite.createSession(email, password);
-      setLoading(false);
-      if (session) navigate(redirect, { replace: true });
-    } catch (error) {
-      setError(error?.message);
-      setLoading(false);
-    }
+    const session = await appwrite.createSession(email, password);
+    return session;
   };
 
   const logout = async () => {
@@ -29,16 +16,9 @@ function Auth({ children }) {
   };
 
   const signUp = async (email, password) => {
-    try {
-      setLoading(true);
-      const account = await appwrite.createAccount(email, password);
-      const session = await appwrite.createSession(email, password);
-      setLoading(false);
-      if (session) navigate(redirect, { replace: true });
-    } catch (error) {
-      setError(error?.message);
-      setLoading(false);
-    }
+    await appwrite.createAccount(email, password);
+    const session = await appwrite.createSession(email, password);
+    return session;
   };
 
   useEffect(() => {
@@ -47,9 +27,9 @@ function Auth({ children }) {
       setUser(user);
     };
 
-    getUser();
+    getUser().catch(error => console.log(error));
 
-    appwrite.client.subscribe("account", getUser());
+    appwrite.client.subscribe("account", getUser().catch(error => console.log(error)));
 
     return () => {
       appwrite.client.unsubscribe();
@@ -57,13 +37,10 @@ function Auth({ children }) {
   }, []);
   const values = {
     user,
-    error,
-    loading,
     setUser,
     login,
     logout,
     signUp,
-    setLoading,
   };
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

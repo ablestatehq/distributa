@@ -5,7 +5,10 @@ import { useAuth } from "../../../../hooks";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function Login() {
-  const { login, error } = useAuth();
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.from ?? "/dashboard";
 
   const initialValues = {
     email: "",
@@ -16,9 +19,15 @@ function Login() {
     { email, password },
     { resetForm, setSubmitting }
   ) => {
-    login(email, password);
-    setSubmitting(false);
-    resetForm({ values: initialValues });
+    try {
+      const session = await login(email, password);
+      if (session) navigate(from, { replace: true });
+    } catch (error) {
+      console.log("Error: ", error);
+    } finally {
+      setSubmitting(false);
+      resetForm({ values: { email: "", password: "" } });
+    }
   };
 
   return (
