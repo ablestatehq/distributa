@@ -5,7 +5,6 @@ export const protectedRoutes = [
   {
     path: "/dashboard",
     element: <Private />,
-    indexRoute: true,
-    children: [{ path: "/dashboard", element: <Dashboard /> }]
+    children: [{ index: true, element: <Dashboard /> }],
   },
 ];

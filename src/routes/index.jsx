@@ -5,6 +5,8 @@ import { Main } from "../Layouts";
 import { NotFound } from "./components";
 
 function Routes() {
+
+  console.log(protectedRoutes)
   const children = [
     ...publicRoutes,
     ...protectedRoutes,
