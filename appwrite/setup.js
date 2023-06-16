@@ -77,78 +77,75 @@ const setup = async () => {
       format:
         "Progress |" +
         colors.cyan("{bar}") +
-        "| {percentage}% || {value}/{total} Steps || {step}",
+        "| {percentage}% | {eta}s | {value}/{total} Steps | {step}",
       barCompleteChar: "\u2588",
       barIncompleteChar: "\u2591",
       hideCursor: true,
     });
 
-
-    const updateProgress = (stepIndex) => {
-      progressBar.update(stepIndex + 1, { step: progressSteps[stepIndex] });
-    };
-
     progressBar.start(progressSteps.length, 0, { step: progressSteps[0] });
     const database = await createDatabase();
-    updateProgress(0);
+    progressBar.update(1, { step: progressSteps[1] });
 
     const systemTeam = await createTeam("system");
-    updateProgress(1);
+    progressBar.update(2, { step: progressSteps[2] });
 
     const admin = await createUser(adminEmail, adminPassword);
-    updateProgress(2);
+    progressBar.update(3, { step: progressSteps[3] });
 
     const user = await createUser(userEmail, userPassword);
-    updateProgress(3);
+    progressBar.update(4, { step: progressSteps[4] });
 
-    const adminMembership = await  createTeamMembership(systemTeam.$id, admin.email, [
-      "admin",
-      "user",
-      "owner",
-    ]);
-    updateProgress(4);
+    const adminMembership = await createTeamMembership(
+      systemTeam.$id,
+      admin.email,
+      ["admin", "user", "owner"]
+    );
+    progressBar.update(5, { step: progressSteps[5] });
 
-    const userMembership = await createTeamMembership(systemTeam.$id, user.email, [
-      "user",
-    ]);
-    updateProgress(5);
+    const userMembership = await createTeamMembership(
+      systemTeam.$id,
+      user.email,
+      ["user"]
+    );
+    progressBar.update(6, { step: progressSteps[6] });
 
     const invoicesCollection = await createCollection(database.$id, "invoices");
-    updateProgress(6);
+    progressBar.update(7, { step: progressSteps[6] });
 
     const distributionsCollection = await createCollection(
       database.$id,
       "distributions"
     );
-    updateProgress(7);
+    progressBar.update(8, { step: "Saving secrets" });
     progressBar.stop();
-    
-    const userCreadentails = `
-    User Credentails
+
+    const environments = `
+    1. Use the following credentials to login to the user and admin accounts.
+    - User Login Credentails
     Email: ${userEmail}
     Password: ${userPassword}
 
-    Admin Credentails
+    - Admin Login Credentails
     Email: ${adminEmail}
     Password: ${adminPassword}
+    
+    2. Create a file named .env.local following information to your env.local file
+    # Project Credentails
+    REACT_APP_APPWRITE_API_PROJECT_ID=${process.env.APPWRITE_PROJECT}
+    REACT_APP_APPWRITE_API_ENDPOINT=${process.env.APPWRITE_ENDPOINT}
 
-    Project Credentails
-    Project ID: ${process.env.APPWRITE_PROJECT}
-    Endpoint: ${process.env.APPWRITE_ENDPOINT}
+    # Database Credentails
+    REACT_APP_APPWRITE_DATABASE_ID=${database.$id}
+    REACT_APP_APPWRITE_INVOICES_COLLECTION_ID=${invoicesCollection.$id}
+    REACT_APP_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=${distributionsCollection.$id}
 
-    Database Credentails
-    Database ID: ${database.$id}
-    Invoices Collection ID: ${invoicesCollection.$id}
-    Distributions Collection ID: ${distributionsCollection.$id}
-
-    Team Credentails
-    System Team ID: ${systemTeam.$id}
-    Admin Membership ID: ${adminMembership.$id}
-    User Membership ID: ${userMembership.$id}
-    `
+    # Team Credentails
+    REACT_APP_APPWRITE_SYSTEM_TEAM_ID=${systemTeam.$id}
+    `;
 
     const filePath = path.join(__dirname, "./environments.txt");
-    writeFileSync(filePath, JSON.stringify(data, null, 4));
+    writeFileSync(filePath, environments);
 
     return;
   } catch (error) {

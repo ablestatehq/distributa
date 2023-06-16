@@ -180,7 +180,6 @@ const createTeam = async (name) => {
  * @description Creates a team membership in appwrite
  */
 const createTeamMembership = async (teamID, userEmail, roles) => {
-	console.log("Here: ", { teamID, userEmail, roles, redirectUrl });
 	const membership = await teams.createMembership(
 		teamID,
 		roles,
