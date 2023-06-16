@@ -53,6 +53,20 @@ class AppwriteService {
     this.storage = new Storage(appwriteClient);
   }
 
+  // Variables
+  getVariables() {
+    const variables = {
+      API_ENDPOINT,
+      PROJECT_ID,
+      SYSTEM_TEAM_ID,
+      DATABASE_ID,
+      INVOICES_COLLECTION_ID,
+      DISTRIBUTIONS_COLLECTION_ID,
+    }
+
+    return variables
+  }
+
   /**
    * @function createAccount
    * @description Creates an account using the appwrite API

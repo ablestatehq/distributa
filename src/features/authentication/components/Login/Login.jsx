@@ -5,7 +5,7 @@ import { useAuth } from "../../../../hooks";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function Login() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from ?? "/dashboard";
@@ -30,7 +30,9 @@ function Login() {
     }
   };
 
-  return (
+  return user ? (
+    navigate(from, { replace: true })
+  ) : (
     <div className="h-[calc(100vh-45px)] flex justify-center items-center">
       <Formik
         initialValues={initialValues}

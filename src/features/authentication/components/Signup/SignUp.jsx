@@ -5,7 +5,7 @@ import { useAuth } from "../../../../hooks";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function SignUp() {
-  const { signUp } = useAuth();
+  const { signUp, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from ?? "/dashboard";
@@ -29,7 +29,9 @@ function SignUp() {
     }
   };
 
-  return (
+  return user ? (
+    navigate(from, { replace: true })
+  ) : (
     <div className="h-[calc(100vh-45px)] flex justify-center items-center">
       <Formik
         initialValues={initialValues}
@@ -55,7 +57,11 @@ function SignUp() {
                 ></Field>
                 <div className="h-5">
                   <ErrorMessage name="email">
-                    {(msg) => <div className="text-red-500 text-xs font-light">{msg}</div>}
+                    {(msg) => (
+                      <div className="text-red-500 text-xs font-light">
+                        {msg}
+                      </div>
+                    )}
                   </ErrorMessage>
                 </div>
               </div>
@@ -72,7 +78,11 @@ function SignUp() {
                 ></Field>
                 <div className="h-5">
                   <ErrorMessage name="password">
-                    {(msg) => <div className="text-red-500 text-xs font-light">{msg}</div>}
+                    {(msg) => (
+                      <div className="text-red-500 text-xs font-light">
+                        {msg}
+                      </div>
+                    )}
                   </ErrorMessage>
                 </div>
               </div>
