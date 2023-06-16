@@ -12,6 +12,10 @@
  * @requires database
  * @requires helpers/appwrite
  * @requires cli-progress
+ * @requires ansi-colors
+ * @requires dotenv
+ * @requires node-appwrite
+ * @requires encryptPassword
  *
  * @see https://appwrite.io/docs/server/database
  * @see https://appwrite.io/docs/server/teams
@@ -31,6 +35,7 @@ const {
   createCollection,
 } = require("./helpers/appwrite");
 const generatePassword = require("./helpers/generatePassword");
+const encryptPassword = require("./helpers/encryptPassword");
 
 /**
  * @function setup
@@ -59,7 +64,9 @@ const generatePassword = require("./helpers/generatePassword");
 const setup = async () => {
   try {
     const userPassword = generatePassword();
+    const userPasswordHash = await encryptPassword(userPassword);
     const adminPassword = generatePassword();
+    const adminPasswordHash = await encryptPassword(adminPassword);
     const adminEmail = "admin@distributa.com";
     const userEmail = "user@distributa.com";
     const progressSteps = [
@@ -90,10 +97,10 @@ const setup = async () => {
     const systemTeam = await createTeam("system");
     progressBar.update(2, { step: progressSteps[2] });
 
-    const admin = await createUser(adminEmail, adminPassword);
+    const admin = await createUser(adminEmail, adminPasswordHash);
     progressBar.update(3, { step: progressSteps[3] });
 
-    const user = await createUser(userEmail, userPassword);
+    const user = await createUser(userEmail, userPasswordHash);
     progressBar.update(4, { step: progressSteps[4] });
 
     const adminMembership = await createTeamMembership(
@@ -133,7 +140,7 @@ const setup = async () => {
     2. Create a file named .env.local following information to your env.local file
     # Project Credentails
     REACT_APP_APPWRITE_API_PROJECT_ID=${process.env.PROJECT_ID}
-    REACT_APP_APPWRITE_API_ENDPOINT=${process.env.API_ENDPOINT}
+    REACT_APP_APPWRITE_API_ENDPOINT=${process.env.PROJECT_ENDPOINT}
 
     # Database Credentails
     REACT_APP_APPWRITE_DATABASE_ID=${database.$id}
