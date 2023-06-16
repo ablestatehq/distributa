@@ -132,8 +132,8 @@ const setup = async () => {
     
     2. Create a file named .env.local following information to your env.local file
     # Project Credentails
-    REACT_APP_APPWRITE_API_PROJECT_ID=${process.env.APPWRITE_PROJECT}
-    REACT_APP_APPWRITE_API_ENDPOINT=${process.env.APPWRITE_ENDPOINT}
+    REACT_APP_APPWRITE_API_PROJECT_ID=${process.env.PROJECT_ID}
+    REACT_APP_APPWRITE_API_ENDPOINT=${process.env.API_ENDPOINT}
 
     # Database Credentails
     REACT_APP_APPWRITE_DATABASE_ID=${database.$id}
