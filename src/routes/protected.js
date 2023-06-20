@@ -1,7 +1,7 @@
 import { Dashboard } from "../pages";
 import { PrivateRoute } from "./components";
 import { AppwriteService as Appwrite } from "../services";
-import { redirect } from "react-router-dom";
+import { redirect, defer } from "react-router-dom";
 
 const appwrite = new Appwrite();
 
@@ -18,7 +18,8 @@ export const protectedRoutes = [
       if (!user) {
         return redirect("/login");
       }
-      return user;
+
+      return defer({user});
     },
     children: [
       {
