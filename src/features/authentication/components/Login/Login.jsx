@@ -2,39 +2,42 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
 import { loginSchema } from "../../utils/validator";
 import { useAuth } from "../../../../hooks";
-import { useNavigate, useLocation } from "react-router-dom";
-import { AppwriteService as appwrite } from "../../../../services";
+import { useNavigate, useLocation, useLoaderData, Navigate } from "react-router-dom";
 
 function Login() {
-  const { setSession } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location?.state?.from ?? "/";
+  const from = location?.state?.from ?? "/dashboard";
+  const user = useLoaderData();
 
   const initialValues = {
     email: "",
     password: "",
   };
 
+  const handleLogin = async (
+    { email, password },
+    { resetForm, setSubmitting }
+  ) => {
+    try {
+      const session = await login(email, password);
+      if (session) navigate(from, { replace: true });
+    } catch (error) {
+      console.log("Error: ", error);
+    } finally {
+      setSubmitting(false);
+      resetForm({ values: { email: "", password: "" } });
+    }
+  };
+
   return (
+    user ? <Navigate to={from} replace={true} /> :
     <div className="h-[calc(100vh-45px)] flex justify-center items-center">
       <Formik
         initialValues={initialValues}
         validationSchema={loginSchema}
-        onSubmit={async ({ email, password }, { resetForm, setSubmitting }) => {
-          try {
-            const session = await appwrite.createSession(email, password);
-            if (session) {
-              setSession(session);
-              navigate(from, { replace: true });
-            }
-          } catch (error) {
-            console.log("Error: ", error);
-          } finally {
-            setSubmitting(false);
-            resetForm({ values: { email: "", password: "" } });
-          }
-        }}
+        onSubmit={handleLogin}
       >
         {() => {
           return (

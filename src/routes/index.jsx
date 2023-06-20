@@ -1,26 +1,23 @@
-import { useRoutes } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { publicRoutes } from "./public";
 import { protectedRoutes } from "./protected";
 import { Main } from "../Layouts";
 import { NotFound } from "./components";
 
 function Routes() {
-  const children = [
-    ...publicRoutes,
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Main />,
+      children: publicRoutes,
+    },
     ...protectedRoutes,
     {
       path: "*",
       element: <NotFound />,
     },
-  ];
-  const routes = [
-    {
-      path: "/",
-      element: <Main />,
-      children,
-    },
-  ];
-  return useRoutes(routes);
+  ]);
+  return <RouterProvider router={router}></RouterProvider>;
 }
 
 export default Routes;

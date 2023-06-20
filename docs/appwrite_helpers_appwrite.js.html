@@ -1,6 +1,34 @@
-require("dotenv").config();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: appwrite/helpers/appwrite.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: appwrite/helpers/appwrite.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>require("dotenv").config();
 /**
- * @author David Derrick Anyuru <davidderrickanyuru@gmail.com>
+ * @author David Derrick Anyuru &lt;davidderrickanyuru@gmail.com>
  * @file appwrite.js
  * @module appwrite
  * @requires dotenv
@@ -63,10 +91,10 @@ const databases = new Databases(client);
 const users = new Users(client);
 const teams = new Teams(client);
 /**
- * @author David Derrick Anyuru <davidderrickanyuru@gmail.com>
+ * @author David Derrick Anyuru &lt;davidderrickanyuru@gmail.com>
  * @async
  * @function createDatabase
- * @return {Promise<Object>}
+ * @return {Promise&lt;Object>}
  * @description Creates an appwrite database
  * @see https://appwrite.io/docs/server/database
  * @example
@@ -92,7 +120,7 @@ const createDatabase = async () => {
  * @function createCollections
  * @param {string} databaseID - The id of the database
  * @param {string} collection - The name of the collection
- * @return {Promise<Object>} - The new collection object
+ * @return {Promise&lt;Object>} - The new collection object
  * @description Creates an appwrite collection
  * @see https://appwrite.io/docs/server/database
  * @example
@@ -126,7 +154,7 @@ const createCollection = async (databaseID, collectionName) => {
  * @function createUser
  * @param {string} email
  * @param {string} pass
- * @returns {Promise<Object>}
+ * @returns {Promise&lt;Object>}
  * @description Creates an user account in appwrite
  * @see https://appwrite.io/docs/server/account
  * @example
@@ -145,71 +173,6 @@ const createCollection = async (databaseID, collectionName) => {
  * //   "prefs": {}
  * // }
  */
-
-/** 
- * @async
- * @function createAttribute
- * @param {string} databaseID - The id of the database
- * @param {string} collectionID - The id of the collection
- * @param {string} attribute - The name of the attribute
- * @param {Number} size - The size of the attribute
- * @param {boolean} isRequired - Is the attribute required
- * @returns {Promise<Object>}
- * @description Creates an attribute in appwrite
- * @see https://appwrite.io/docs/server/database
- * @example
- * const attribute = await createAttribute("5f9c0f0c5c6f5", "5e5ea5c16897e", "name", 255, true);
- * // {
- * //   "key": "name",
- * //   "type": "string",
- * //   "status": "available",
- * //   "required": true,
- * //   "array": false,
- * //   "size": 128,
- * //   "default": "default"
- * // }
- */
-
-const createStringAttribute = async (databaseID, collectionID, attributeName, size, isRequired=false) => {
-  const attribute = await databases.createStringAttribute(
-    databaseID,
-    collectionID,
-    attributeName,
-    size,
-    isRequired
-  );
-  return attribute;
-}
-/**
- * @async
- * @function createFloatAttribute
- * @param {string} databaseID - The id of the database
- * @param {string} collectionID - The id of the collection
- * @param {string} attribute - The name of the attribute
- * @param {boolean} isRequired - Is the attribute required
- * @returns {Promise<Object>}
- * @description Creates an attribute in appwrite
- * @see https://appwrite.io/docs/server/database
- * @example
- * const attribute = await createAttribute("5f9c0f0c5c6f5", "5e5ea5c16897e", "name", 255, true);
- * // {
- * //   "key": "name",
- * //   "type": "float",
- * //   "status": "available",
- * //   "required": true,
- * //   "array": false,
- * //   "default": "default"
- * // }
- */
-const createFloatAttribute = async (databaseID, collectionID, attributeName, isRequired=false) => {
-  const attribute = await databases.createFloatAttribute(
-    databaseID,
-    collectionID,
-    attributeName,
-    isRequired
-  );
-  return attribute;
-}
 const createUser = async (email, pass) => {
   const user = await users.createBcryptUser(ID.unique(), email, pass);
   return user;
@@ -218,7 +181,7 @@ const createUser = async (email, pass) => {
  * @async
  * @function createTeam
  * @param {string} name - The name of the team
- * @returns {Promise<Object>}
+ * @returns {Promise&lt;Object>}
  * @description Creates a team in appwrite
  * @see https://appwrite.io/docs/server/teams
  * @example
@@ -241,7 +204,7 @@ const createTeam = async (name) => {
  * @param {string} teamID - The id of the team
  * @param {string} userEmail - The email of the user
  * @param {array} roles - An array of roles for the user in the team
- * @returns {Promise<Object>}
+ * @returns {Promise&lt;Object>}
  * @description Creates a team membership in appwrite
  */
 const createTeamMembership = async (teamID, userEmail, roles) => {
@@ -262,9 +225,30 @@ module.exports = {
   createDatabase,
   deleteDatabase,
   createCollection,
-  createStringAttribute,
-  createFloatAttribute,
   createUser,
   createTeam,
   createTeamMembership,
 };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Distributa</a></h2><h3>Modules</h3><ul><li><a href="module-appwrite.html">appwrite</a></li><li><a href="module-setup.html">setup</a></li></ul><h3>Classes</h3><ul><li><a href="AppwriteService.html">AppwriteService</a></li></ul><h3>Global</h3><ul><li><a href="global.html#createAccount">createAccount</a></li><li><a href="global.html#createCollection">createCollection</a></li><li><a href="global.html#createFile">createFile</a></li><li><a href="global.html#createFunctionExecution">createFunctionExecution</a></li><li><a href="global.html#createSession">createSession</a></li><li><a href="global.html#createTeam">createTeam</a></li><li><a href="global.html#defaultTheme">defaultTheme</a></li><li><a href="global.html#deleteCurrentSession">deleteCurrentSession</a></li><li><a href="global.html#deleteDocument">deleteDocument</a></li><li><a href="global.html#encryptPassword">encryptPassword</a></li><li><a href="global.html#getAccount">getAccount</a></li><li><a href="global.html#getAccountPrefs">getAccountPrefs</a></li><li><a href="global.html#getDocument">getDocument</a></li><li><a href="global.html#getExecution">getExecution</a></li><li><a href="global.html#getFileForView">getFileForView</a></li><li><a href="global.html#getSession">getSession</a></li><li><a href="global.html#listCollections">listCollections</a></li><li><a href="global.html#listLogs">listLogs</a></li><li><a href="global.html#listMemberships">listMemberships</a></li><li><a href="global.html#listTeams">listTeams</a></li><li><a href="global.html#updateDocument">updateDocument</a></li><li><a href="global.html#updateEmail">updateEmail</a></li><li><a href="global.html#updateName">updateName</a></li><li><a href="global.html#updatepass">updatepass</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Tue Jun 20 2023 13:33:13 GMT+0300 (East Africa Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

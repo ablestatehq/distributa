@@ -1,9 +1,11 @@
-import { Outlet, NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../../../hooks";
 
 function PublicNav() {
   const location = useLocation();
   const [activeLink, setActiveLink] = useState(location.pathname);
+  const { user } = useAuth();
 
   const handleMouseEnter = (link) => {
     setActiveLink(link);
