@@ -71,6 +71,10 @@ In the env file replace your-api-key, your-project-id, and your-project-endpoint
 
 This script will create initial project configuration for Distributa.
 Once the script completes execution, the distributa database, invoices collection, and distributions collection will be created the project whose ID is specified in the project of your Appwrite instance.
+Additionaly, an *environment.txt* file will be generated that contains the user details and project enviroment varibles. The user credentials are the details that will be for user authentication to the application. To test the features of the application.  
+
+**Note** 
+It is advised to add text *enviroments.txt* to your *.gitingnore* on file to keep your project secure. 
 
 6. Set environment variables for React:
    In your project's environment configuration file (e.g., .env.local or .env.development), add the following lines:
@@ -84,8 +88,9 @@ REACT_APP_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=your-distributions-collection-id
 
 -   Replace your-project-endpoint, your-distributa-database-id, your-invoices-collection-id, and your-distributions-collection-id with the actual values obtained from the previous steps.
 
-Your inital Project configuartion is now set is now ready! Voilà! Let's distribute:
+Your inital Project configuartion is now set and ready! Voilà! Let's distribute:
 With the configurations in place, you can use Distributa to distribute earnings, generate invoices, and perform other application-specific actions.
+
 
 ### Prerequisites
 
