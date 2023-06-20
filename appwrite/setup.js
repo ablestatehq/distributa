@@ -29,6 +29,8 @@ const path = require("path");
 const {
   createDatabase,
   deleteDatabase,
+  createStringAttribute,
+  createFloatAttribute,
   createTeam,
   createUser,
   createTeamMembership,
@@ -119,6 +121,36 @@ const setup = async () => {
 
     const invoicesCollection = await createCollection(database.$id, "invoices");
     progressBar.update(7, { step: progressSteps[6] });
+
+    const project = await createStringAttribute(
+      database.$id,
+      invoicesCollection.$id,
+      "project",
+      100,
+      true
+    );
+
+    const amount = await createFloatAttribute(
+      database.$id,
+      invoicesCollection.$id,
+      "amount",
+      true
+    );
+
+    const breakdown = await createStringAttribute(
+      database.$id,
+      invoicesCollection.$id,
+      "breakdown",
+      100000000,
+    );
+
+    const remoteID = await createStringAttribute(
+      database.$id,
+      invoicesCollection.$id,
+      "remoteID",
+      100,
+      true
+    );
 
     const distributionsCollection = await createCollection(
       database.$id,

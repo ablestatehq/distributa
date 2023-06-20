@@ -145,6 +145,71 @@ const createCollection = async (databaseID, collectionName) => {
  * //   "prefs": {}
  * // }
  */
+
+/** 
+ * @async
+ * @function createAttribute
+ * @param {string} databaseID - The id of the database
+ * @param {string} collectionID - The id of the collection
+ * @param {string} attribute - The name of the attribute
+ * @param {Number} size - The size of the attribute
+ * @param {boolean} isRequired - Is the attribute required
+ * @returns {Promise<Object>}
+ * @description Creates an attribute in appwrite
+ * @see https://appwrite.io/docs/server/database
+ * @example
+ * const attribute = await createAttribute("5f9c0f0c5c6f5", "5e5ea5c16897e", "name", 255, true);
+ * // {
+ * //   "key": "name",
+ * //   "type": "string",
+ * //   "status": "available",
+ * //   "required": true,
+ * //   "array": false,
+ * //   "size": 128,
+ * //   "default": "default"
+ * // }
+ */
+
+const createStringAttribute = async (databaseID, collectionID, attributeName, size, isRequired=false) => {
+  const attribute = await databases.createStringAttribute(
+    databaseID,
+    collectionID,
+    attributeName,
+    size,
+    isRequired
+  );
+  return attribute;
+}
+/**
+ * @async
+ * @function createFloatAttribute
+ * @param {string} databaseID - The id of the database
+ * @param {string} collectionID - The id of the collection
+ * @param {string} attribute - The name of the attribute
+ * @param {boolean} isRequired - Is the attribute required
+ * @returns {Promise<Object>}
+ * @description Creates an attribute in appwrite
+ * @see https://appwrite.io/docs/server/database
+ * @example
+ * const attribute = await createAttribute("5f9c0f0c5c6f5", "5e5ea5c16897e", "name", 255, true);
+ * // {
+ * //   "key": "name",
+ * //   "type": "float",
+ * //   "status": "available",
+ * //   "required": true,
+ * //   "array": false,
+ * //   "default": "default"
+ * // }
+ */
+const createFloatAttribute = async (databaseID, collectionID, attributeName, isRequired=false) => {
+  const attribute = await databases.createFloatAttribute(
+    databaseID,
+    collectionID,
+    attributeName,
+    isRequired
+  );
+  return attribute;
+}
 const createUser = async (email, pass) => {
   const user = await users.createBcryptUser(ID.unique(), email, pass);
   return user;
@@ -197,6 +262,8 @@ module.exports = {
   createDatabase,
   deleteDatabase,
   createCollection,
+  createStringAttribute,
+  createFloatAttribute,
   createUser,
   createTeam,
   createTeamMembership,
