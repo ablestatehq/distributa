@@ -2,15 +2,14 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
 import { loginSchema } from "../../utils/validator";
 import { useAuth } from "../../../../hooks";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useLoaderData, Navigate } from "react-router-dom";
 
 function Login() {
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location?.state?.from ?? "/dashboard";
-
-  console.log("from: ", from)
+  const user = useLoaderData();
 
   const initialValues = {
     email: "",
@@ -32,9 +31,8 @@ function Login() {
     }
   };
 
-  return user ? (
-    navigate(from, { replace: true })
-  ) : (
+  return (
+    user ? <Navigate to={from} replace={true} /> :
     <div className="h-[calc(100vh-45px)] flex justify-center items-center">
       <Formik
         initialValues={initialValues}

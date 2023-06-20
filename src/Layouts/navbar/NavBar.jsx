@@ -1,9 +1,8 @@
+import { PublicNav } from "../components";
+import { PrivateNav } from "../components";
 
-
-function NavBar() {
-  return (
-    <div>NavBar</div>
-  )
+function NavBar({ user }) {
+  return user ? <PrivateNav /> : <PublicNav />;
 }
 
-export default NavBar
+export default NavBar;

@@ -5,8 +5,7 @@ const appwrite = new Appwrite();
 
 export const protectedRoutes = [
   {
-    path: "/dashboard",
-    element: <Private className="border border-red-500 h-20 w-20"/>,
+    element: <Private className="border border-red-500 h-20 w-20" />,
     loader: async () => {
       try {
         const user = await appwrite.getAccount();
@@ -17,8 +16,8 @@ export const protectedRoutes = [
     },
     children: [
       {
-        index: true,
-        element: <div className="border border-red-500">Dashboard</div>,
+        path: "/dashboard",
+        element: <Dashboard />,
       },
     ],
   },
