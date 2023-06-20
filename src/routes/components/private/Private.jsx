@@ -1,15 +1,21 @@
 import { useAuth } from "../../../hooks";
-import { Navigate, useLocation } from "react-router-dom";
-import { Outlet } from "react-router-dom";
+import { Navigate, useLocation, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { AppwriteService as Appwrite } from "../../../services";
 
 function Private() {
-  const { user } = useAuth();
-  const location = useLocation();
-  const from =
-    location.pathname?.from === "login"
-      ? "/dashboard"
-      : location?.pathname?.from;
-  return user ? <Outlet /> : <Navigate to="/login" state={{ from }} />;
+  const { pathname: from } = useLocation();
+  const { session } = useAuth();
+  const [ user, setUser] = useState(null)
+  const appwrite = new Appwrite();
+
+  useEffect(() => {
+    appwrite.getAccount().then(
+      user => {
+      setUser(user)
+    });
+  }, [ session ]);
+  return user ? <Outlet/> : <Navigate to="/login" state={{ from }} />;
 }
 
 export default Private;

@@ -10,6 +10,8 @@ function Login() {
   const location = useLocation();
   const from = location?.state?.from ?? "/dashboard";
 
+  console.log("from: ", from)
+
   const initialValues = {
     email: "",
     password: "",

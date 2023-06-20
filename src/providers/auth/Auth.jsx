@@ -51,9 +51,9 @@ function Auth({ children }) {
     };
 
     getUser();
-    return () => {
-      appwrite.client.unsubscribe();
-    };
+    // return () => {
+    //   appwrite.client.unsubscribe();
+    // };
   }, []);
   const values = {
     user,
