@@ -1,15 +1,15 @@
 import { Outlet } from "react-router-dom";
-import { PublicNav } from "../components";
+import { PrivateNav } from "../../../Layouts/components";
 
-const Main = () => {
+function PrivateRoute() {
   return (
     <>
-      <PublicNav />
+      <PrivateNav />
       <div className="w-screen">
         <Outlet />
       </div>
     </>
   );
-};
+}
 
-export default Main;
+export default PrivateRoute;

@@ -1,3 +1,3 @@
-import Private from "./private";
+import PrivateRoute from "./privateRoute";
 import NotFound from "./notFound";
-export { Private, NotFound };
+export { PrivateRoute, NotFound };

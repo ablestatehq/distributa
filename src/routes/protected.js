@@ -1,18 +1,24 @@
 import { Dashboard } from "../pages";
-import { Private } from "./components";
+import { PrivateRoute } from "./components";
 import { AppwriteService as Appwrite } from "../services";
+import { redirect } from "react-router-dom";
+
 const appwrite = new Appwrite();
 
 export const protectedRoutes = [
   {
-    element: <Private className="border border-red-500 h-20 w-20" />,
+    element: <PrivateRoute className="border border-red-500 h-20 w-20" />,
     loader: async () => {
+      let user = null;
       try {
-        const user = await appwrite.getAccount();
-        return user;
+        user = await appwrite.getAccount();
       } catch (error) {
-        return null;
+        user = null;
       }
+      if (!user) {
+        return redirect("/login");
+      }
+      return user;
     },
     children: [
       {
