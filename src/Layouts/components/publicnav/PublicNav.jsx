@@ -14,44 +14,28 @@ function PublicNav() {
 		setActiveLink(location.pathname);
 	};
 	return (
-		<div className="w-screen xs:px-5 sm:px-10 md:px-20 bg-gray-100 flex items-center justify-between">
-			<nav className="flex gap-x-2 items-center">
-				<NavLink
-					to="/"
-					className="text-lg cursor-pointer py-2 text-gray-800 transition-all duration-200"
-					onMouseEnter={() => handleMouseEnter("/")}
-					onMouseLeave={handleMouseLeave}>
-					Distributa
-				</NavLink>
-				<NavLink
-					to="/"
-					className={`mr-2 text-sm py-2 transition-all duration-200 ${
-						activeLink === "/" ? "text-gray-800" : "text-gray-500"
-					}`}
-					onMouseEnter={() => handleMouseEnter("/")}
-					onMouseLeave={handleMouseLeave}>
-					Expenses
-				</NavLink>
-				<NavLink
-					to="/invoice"
-					className={`mr-2 text-sm py-2 transition-all duration-200 ${
-						activeLink === "/invoice"
-							? "text-gray-800"
-							: "text-gray-500"
-					}`}
-					onMouseEnter={() => handleMouseEnter("/invoice")}
-					onMouseLeave={handleMouseLeave}>
-					Invoice
-				</NavLink>
-			</nav>
+		<header class="flex justify-between mt-5">
 			<div>
 				<NavLink
-					to="/login"
-					className="text-white bg-[#007BFF] hover:bg-[#0B5ED7] text-sm py-2 px-4 rounded-sm cursor-pointer duration-200 ease-in-out">
-					Login
+					to="/"
+					className="underline decoration-black text-blue text-lg font-bold py-3">
+					Distributa
 				</NavLink>
 			</div>
-		</div>
+			<nav>
+				<NavLink
+					className="mr-6 p-3"
+					onMouseEnter={() => handleMouseEnter("/")}
+					onMouseLeave={handleMouseLeave}>
+					Login
+				</NavLink>
+				<NavLink
+					className="text-blue font-semibold bg-gray-200 p-4"
+					to="#">
+					Start Now, It's Free
+				</NavLink>
+			</nav>
+		</header>
 	);
 }
 
