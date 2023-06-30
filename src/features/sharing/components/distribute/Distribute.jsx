@@ -198,44 +198,45 @@ function Distribute() {
 
 	return (
 		<>
-			<section className="flex py-10">
-				<div className="w-1/2 flex flex-col justify-between">
-					<h1 className="text-5xl font-sans">
-						Effortlessly Track Your <br />
-						Expenses & Generate <br />
+			<section className="flex md:flex-row xs:flex-col-reverse py-10">
+				<div className="md:w-1/2 flex flex-col justify-between">
+					<h1 className="xs:font-bold md:text-5xl font-sans">
+						Effortlessly Track Your <br className="xs:hidden" />
+						Expenses & Generate <br className="xs:hidden" />
 						Professional Invoices
 					</h1>
-					<p className="py-4 text-2xl">
+					<p className="py-4 md:text-2xl">
 						Simplify the process, making it easy for you to track
-						your <br />
+						your <br className="xs:hidden" />
 						expenses and generate professional invoices in minutes.
 					</p>
-					<button className="py-4 px-14 mt-4 bg-blue text-white text-center w-fit">
+					<button className="py-4 px-14 mt-4 bg-blue text-white text-center md:w-fit">
 						Start Now, It's Free
 					</button>
 				</div>
-				<div className="w-1/2 flex flex-end">
+				<div className="md:w-1/2 md:flex flex-end">
 					<img
 						className="w-full h-auto"
 						src="Colunm.png.png"
 						alt="invoices "
 					/>
+					<br className="md:hidden" />
 				</div>
 			</section>
 			<section className="py-10">
 				<article>
 					<h2 className="text-3xl font-sans">
-						Generate and Share <br />
+						Generate and Share <br className="xs:hidden" />
 						Invoices In 3 Simple Steps
 					</h2>
 				</article>
-				<div className="grid grid-cols-3 gap-6 mt-6">
+				<div className="grid md:grid-cols-3 gap-6 mt-6 xs:grid-cols-1">
 					<article className="bg-gray-200 p-5 rounded">
 						<img src="Icon1.png.png" />
 						<h3 className="py-4 text-xl font-bold">
 							Income details
 						</h3>
-						<p>Add amount you want to share</p>
+						<p>Add the amount you earned.</p>
 					</article>
 					<article className="bg-gray-200 pt-4 pl-4 pb-5 rounded">
 						<img src="Icon2.png.png" />
@@ -243,7 +244,8 @@ function Distribute() {
 							Beneficiaries
 						</h3>
 						<p>
-							Enter the Name and Percentage of each person. <br />
+							Enter the Name and Percentage/Amount of each person.{" "}
+							<br />
 							Made a mistake? No worries you can edit or delete.
 						</p>
 					</article>
@@ -261,19 +263,20 @@ function Distribute() {
 			<section className="py-10">
 				<article>
 					<h2 className="text-3xl font-sans">
-						Use Our Expense <br />
-						Tracker To
+						Track your <br className="xs:hidden" />
+						Money
 					</h2>
 				</article>
-				<div className="grid grid-cols-3 gap-6 mt-6">
+				<div className="grid md:grid-cols-3 xs:grid-cols-1 gap-6 mt-6">
 					<article className="bg-gray-200 p-6 rounded">
 						<img src="Icon4.png.png" />
 						<h3 className="py-4 text-xl font-bold">
-							Improve Your Financial
+							Improve Your Financial Health
 						</h3>
 						<p>
-							Awareness <br />
-							Understand and take informed decissions about <br />
+							Awareness <br className="hidden" />
+							Understand and take informed decisions about{" "}
+							<br className="hidden" />
 							your spending habits.
 						</p>
 					</article>
@@ -285,7 +288,7 @@ function Distribute() {
 						</h3>
 						<p>
 							Create and stick to a budget by showing your
-							<br />
+							<br className="hidden" />
 							spending and indetifying areas of overspending.
 						</p>
 					</article>
@@ -294,13 +297,188 @@ function Distribute() {
 						<img src="Icon6.png.png" />
 						<h3 className="py-4 text-xl font-bold">Saving Money</h3>
 						<p>
-							Indetify and cut unnecessary expenses to save <br />
+							Indetify and cut unnecessary expenses to save{" "}
+							<br className="hidden" />
 							money.
 						</p>
 					</article>
 				</div>
 			</section>
 			{/* {!amount && <HowTo />} */}
+			<article>
+				<h2 className="text-3xl font-sans mb-10">Expense/Budget</h2>
+			</article>
+			<section className="md:flex justify-between">
+				<div className="md:w-8/12">
+					<div className="flex flex-col justify-between">
+						<div className="flex xs:flex-wrap md:flex-nowrap md:gap-10 justify-between">
+							<div className="md:w-1/3 xs:w-2.25/5 flex flex-col justify-end">
+								<label className="block">Income source</label>
+								<input
+									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
+									type="text"
+									placeholder="Income source"
+								/>
+							</div>
+							<div className="md:w-1/3 xs:w-2/5 flex flex-col justify-end">
+								<label className="block">Amount</label>
+								<input
+									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
+									type="text"
+									placeholder="Amount"
+								/>
+							</div>
+							<div className="md:w-1/3 xs:w-full">
+								<button className="w-full text-center bg-gray-200 py-4 px-6 mt-9 text-primary-900 font-bold">
+									Enter
+								</button>
+							</div>
+						</div>
+
+						<br className="my-5" />
+
+						{/* 						<div className="flex justify-between bg-gray-200 p-4 items-center">
+							<p>Divide using</p>
+							<div className="flex-inline">
+								<span className="px-2 text-sm">
+									Manual Amount
+								</span>
+								<input
+									type="checkbox"
+									className="mt-1 relative appearance-none inline-block h-[30px] w-[50px] cursor-pointer rounded-full bg-blue shadow-md transition-all after:content-[''] after:absolute after:top-1 after:-left-1 after:h-5 after:w-7 after:rounded-full after:bg-white after:shadow-sm after:transition-all checked:after:bg-gray-200 checked:after:translate-x-6 border border-solid border-spacing-1 border-black"
+								/>
+								<span className="px-2 text-sm">Percentage</span>
+							</div>
+						</div> */}
+						<br className="mt-5" />
+						<table className="w-full text-sm">
+							<thead>
+								<tr className="border-b-2">
+									<td className="p-2">Name</td>
+									<td className="p-2">Percentage</td>
+									<td className="p-2">Amount</td>
+									{/* <td className="p-2">Give/Take Cash</td> */}
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td className="p-2">David</td>
+									<td className="p-2">45%</td>
+									<td className="p-2">45000</td>
+									{/* <td className="p-2">Give Cash</td> */}
+									<td className="text-red-600 underline p-2">
+										Delete
+									</td>
+									<td className="underline p-2">Edit</td>
+								</tr>
+								<tr className="bg-gray-200">
+									<td className="p-2">David</td>
+									<td className="p-2">45%</td>
+									<td className="p-2">45000</td>
+									{/* <td className="p-2">Give Cash</td> */}
+									<td className="text-red-600 underline p-2">
+										Delete
+									</td>
+									<td className="underline p-2">Edit</td>
+								</tr>
+								<tr>
+									<td className="p-2">David</td>
+									<td className="p-2">45%</td>
+									<td className="p-2">45000</td>
+									{/* <td className="p-2">Give Cash</td> */}
+									<td className="text-red-600 underline p-2">
+										Delete
+									</td>
+									<td className="underline p-2">Edit</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr className="border-t-2">
+									<td className="p-2">Name</td>
+									<td className="p-2">Percentage</td>
+									<td className="p-2">Amount</td>
+									{/* <td className="p-2">Give/Take Cash</td> */}
+								</tr>
+							</tfoot>
+						</table>
+						<br className="mt-3" />
+						<form className="flex xs:flex-wrap md:flex-nowrap justify-between xs:gap-y-3 md:gap-y-0">
+							<input
+								className="md:w-[30%] xs:w-[40%] border border-gray-500 p-2 placeholder-black"
+								type="text"
+								placeholder="Name"
+							/>
+							<input
+								className="md:w-[10%] xs:w-[20%] border border-gray-500 p-2 placeholder-black"
+								type="text"
+								placeholder="%"
+							/>
+							<input
+								className="md:w-[30%] xs:w-[32%] border border-gray-500 p-2 placeholder-black"
+								type="text"
+								placeholder="Amount"
+							/>
+							{/* 							<select
+								name=""
+								id=""
+								className="border border-gray-500 p-2 text-sm outline-none bg-white flex placeholder-black">
+								<option value="">Select one</option>
+								<option value="">Take cash</option>
+								<option value="">Give cash</option>
+							</select> */}
+							<button className="xs:w-[46%] md:w-fit text-primary-800 bg-gray-200 font-bold text-primary-900 border-none py-2 px-6">
+								Add
+							</button>
+							<button className="xs:w-[46%] md:w-fit bg-gray-200 font-bold text-primary-900 py-2 px-6">
+								Save
+							</button>
+						</form>
+					</div>
+				</div>
+				<br className="md:hidden" />
+				<div className="md:w-3/12 bg-gray-200 p-5">
+					<h2 className="font-semibold py-2">Summary</h2>
+					<hr className="border-solid border-b-1 border-gray-400 my-5" />
+					<table className="w-full">
+						<tr>
+							<td className="py-2">Income source</td>
+							<td className="py-2 text-right">Pizza Party</td>
+						</tr>
+						<tr>
+							<td className="py-2">Spent/Budget</td>
+							<td className="py-2 text-right">UG 5.000</td>
+						</tr>
+						<tr>
+							<td className="py-2">Beneficiaries/Items</td>
+							<td className="py-2 text-right">5</td>
+						</tr>
+					</table>
+					<hr className="border-b-1 border-gray-400 my-5" />
+					<table className="w-full">
+						<tr>
+							<td className="py-2">Balance</td>
+							<td className="py-2 text-right">UGX 5.000/100%</td>
+						</tr>
+						<tr>
+							<td className="py-2">Spent</td>
+							<td className="py-2 text-right">UGX 5.000/100%</td>
+						</tr>
+					</table>
+					<hr className="border-solid border-b-1 border-gray-400 my-5" />
+					<br className="py-10" />
+					<button className="bg-blue w-full h-10 text-white">
+						Share
+					</button>
+					<div className="flex gap-5 pt-5">
+						<button className="w-1/2 py-2 text-red-700 border border-solid border-red-600 text-center">
+							Reset
+						</button>
+						<button className="w-1/2 py-2 text-primary-900 border border-solid border-blue text-center">
+							Save
+						</button>
+					</div>
+				</div>
+			</section>
 			<div className="grid md:grid-cols-12 xs:mx-5 sm:mx-10 md:mx-20 rounded-sm md:gap-5 mt-4">
 				<div className="md:col-span-9">
 					{!amount && (
