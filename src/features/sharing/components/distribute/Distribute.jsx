@@ -301,6 +301,180 @@ function Distribute() {
 				</div>
 			</section>
 			{/* {!amount && <HowTo />} */}
+			<article>
+				<h2 className="text-3xl font-sans mb-10">
+					Generate A Shareable <br />
+					Invoice
+				</h2>
+			</article>
+			<section className="flex justify-between">
+				<div className="8/12">
+					<div className="w-full h-full flex flex-col justify-between">
+						<div className="flex gap-10">
+							<div className="w-1/3">
+								<label className="block">
+									Payment Source/Purpose
+								</label>
+								<input
+									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
+									type="text"
+									placeholder="Payment Source/Purpose"
+								/>
+							</div>
+							<div className="w-1/3">
+								<label className="block">Amount</label>
+								<input
+									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
+									type="text"
+									placeholder="Amount"
+								/>
+							</div>
+							<div className="w-1/3">
+								<button className="w-full text-center bg-gray-200 py-4 px-6 mt-9 text-blue font-bold">
+									Enter
+								</button>
+							</div>
+						</div>
+						<div className="flex justify-between bg-gray-200 p-4 items-center">
+							<p>Divide using</p>
+							<div className="flex-inline">
+								<span className="px-2 text-sm">
+									Manual Amount
+								</span>
+								<input
+									type="checkbox"
+									className="mt-1 relative appearance-none inline-block h-[30px] w-[50px] cursor-pointer rounded-full bg-blue shadow-md transition-all after:content-[''] after:absolute after:top-1 after:-left-1 after:h-5 after:w-7 after:rounded-full after:bg-white after:shadow-sm after:transition-all checked:after:bg-gray-200 checked:after:translate-x-6 border border-solid border-spacing-1 border-black"
+								/>
+								<span className="px-2 text-sm">Percentage</span>
+							</div>
+						</div>
+						<table className="w-full text-sm">
+							<thead>
+								<tr className="border-b-2">
+									<td className="p-2">Name</td>
+									<td className="p-2">Percentage</td>
+									<td className="p-2">Amount</td>
+									<td className="p-2">Give/Take Cash</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td className="p-2">David</td>
+									<td className="p-2">45%</td>
+									<td className="p-2">45000</td>
+									<td className="p-2">Give Cash</td>
+									<td className="text-red-600 underline p-2">
+										Delete
+									</td>
+									<td className="underline p-2">Edit</td>
+								</tr>
+								<tr className="bg-gray-200">
+									<td className="p-2">David</td>
+									<td className="p-2">45%</td>
+									<td className="p-2">45000</td>
+									<td className="p-2">Give Cash</td>
+									<td className="text-red-600 underline p-2">
+										Delete
+									</td>
+									<td className="underline p-2">Edit</td>
+								</tr>
+								<tr>
+									<td className="p-2">David</td>
+									<td className="p-2">45%</td>
+									<td className="p-2">45000</td>
+									<td className="p-2">Give Cash</td>
+									<td className="text-red-600 underline p-2">
+										Delete
+									</td>
+									<td className="underline p-2">Edit</td>
+								</tr>
+							</tbody>
+							<tfooter>
+								<tr className="border-t-2">
+									<td className="p-2">Name</td>
+									<td className="p-2">Percentage</td>
+									<td className="p-2">Amount</td>
+									<td className="p-2">Give/Take Cash</td>
+								</tr>
+							</tfooter>
+						</table>
+						<form className="flex gap-5 mt-3">
+							<input
+								className="border border-gray-500 p-2 placeholder-black"
+								type="text"
+								placeholder="Name"
+							/>
+							<input
+								className="border border-gray-500 p-2 placeholder-black"
+								type="text"
+								placeholder="%"
+							/>
+							<input
+								className="border border-gray-500 p-2 placeholder-black"
+								type="text"
+								placeholder="Amount"
+							/>
+							<select
+								name=""
+								id=""
+								className="border border-gray-500 p-2 text-sm outline-none bg-white flex placeholder-black">
+								<option value="">Select one</option>
+								<option value="">Take cash</option>
+								<option value="">Give cash</option>
+							</select>
+							<button className="bg-gray-200 font-bold text-blue p-4">
+								Save
+							</button>
+						</form>
+
+						<button className="text-blue-800 bg-gray-200 font-bold w-fit text-blue border-none py-4 px-6">
+							Add
+						</button>
+					</div>
+				</div>
+				<div className="w-3/12 bg-gray-200 p-5">
+					<h2 className="font-semibold py-2">Summary</h2>
+					<hr className="border-solid border-b-1 border-gray-400 my-5" />
+					<table className="w-full">
+						<tr>
+							<td className="py-2">Payment Source/Purpose</td>
+							<td className="py-2 text-right">Pizza Party</td>
+						</tr>
+						<tr>
+							<td className="py-2">Shared Amount</td>
+							<td className="py-2 text-right">UG 5.000</td>
+						</tr>
+						<tr>
+							<td className="py-2">Number of beneficiaries</td>
+							<td className="py-2 text-right">5</td>
+						</tr>
+					</table>
+					<hr className="border-b-1 border-gray-400 my-5" />
+					<table className="w-full">
+						<tr>
+							<td className="py-2">Unshared Amount</td>
+							<td className="py-2 text-right">UGX 5.000/100%</td>
+						</tr>
+						<tr>
+							<td className="py-2">Shared Amount</td>
+							<td className="py-2 text-right">UGX 5.000/100%</td>
+						</tr>
+					</table>
+					<hr className="border-solid border-b-1 border-gray-400 my-5" />
+					<br className="py-10" />
+					<button className="bg-blue w-full h-10 text-white">
+						Share
+					</button>
+					<div className="flex gap-5 pt-5">
+						<button className="md:w-1/2 py-2 text-red-700 border border-solid border-red-600 text-center">
+							Restart
+						</button>
+						<button className="md:w-1/2 py-2 text-blue border border-solid border-blue text-center">
+							Save
+						</button>
+					</div>
+				</div>
+			</section>
 			<div className="grid md:grid-cols-12 xs:mx-5 sm:mx-10 md:mx-20 rounded-sm md:gap-5 mt-4">
 				<div className="md:col-span-9">
 					{!amount && (
