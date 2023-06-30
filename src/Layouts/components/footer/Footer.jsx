@@ -3,10 +3,10 @@ import { NavLink } from "react-router-dom";
 function Footer() {
 	return (
 		<footer>
-			<section class="flex py-14">
-				<div class="w-3/4 flex flex-col gap-7">
+			<section className="md:flex py-14 xs:p-4">
+				<div className="w-3/4 flex flex-col gap-7">
 					<NavLink
-						class="text-primary-900 underline decoration-slate-500 font-bold"
+						className="text-primary-900 underline decoration-slate-500 font-bold"
 						to="/">
 						Distributa
 					</NavLink>
@@ -18,15 +18,16 @@ function Footer() {
 						</p>
 					</article>
 
-					<figure class="flex flex-inline gap-5">
+					<figure className="flex flex-inline gap-5">
 						<img src="Facebook.png" />
 						<img src="Instagram.png" />
 						<img src="Twitter.png" />
 						<img src="LinkedIn.png" />
 					</figure>
 				</div>
-				<nav class="w-1/4 ms-auto flex flex-col items-end gap-2">
-					<h4 class="font-bold">Links</h4>
+				<br className="py-4 md:hidden" />
+				<nav className="md:w-1/4 ms-auto flex flex-col md:items-end gap-2">
+					<h4 className="font-bold">Links</h4>
 					<NavLink to="#">Sign Up</NavLink>
 					<NavLink to="#">Login</NavLink>
 					<NavLink to="#">FAQS</NavLink>
@@ -34,11 +35,11 @@ function Footer() {
 					<NavLink to="myinvoice.html">Invoice</NavLink>
 				</nav>
 			</section>
-			<section class="flex justify-between pt-6 border-t-2 border-black">
+			<section className="md:flex justify-between py-6 border-t-2 border-black">
 				<article>
 					<p>&copy; 2023. All rights reserved.</p>
 				</article>
-				<nav class="flex gap-12 text-right">
+				<nav className="flex gap-x-12 text-right">
 					<NavLink to="#">Privacy Policy</NavLink>
 					<NavLink to="#">Terms of service</NavLink>
 				</nav>
