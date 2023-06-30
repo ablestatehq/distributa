@@ -337,7 +337,7 @@ function Distribute() {
 
 						<br className="my-5" />
 
-						<div className="flex justify-between bg-gray-200 p-4 items-center">
+						{/* 						<div className="flex justify-between bg-gray-200 p-4 items-center">
 							<p>Divide using</p>
 							<div className="flex-inline">
 								<span className="px-2 text-sm">
@@ -349,7 +349,7 @@ function Distribute() {
 								/>
 								<span className="px-2 text-sm">Percentage</span>
 							</div>
-						</div>
+						</div> */}
 						<br className="mt-5" />
 						<table className="w-full text-sm">
 							<thead>
@@ -402,19 +402,19 @@ function Distribute() {
 							</tfoot>
 						</table>
 						<br className="mt-3" />
-						<form className="flex justify-between">
+						<form className="flex xs:flex-wrap md:flex-nowrap justify-between xs:gap-y-3 md:gap-y-0">
 							<input
-								className="w-[30%] border border-gray-500 p-2 placeholder-black"
+								className="md:w-[30%] xs:w-[40%] border border-gray-500 p-2 placeholder-black"
 								type="text"
 								placeholder="Name"
 							/>
 							<input
-								className="w-[10%] border border-gray-500 p-2 placeholder-black"
+								className="md:w-[10%] xs:w-[20%] border border-gray-500 p-2 placeholder-black"
 								type="text"
 								placeholder="%"
 							/>
 							<input
-								className="w-[30%] border border-gray-500 p-2 placeholder-black"
+								className="md:w-[30%] xs:w-[32%] border border-gray-500 p-2 placeholder-black"
 								type="text"
 								placeholder="Amount"
 							/>
@@ -426,10 +426,10 @@ function Distribute() {
 								<option value="">Take cash</option>
 								<option value="">Give cash</option>
 							</select> */}
-							<button className="text-primary-800 bg-gray-200 font-bold text-primary-900 border-none py-4 px-6">
+							<button className="xs:w-[46%] md:w-fit text-primary-800 bg-gray-200 font-bold text-primary-900 border-none py-2 px-6">
 								Add
 							</button>
-							<button className="bg-gray-200 font-bold text-primary-900 p-4">
+							<button className="xs:w-[46%] md:w-fit bg-gray-200 font-bold text-primary-900 py-2 px-6">
 								Save
 							</button>
 						</form>
@@ -471,7 +471,7 @@ function Distribute() {
 					</button>
 					<div className="flex gap-5 pt-5">
 						<button className="w-1/2 py-2 text-red-700 border border-solid border-red-600 text-center">
-							Restart
+							Reset
 						</button>
 						<button className="w-1/2 py-2 text-primary-900 border border-solid border-blue text-center">
 							Save
