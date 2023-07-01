@@ -44,7 +44,9 @@ function Distribute() {
 
 		if (error) return;
 
-		const myAmount = (parseInt(percentage) / 100) * parseInt(amount);
+		// const myAmount = (parseInt(percentage) / 100) * parseInt(amount);
+		const myAmount = parseInt(amount);
+
 		setBreakdown([
 			...breakdown,
 			{ name, percentage, amount: myAmount, received: false },
