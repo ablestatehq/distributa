@@ -5,7 +5,6 @@ module.exports = {
 	theme: {
 		extend: {
 			colors: {
-				blue: "#0d6efd",
 				primary: {
 					900: "#0d6efd",
 					800: "rgba(13,110,253,0.8)",
@@ -18,6 +17,12 @@ module.exports = {
 					100: "rgba(13,110,253,0.1)",
 					50: "rgba(13,110,253,0.05)",
 				},
+				main: "#111111",
+				grey1: "#FAFAFA",
+				greyborder: "#BBBBBB",
+				warning: "#F3BB1B",
+				error: "#F13637",
+				success: "#3DC13C",
 			},
 		},
 		screens: {

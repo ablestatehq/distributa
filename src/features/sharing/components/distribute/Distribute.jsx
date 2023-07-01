@@ -318,6 +318,12 @@ function Distribute() {
 									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
 									type="text"
 									placeholder="Income source"
+									onBlur={(e) => setProject(e.target.value)}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											setProject(e.target.value);
+										}
+									}}
 								/>
 							</div>
 							<div className="md:w-1/3 xs:w-2/5 flex flex-col justify-end">
@@ -326,11 +332,17 @@ function Distribute() {
 									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
 									type="text"
 									placeholder="Amount"
+									onBlur={(e) => setAmount(e.target.value)}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											setAmount(e.target.value);
+										}
+									}}
 								/>
 							</div>
 							<div className="md:w-1/3 xs:w-full">
 								<button className="w-full text-center bg-gray-200 py-4 px-6 mt-9 text-primary-900 font-bold">
-									Enter
+									Add Income
 								</button>
 							</div>
 						</div>
@@ -442,38 +454,50 @@ function Distribute() {
 					<table className="w-full">
 						<tr>
 							<td className="py-2">Income source</td>
-							<td className="py-2 text-right">Pizza Party</td>
+							<td className="py-2 text-right">{project}</td>
 						</tr>
 						<tr>
-							<td className="py-2">Spent/Budget</td>
-							<td className="py-2 text-right">UG 5.000</td>
+							<td className="py-2">Income</td>
+							<td className="py-2 text-right">
+								{currencyFormatter(amount)}
+							</td>
 						</tr>
 						<tr>
 							<td className="py-2">Beneficiaries/Items</td>
-							<td className="py-2 text-right">5</td>
+							<td className="py-2 text-right">
+								{breakdown?.length}
+							</td>
 						</tr>
 					</table>
 					<hr className="border-b-1 border-gray-400 my-5" />
 					<table className="w-full">
 						<tr>
 							<td className="py-2">Balance</td>
-							<td className="py-2 text-right">UGX 5.000/100%</td>
+							<td className="py-2 text-right">
+								{currencyFormatter(
+									breakdown?.length === 0 ? amount : balance
+								)}
+								/{100 - totalPercentage}%
+							</td>
 						</tr>
 						<tr>
 							<td className="py-2">Spent</td>
-							<td className="py-2 text-right">UGX 5.000/100%</td>
+							<td className="py-2 text-right">
+								{" "}
+								{currencyFormatter(total)} / {totalPercentage}%
+							</td>
 						</tr>
 					</table>
 					<hr className="border-solid border-b-1 border-gray-400 my-5" />
 					<br className="py-10" />
-					<button className="bg-blue w-full h-10 text-white">
+					<button className="bg-primary-900 w-full h-10 text-white">
 						Share
 					</button>
 					<div className="flex gap-5 pt-5">
 						<button className="w-1/2 py-2 text-red-700 border border-solid border-red-600 text-center">
 							Reset
 						</button>
-						<button className="w-1/2 py-2 text-primary-900 border border-solid border-blue text-center">
+						<button className="w-1/2 py-2 text-primary-900 border border-solid border-primary-900 text-center">
 							Save
 						</button>
 					</div>
