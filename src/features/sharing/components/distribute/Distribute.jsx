@@ -25,8 +25,10 @@ function Distribute() {
 	const [breakdown, setBreakdown] = useState([]);
 	const nameField = useRef();
 	const percentageField = useRef();
+	const amountField = useRef();
 	const nameFieldUpdate = useRef();
 	const percentageFieldUpdate = useRef();
+	const amountFieldUpdate = useRef();
 	const [distributions, setDistributions] = useState(null);
 	const [selectedDistribution, setSelectedDistribution] = useState(null);
 	const handleAdd = (e) => {
@@ -34,21 +36,24 @@ function Distribute() {
 		setError(null);
 		const name = nameField.current.value;
 		const percentage = percentageField.current.value;
-
-		if (name === "" || percentage === "") {
-			setError("Please enter a name and percentage");
+		const amount = amountField.current.value;
+		if (name === "" || percentage === "" || amount === "") {
+			setError("Please enter a name, percentage and amount!");
 			return;
 		}
 
 		if (error) return;
 
-		const myAmount = (parseInt(percentage) / 100) * parseInt(amount);
+		// const myAmount = (parseInt(percentage) / 100) * parseInt(amount);
+		const myAmount = parseInt(amount);
+
 		setBreakdown([
 			...breakdown,
 			{ name, percentage, amount: myAmount, received: false },
 		]);
 		nameField.current.value = "";
 		percentageField.current.value = "";
+		amountField.current.value = "";
 	};
 	const submitToServer = (e) => {
 		e.preventDefault();
@@ -318,6 +323,12 @@ function Distribute() {
 									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
 									type="text"
 									placeholder="Income source"
+									onBlur={(e) => setProject(e.target.value)}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											setProject(e.target.value);
+										}
+									}}
 								/>
 							</div>
 							<div className="md:w-1/3 xs:w-2/5 flex flex-col justify-end">
@@ -326,11 +337,17 @@ function Distribute() {
 									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
 									type="text"
 									placeholder="Amount"
+									onBlur={(e) => setAmount(e.target.value)}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											setAmount(e.target.value);
+										}
+									}}
 								/>
 							</div>
 							<div className="md:w-1/3 xs:w-full">
 								<button className="w-full text-center bg-gray-200 py-4 px-6 mt-9 text-primary-900 font-bold">
-									Enter
+									Add Income
 								</button>
 							</div>
 						</div>
@@ -351,72 +368,118 @@ function Distribute() {
 							</div>
 						</div> */}
 						<br className="mt-5" />
-						<table className="w-full text-sm">
-							<thead>
-								<tr className="border-b-2">
-									<td className="p-2">Name</td>
-									<td className="p-2">Percentage</td>
-									<td className="p-2">Amount</td>
-									{/* <td className="p-2">Give/Take Cash</td> */}
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td className="p-2">David</td>
-									<td className="p-2">45%</td>
-									<td className="p-2">45000</td>
-									{/* <td className="p-2">Give Cash</td> */}
-									<td className="text-red-600 underline p-2">
-										Delete
-									</td>
-									<td className="underline p-2">Edit</td>
-								</tr>
-								<tr className="bg-gray-200">
-									<td className="p-2">David</td>
-									<td className="p-2">45%</td>
-									<td className="p-2">45000</td>
-									{/* <td className="p-2">Give Cash</td> */}
-									<td className="text-red-600 underline p-2">
-										Delete
-									</td>
-									<td className="underline p-2">Edit</td>
-								</tr>
-								<tr>
-									<td className="p-2">David</td>
-									<td className="p-2">45%</td>
-									<td className="p-2">45000</td>
-									{/* <td className="p-2">Give Cash</td> */}
-									<td className="text-red-600 underline p-2">
-										Delete
-									</td>
-									<td className="underline p-2">Edit</td>
-								</tr>
-							</tbody>
-							<tfoot>
-								<tr className="border-t-2">
-									<td className="p-2">Name</td>
-									<td className="p-2">Percentage</td>
-									<td className="p-2">Amount</td>
-									{/* <td className="p-2">Give/Take Cash</td> */}
-								</tr>
-							</tfoot>
-						</table>
+						{breakdown.length > 0 && (
+							<table className="w-full text-sm">
+								<thead>
+									<tr className="border-b-2">
+										<td className="p-2">Name</td>
+										<td className="p-2">Percentage</td>
+										<td className="p-2">Amount</td>
+										{/* <td className="p-2">Give/Take Cash</td> */}
+									</tr>
+								</thead>
+								<tbody>
+									{breakdown.map((person, index) => {
+										return edit === index ? (
+											<tr key={index.toString()}>
+												<td className="p-2">
+													<input
+														type="text"
+														value={person.name}
+													/>
+												</td>
+												<td className="p-2">45%</td>
+												<td className="p-2">45000</td>
+												<td className="text-red-600 underline p-2">
+													Delete
+												</td>
+												<td className="underline p-2">
+													Edit
+												</td>
+											</tr>
+										) : (
+											<tr key={index.toString()}>
+												<td className="p-2">
+													{person.name}
+												</td>
+												<td className="p-2">
+													{person.percentage}%
+												</td>
+												<td className="p-2">
+													{currencyFormatter(
+														person.amount
+													)}
+												</td>
+												<td className="p-2">
+													<button
+														data-index={index}
+														onClick={handleRemove}
+														variant="outline-danger"
+														size="sm"
+														className="text-red-600 underline p-2 cursor-pointer">
+														Delete
+													</button>
+												</td>
+												<td className="p-2">
+													<button
+														data-edit-index={index}
+														onClick={handleEdit}
+														variant="outline-info"
+														className="underline p-2 cursor-pointer"
+														size="sm">
+														Edit
+													</button>
+												</td>
+											</tr>
+										);
+									})}
+								</tbody>
+								<tfoot>
+									<tr className="border-t-2">
+										<td className="p-2">Name</td>
+										<td className="p-2">Percentage</td>
+										<td className="p-2">Amount</td>
+										{/* <td className="p-2">Give/Take Cash</td> */}
+									</tr>
+								</tfoot>
+							</table>
+						)}
 						<br className="mt-3" />
-						<form className="flex xs:flex-wrap md:flex-nowrap justify-between xs:gap-y-3 md:gap-y-0">
+						<form
+							className="flex xs:flex-wrap md:flex-nowrap justify-between xs:gap-y-3 md:gap-y-0"
+							onSubmit={handleAdd}>
 							<input
 								className="md:w-[30%] xs:w-[40%] border border-gray-500 p-2 placeholder-black"
 								type="text"
 								placeholder="Name"
+								ref={nameField}
 							/>
 							<input
 								className="md:w-[10%] xs:w-[20%] border border-gray-500 p-2 placeholder-black"
 								type="text"
 								placeholder="%"
+								value={percentageField.value}
+								ref={percentageField}
+								onBlur={(e) => {
+									if (e.target?.value) {
+										amountField.current.value =
+											(Number(e.target.value) / 100) *
+											amount;
+									}
+								}}
 							/>
 							<input
 								className="md:w-[30%] xs:w-[32%] border border-gray-500 p-2 placeholder-black"
 								type="text"
 								placeholder="Amount"
+								ref={amountField}
+								onBlur={(e) => {
+									if (e.target?.value) {
+										percentageField.current.value =
+											(Number(e.target.value) / amount) *
+											100;
+									}
+								}}
 							/>
 							{/* 							<select
 								name=""
@@ -426,7 +489,9 @@ function Distribute() {
 								<option value="">Take cash</option>
 								<option value="">Give cash</option>
 							</select> */}
-							<button className="xs:w-[46%] md:w-fit text-primary-800 bg-gray-200 font-bold text-primary-900 border-none py-2 px-6">
+							<button
+								className="xs:w-[46%] md:w-fit text-primary-800 bg-gray-200 font-bold text-primary-900 border-none py-2 px-6"
+								onClick={handleAdd}>
 								Add
 							</button>
 							<button className="xs:w-[46%] md:w-fit bg-gray-200 font-bold text-primary-900 py-2 px-6">
@@ -442,44 +507,56 @@ function Distribute() {
 					<table className="w-full">
 						<tr>
 							<td className="py-2">Income source</td>
-							<td className="py-2 text-right">Pizza Party</td>
+							<td className="py-2 text-right">{project}</td>
 						</tr>
 						<tr>
-							<td className="py-2">Spent/Budget</td>
-							<td className="py-2 text-right">UG 5.000</td>
+							<td className="py-2">Income</td>
+							<td className="py-2 text-right">
+								{currencyFormatter(amount)}
+							</td>
 						</tr>
 						<tr>
 							<td className="py-2">Beneficiaries/Items</td>
-							<td className="py-2 text-right">5</td>
+							<td className="py-2 text-right">
+								{breakdown?.length}
+							</td>
 						</tr>
 					</table>
 					<hr className="border-b-1 border-gray-400 my-5" />
 					<table className="w-full">
 						<tr>
 							<td className="py-2">Balance</td>
-							<td className="py-2 text-right">UGX 5.000/100%</td>
+							<td className="py-2 text-right">
+								{currencyFormatter(
+									breakdown?.length === 0 ? amount : balance
+								)}
+								/{100 - totalPercentage}%
+							</td>
 						</tr>
 						<tr>
 							<td className="py-2">Spent</td>
-							<td className="py-2 text-right">UGX 5.000/100%</td>
+							<td className="py-2 text-right">
+								{" "}
+								{currencyFormatter(total)} / {totalPercentage}%
+							</td>
 						</tr>
 					</table>
 					<hr className="border-solid border-b-1 border-gray-400 my-5" />
 					<br className="py-10" />
-					<button className="bg-blue w-full h-10 text-white">
+					<button className="bg-primary-900 w-full h-10 text-white">
 						Share
 					</button>
 					<div className="flex gap-5 pt-5">
 						<button className="w-1/2 py-2 text-red-700 border border-solid border-red-600 text-center">
 							Reset
 						</button>
-						<button className="w-1/2 py-2 text-primary-900 border border-solid border-blue text-center">
+						<button className="w-1/2 py-2 text-primary-900 border border-solid border-primary-900 text-center">
 							Save
 						</button>
 					</div>
 				</div>
 			</section>
-			<div className="grid md:grid-cols-12 xs:mx-5 sm:mx-10 md:mx-20 rounded-sm md:gap-5 mt-4">
+			{/* 			<div className="grid md:grid-cols-12 xs:mx-5 sm:mx-10 md:mx-20 rounded-sm md:gap-5 mt-4">
 				<div className="md:col-span-9">
 					{!amount && (
 						<>
@@ -849,7 +926,7 @@ function Distribute() {
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> */}
 		</>
 	);
 }
