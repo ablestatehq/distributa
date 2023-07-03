@@ -81,6 +81,7 @@ function Distribute() {
 
 	const handleReset = (e) => {
 		setBreakdown([]);
+		setProject(null);
 		setAmount(0);
 		setTotal(0);
 		setBalance(0);
@@ -97,7 +98,7 @@ function Distribute() {
 
 	const handleEdit = (e) => {
 		setError(null);
-		setEdit(e.target.getAttribute("data-edit-index"));
+		setEdit(Number(e.target.getAttribute("data-edit-index")));
 	};
 	const handleReceived = (e) => {
 		setError(null);
@@ -142,6 +143,18 @@ function Distribute() {
 			(parseInt(percentage) / 100) * parseInt(amount);
 
 		setBreakdown(myBreakdown);
+		setEdit(null);
+	};
+
+	const handleUpdate = (index) => {
+		// console.log(breakdown[index]);
+		breakdown[index].name = nameFieldUpdate.current.value;
+		breakdown[index].percentage = Number(
+			percentageFieldUpdate.current.value
+		);
+		breakdown[index].amount = Number(amountFieldUpdate.current.value);
+		setBreakdown([...breakdown]);
+		console.log(breakdown);
 		setEdit(null);
 	};
 
@@ -358,36 +371,95 @@ function Distribute() {
 							</div>
 						</div> */}
 						<br className="mt-5" />
-						{breakdown.length > 0 && (
-							<table className="w-full text-sm">
-								<thead>
-									<tr className="border-b-2">
-										<td className="p-2">Name</td>
-										<td className="p-2">Percentage</td>
-										<td className="p-2">Amount</td>
-									</tr>
-								</thead>
+
+						<table className="w-full text-sm">
+							<thead>
+								<tr className="border-b-2">
+									<th className="text-left p-2">Name</th>
+									<th className="text-left p-2">
+										Percentage
+									</th>
+									<th className="text-left p-2">Amount</th>
+								</tr>
+							</thead>
+							{breakdown.length > 0 && (
 								<tbody>
 									{breakdown.map((person, index) => {
 										return edit === index ? (
-											<tr key={index.toString()}>
+											<tr
+												key={index.toString()}
+												className={
+													index % 2 === 0 &&
+													`bg-gray-200`
+												}>
 												<td className="p-2">
 													<input
 														type="text"
-														value={person.name}
+														defaultValue={
+															person.name
+														}
+														ref={nameFieldUpdate}
+														className="w-full border border-gray-500 py-1 p-2 placeholder-black"
 													/>
 												</td>
-												<td className="p-2">45%</td>
-												<td className="p-2">45000</td>
-												<td className="text-red-600 underline p-2">
-													Delete
+												<td className="flex p-2 gap-x-1 items-center">
+													<input
+														type="text"
+														defaultValue={
+															person.percentage
+														}
+														ref={
+															percentageFieldUpdate
+														}
+														onKeyUp={(e) => {
+															amountFieldUpdate.current.value =
+																(Number(
+																	e.target
+																		.value
+																) /
+																	100) *
+																amount;
+														}}
+														className="w-fit border border-gray-500 py-1 p-2 placeholder-black"
+													/>
+													%
 												</td>
-												<td className="underline p-2">
-													Edit
+												<td className="p-2">
+													<input
+														type="text"
+														defaultValue={
+															person.amount
+														}
+														ref={amountFieldUpdate}
+														onKeyUp={(e) => {
+															percentageFieldUpdate.current.value =
+																(Number(
+																	e.target
+																		.value
+																) /
+																	amount) *
+																100;
+														}}
+														className="w-full border border-gray-500 py-1 p-2 placeholder-black"
+													/>
+												</td>
+												<td colSpan="2">
+													<button
+														className="w-fit bg-gray-200 font-bold text-primary-900 py-1 px-6"
+														onClick={() =>
+															handleUpdate(index)
+														}>
+														Save
+													</button>
 												</td>
 											</tr>
 										) : (
-											<tr key={index.toString()}>
+											<tr
+												key={index.toString()}
+												className={
+													index % 2 === 0 &&
+													`bg-gray-200`
+												}>
 												<td className="p-2">
 													{person.name}
 												</td>
@@ -423,16 +495,19 @@ function Distribute() {
 										);
 									})}
 								</tbody>
-								<tfoot>
-									<tr className="border-t-2">
-										<td className="p-2">Name</td>
-										<td className="p-2">Percentage</td>
-										<td className="p-2">Amount</td>
-										{/* <td className="p-2">Give/Take Cash</td> */}
-									</tr>
-								</tfoot>
-							</table>
-						)}
+							)}
+							<tfoot>
+								<tr className="border-t-2">
+									<th className="text-left p-2">Name</th>
+									<th className="text-left p-2">
+										Percentage
+									</th>
+									<th className="text-left p-2">Amount</th>
+									{/* <td className="p-2">Give/Take Cash</td> */}
+								</tr>
+							</tfoot>
+						</table>
+
 						<br className="mt-3" />
 						<form
 							className="flex xs:flex-wrap md:flex-nowrap justify-between xs:gap-y-3 md:gap-y-0"
@@ -543,7 +618,9 @@ function Distribute() {
 						Share
 					</button>
 					<div className="flex gap-5 pt-5">
-						<button className="w-1/2 py-2 text-red-700 border border-solid border-red-600 text-center">
+						<button
+							className="w-1/2 py-2 text-red-700 border border-solid border-red-600 text-center"
+							onClick={handleReset}>
 							Reset
 						</button>
 						<button className="w-1/2 py-2 text-primary-900 border border-solid border-primary-900 text-center">
