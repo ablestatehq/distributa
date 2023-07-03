@@ -14,11 +14,11 @@ function PublicNav() {
 		setActiveLink(location.pathname);
 	};
 	return (
-		<header class="flex justify-between mt-5">
+		<header className="flex justify-between mt-5">
 			<div>
 				<NavLink
 					to="/"
-					className="underline decoration-black text-blue text-lg font-bold py-3">
+					className="underline decoration-black text-primary-900 text-lg font-bold py-3">
 					Distributa
 				</NavLink>
 			</div>
@@ -30,7 +30,7 @@ function PublicNav() {
 					Login
 				</NavLink>
 				<NavLink
-					className="text-blue font-semibold bg-gray-200 p-4"
+					className="text-primary-900 font-semibold bg-gray-200 p-4"
 					to="#">
 					Start Now, It's Free
 				</NavLink>
