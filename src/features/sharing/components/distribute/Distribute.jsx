@@ -8,6 +8,7 @@ import Table from "react-bootstrap/Table";
 import Alert from "react-bootstrap/Alert";
 import FormControl from "react-bootstrap/FormControl";
 import { uniqueDateStringId } from "../../../../utils/unique.date.id";
+import addThousandSeparators from "../../../../utils/add.thousand.separators";
 // Form handling
 // import { Formik, Form, Field } from "formik";
 
@@ -42,7 +43,8 @@ function Distribute() {
 		setError(null);
 		const name = nameField.current.value;
 		const percentage = percentageField.current.value;
-		const amount = amountField.current.value;
+		const amount = amountField.current.value.replace(/,/g, "");
+		console.log(amount);
 		if (name === "" || percentage === "" || amount === "") {
 			setError("Please enter a name, percentage and amount!");
 			return;
@@ -161,7 +163,9 @@ function Distribute() {
 		breakdown[index].percentage = Number(
 			percentageFieldUpdate.current.value
 		);
-		breakdown[index].amount = Number(amountFieldUpdate.current.value);
+		breakdown[index].amount = Number(
+			amountFieldUpdate.current.value.replace(/,/g, "")
+		);
 		setBreakdown([...breakdown]);
 		console.log(breakdown);
 		setEdit(null);
@@ -354,7 +358,15 @@ function Distribute() {
 									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
 									type="text"
 									placeholder="Amount"
-									onChange={(e) => setAmount(e.target.value)}
+									onChange={(e) => {
+										const amount = Number(
+											e.target.value.replace(/,/g, "")
+										);
+										setAmount(amount);
+									}}
+									onKeyUp={(e) => {
+										addThousandSeparators(e.target);
+									}}
 								/>
 							</div>
 							<textarea
@@ -423,43 +435,53 @@ function Distribute() {
 														className="w-full border border-gray-500 py-1 p-2 placeholder-black"
 													/>
 												</td>
-												<td className="flex p-2 gap-x-1 items-center">
-													<input
-														type="text"
-														defaultValue={
-															person.percentage
-														}
-														ref={
-															percentageFieldUpdate
-														}
-														onKeyUp={(e) => {
-															amountFieldUpdate.current.value =
-																(Number(
-																	e.target
-																		.value
-																) /
-																	100) *
-																amount;
-														}}
-														className="w-fit border border-gray-500 py-1 p-2 placeholder-black"
-													/>
-													%
+												<td className="flex p-2 justify-center">
+													<span className="w-fit py-1 p-2 border border-gray-500 bg-white">
+														<input
+															type="text"
+															defaultValue={
+																person.percentage
+															}
+															ref={
+																percentageFieldUpdate
+															}
+															onKeyUp={(e) => {
+																amountFieldUpdate.current.value =
+																	(Number(
+																		e.target
+																			.value
+																	) /
+																		100) *
+																	amount;
+																addThousandSeparators(
+																	amountFieldUpdate.current
+																);
+															}}
+															className="w-7 pl-1 border-0 outline-0 placeholder-black "
+														/>
+														%
+													</span>
 												</td>
 												<td className="p-2">
 													<input
 														type="text"
-														defaultValue={
-															person.amount
-														}
+														defaultValue={person.amount.toLocaleString()}
 														ref={amountFieldUpdate}
 														onKeyUp={(e) => {
+															const inputValue =
+																e.target.value.replace(
+																	/,/g,
+																	""
+																);
 															percentageFieldUpdate.current.value =
 																(Number(
-																	e.target
-																		.value
+																	inputValue
 																) /
 																	amount) *
 																100;
+															addThousandSeparators(
+																e.target
+															);
 														}}
 														className="w-full border border-gray-500 py-1 p-2 placeholder-black"
 													/>
@@ -550,6 +572,9 @@ function Distribute() {
 										amountField.current.value =
 											(Number(e.target.value) / 100) *
 											amount;
+										addThousandSeparators(
+											amountField.current
+										);
 									}
 								}}
 							/>
@@ -560,9 +585,12 @@ function Distribute() {
 								ref={amountField}
 								onKeyUp={(e) => {
 									if (e.target?.value) {
+										const inputValue =
+											e.target.value.replace(/,/g, "");
 										percentageField.current.value =
-											(Number(e.target.value) / amount) *
-											100;
+											(Number(inputValue) / amount) * 100;
+
+										addThousandSeparators(e.target);
 									}
 								}}
 							/>
@@ -617,7 +645,7 @@ function Distribute() {
 								<td className="py-2 text-right">
 									{currencyFormatter(
 										breakdown?.length === 0
-											? amount
+											? Number(amount)
 											: balance
 									)}
 									/{100 - totalPercentage}%
