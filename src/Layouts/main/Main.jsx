@@ -4,7 +4,7 @@ import { Footer } from "../components";
 
 const Main = () => {
 	return (
-		<main class="container mx-auto">
+		<main className="container mx-auto">
 			<PublicNav />
 			{/* <div className="w-screen"> */}
 			<Outlet />

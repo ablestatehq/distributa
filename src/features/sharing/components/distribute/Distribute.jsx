@@ -324,11 +324,6 @@ function Distribute() {
 									type="text"
 									placeholder="Income source"
 									onBlur={(e) => setProject(e.target.value)}
-									onKeyDown={(e) => {
-										if (e.key === "Enter") {
-											setProject(e.target.value);
-										}
-									}}
 								/>
 							</div>
 							<div className="md:w-1/3 xs:w-2/5 flex flex-col justify-end">
@@ -338,11 +333,6 @@ function Distribute() {
 									type="text"
 									placeholder="Amount"
 									onBlur={(e) => setAmount(e.target.value)}
-									onKeyDown={(e) => {
-										if (e.key === "Enter") {
-											setAmount(e.target.value);
-										}
-									}}
 								/>
 							</div>
 							<div className="md:w-1/3 xs:w-full">
@@ -375,7 +365,6 @@ function Distribute() {
 										<td className="p-2">Name</td>
 										<td className="p-2">Percentage</td>
 										<td className="p-2">Amount</td>
-										{/* <td className="p-2">Give/Take Cash</td> */}
 									</tr>
 								</thead>
 								<tbody>
@@ -505,41 +494,48 @@ function Distribute() {
 					<h2 className="font-semibold py-2">Summary</h2>
 					<hr className="border-solid border-b-1 border-gray-400 my-5" />
 					<table className="w-full">
-						<tr>
-							<td className="py-2">Income source</td>
-							<td className="py-2 text-right">{project}</td>
-						</tr>
-						<tr>
-							<td className="py-2">Income</td>
-							<td className="py-2 text-right">
-								{currencyFormatter(amount)}
-							</td>
-						</tr>
-						<tr>
-							<td className="py-2">Beneficiaries/Items</td>
-							<td className="py-2 text-right">
-								{breakdown?.length}
-							</td>
-						</tr>
+						<tbody>
+							<tr>
+								<td className="py-2">Income source</td>
+								<td className="py-2 text-right">{project}</td>
+							</tr>
+							<tr>
+								<td className="py-2">Income</td>
+								<td className="py-2 text-right">
+									{currencyFormatter(amount)}
+								</td>
+							</tr>
+							<tr>
+								<td className="py-2">Beneficiaries/Items</td>
+								<td className="py-2 text-right">
+									{breakdown?.length}
+								</td>
+							</tr>
+						</tbody>
 					</table>
 					<hr className="border-b-1 border-gray-400 my-5" />
 					<table className="w-full">
-						<tr>
-							<td className="py-2">Balance</td>
-							<td className="py-2 text-right">
-								{currencyFormatter(
-									breakdown?.length === 0 ? amount : balance
-								)}
-								/{100 - totalPercentage}%
-							</td>
-						</tr>
-						<tr>
-							<td className="py-2">Spent</td>
-							<td className="py-2 text-right">
-								{" "}
-								{currencyFormatter(total)} / {totalPercentage}%
-							</td>
-						</tr>
+						<tbody>
+							<tr>
+								<td className="py-2">Balance</td>
+								<td className="py-2 text-right">
+									{currencyFormatter(
+										breakdown?.length === 0
+											? amount
+											: balance
+									)}
+									/{100 - totalPercentage}%
+								</td>
+							</tr>
+							<tr>
+								<td className="py-2">Spent</td>
+								<td className="py-2 text-right">
+									{" "}
+									{currencyFormatter(total)} /{" "}
+									{totalPercentage}%
+								</td>
+							</tr>
+						</tbody>
 					</table>
 					<hr className="border-solid border-b-1 border-gray-400 my-5" />
 					<br className="py-10" />
