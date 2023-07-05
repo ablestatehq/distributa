@@ -17,12 +17,18 @@ function Distribute() {
 	const [distributeId, setDistributeId] = useState(uniqueDateStringId());
 	const [amount, setAmount] = useState(0);
 	const [project, setProject] = useState("");
+	const [incomeDetails, setIncomeDetails] = useState("");
 	const [total, setTotal] = useState(0);
 	const [totalPercentage, setTotalPercentage] = useState(0);
 	const [balance, setBalance] = useState(0);
 	const [error, setError] = useState(null);
 	const [edit, setEdit] = useState(null);
-	const [breakdown, setBreakdown] = useState([]);
+	const [breakdown, setBreakdown] = useState([
+		{ name: "name", percentage: 0, amount: 0, default: true },
+	]);
+	const projectField = useRef();
+	const incomeAmountField = useRef();
+	const incomeDetailsField = useRef();
 	const nameField = useRef();
 	const percentageField = useRef();
 	const amountField = useRef();
@@ -86,6 +92,9 @@ function Distribute() {
 		setTotal(0);
 		setBalance(0);
 		setError(null);
+		incomeAmountField.current.value = "";
+		incomeDetailsField.current.value = "";
+		projectField.current.value = "";
 	};
 
 	const handleRemove = (e) => {
@@ -329,33 +338,38 @@ function Distribute() {
 			<section className="md:flex justify-between">
 				<div className="md:w-8/12">
 					<div className="flex flex-col justify-between">
-						<div className="flex xs:flex-wrap md:flex-nowrap md:gap-10 justify-between">
-							<div className="md:w-1/3 xs:w-2.25/5 flex flex-col justify-end">
+						<div className="flex flex-wrap gap-y-5 justify-between">
+							<div className="w-[60%] flex flex-col justify-end">
 								<label className="block">Income source</label>
 								<input
 									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
 									type="text"
 									placeholder="Income source"
-									onBlur={(e) => setProject(e.target.value)}
+									onChange={(e) => setProject(e.target.value)}
 								/>
 							</div>
-							<div className="md:w-1/3 xs:w-2/5 flex flex-col justify-end">
+							<div className="w-[34%] flex flex-col justify-end">
 								<label className="block">Amount</label>
 								<input
 									className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
 									type="text"
 									placeholder="Amount"
-									onBlur={(e) => setAmount(e.target.value)}
+									onChange={(e) => setAmount(e.target.value)}
 								/>
 							</div>
-							<div className="md:w-1/3 xs:w-full">
+							<textarea
+								className="w-full border border-gray-500 p-4 mt-2 placeholder-black"
+								placeholder="Provide some details about your income source."
+								ref={incomeDetailsField}
+								onChange={(e) =>
+									setIncomeDetails(e.target.value)
+								}></textarea>
+							{/* <div className="md:w-1/3 xs:w-full">
 								<button className="w-full text-center bg-gray-200 py-4 px-6 mt-9 text-primary-900 font-bold">
 									Add Income
 								</button>
-							</div>
+							</div> */}
 						</div>
-
-						<br className="my-5" />
 
 						{/* 						<div className="flex justify-between bg-gray-200 p-4 items-center">
 							<p>Divide using</p>
@@ -370,6 +384,13 @@ function Distribute() {
 								<span className="px-2 text-sm">Percentage</span>
 							</div>
 						</div> */}
+						<br className="mt-5" />
+						<h2 className="font-bold">Expenditure/Budget info.</h2>
+						<p>
+							Provide details about expenditure or budget. Specify
+							name, percentage or amount per item. Click Add Item
+							to add more items or beneficiaries.
+						</p>
 						<br className="mt-5" />
 
 						<table className="w-full text-sm">
@@ -524,7 +545,7 @@ function Distribute() {
 								placeholder="%"
 								value={percentageField.value}
 								ref={percentageField}
-								onBlur={(e) => {
+								onKeyUp={(e) => {
 									if (e.target?.value) {
 										amountField.current.value =
 											(Number(e.target.value) / 100) *
@@ -537,7 +558,7 @@ function Distribute() {
 								type="text"
 								placeholder="Amount"
 								ref={amountField}
-								onBlur={(e) => {
+								onKeyUp={(e) => {
 									if (e.target?.value) {
 										percentageField.current.value =
 											(Number(e.target.value) / amount) *
@@ -545,7 +566,7 @@ function Distribute() {
 									}
 								}}
 							/>
-							{/* 							<select
+							{/* <select
 								name=""
 								id=""
 								className="border border-gray-500 p-2 text-sm outline-none bg-white flex placeholder-black">
@@ -556,11 +577,11 @@ function Distribute() {
 							<button
 								className="xs:w-[46%] md:w-fit text-primary-800 bg-gray-200 font-bold text-primary-900 border-none py-2 px-6"
 								onClick={handleAdd}>
-								Add
+								Add Item
 							</button>
-							<button className="xs:w-[46%] md:w-fit bg-gray-200 font-bold text-primary-900 py-2 px-6">
+							{/* 							<button className="xs:w-[46%] md:w-fit bg-gray-200 font-bold text-primary-900 py-2 px-6">
 								Save
-							</button>
+							</button> */}
 						</form>
 					</div>
 				</div>
