@@ -229,29 +229,33 @@ function Distribute() {
 
 	return (
 		<>
-			<section className="flex md:flex-row xs:flex-col-reverse py-10">
-				<div className="md:w-1/2 flex flex-col justify-between">
+			<section className="flex md:flex-row xs:flex-col-reverse py-10 gap-x-20">
+				<div className="md:w-1/2 flex flex-col text-center md:h-8/12 items-center justify-center">
 					<h1 className="xs:font-bold md:text-5xl font-sans">
-						Effortlessly Track Your <br className="xs:hidden" />
-						Expenses & Generate <br className="xs:hidden" />
-						Professional Invoices
+						I want to track my expenses and budget.
 					</h1>
-					<p className="py-4 md:text-2xl">
-						Simplify the process, making it easy for you to track
-						your <br className="xs:hidden" />
-						expenses and generate professional invoices in minutes.
+					<p className="md:text-2xl">
+						Your expenses and budget are stored in the cloud if
+						you're a member.
 					</p>
-					<button className="py-4 px-14 mt-4 bg-blue text-white text-center md:w-fit">
+					<Link
+						to="/invoice"
+						className="py-4 px-14 mt-14 bg-primary-800 text-white text-center md:w-fit">
 						Start Now, It's Free
-					</button>
+					</Link>
 				</div>
-				<div className="md:w-1/2 md:flex flex-end">
-					<img
-						className="w-full h-auto"
-						src="Colunm.png.png"
-						alt="invoices "
-					/>
-					<br className="md:hidden" />
+				<div className="md:w-1/2 bg-primary-800 text-center p-5 flex flex-col md:h-8/12 justify-center items-center">
+					<h1 className="xs:font-bold md:text-5xl font-sans">
+						I want to generate invoices.
+					</h1>
+					<p className="md:text-2xl">
+						Generate unlimited invoices for FREE.
+					</p>
+					<Link
+						to="/expenses"
+						className="py-4 px-14 mt-14 border-white border-solid border-2 text-white text-center md:w-fit">
+						Start Now, It's Free
+					</Link>
 				</div>
 			</section>
 			<section className="py-10">
