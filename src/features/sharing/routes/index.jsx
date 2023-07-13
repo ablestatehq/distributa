@@ -2,11 +2,11 @@ import { Distribute } from "../components";
 
 export const sharingRoutes = [
 	{
-		path: "/",
+		path: "/expense",
 		element: <Distribute />,
 	},
 	{
-		path: "/:id",
+		path: "expense/:id",
 		element: <Distribute />,
 	},
 ];

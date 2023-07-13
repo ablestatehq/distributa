@@ -229,68 +229,6 @@ function Distribute() {
 
 	return (
 		<>
-			<section className="flex md:flex-row xs:flex-col-reverse py-10">
-				<div className="md:w-1/2 flex flex-col justify-between">
-					<h1 className="xs:font-bold md:text-5xl font-sans">
-						Effortlessly Track Your <br className="xs:hidden" />
-						Expenses & Generate <br className="xs:hidden" />
-						Professional Invoices
-					</h1>
-					<p className="py-4 md:text-2xl">
-						Simplify the process, making it easy for you to track
-						your <br className="xs:hidden" />
-						expenses and generate professional invoices in minutes.
-					</p>
-					<button className="py-4 px-14 mt-4 bg-blue text-white text-center md:w-fit">
-						Start Now, It's Free
-					</button>
-				</div>
-				<div className="md:w-1/2 md:flex flex-end">
-					<img
-						className="w-full h-auto"
-						src="Colunm.png.png"
-						alt="invoices "
-					/>
-					<br className="md:hidden" />
-				</div>
-			</section>
-			<section className="py-10">
-				<article>
-					<h2 className="text-3xl font-sans">
-						Generate and Share <br className="xs:hidden" />
-						Invoices In 3 Simple Steps
-					</h2>
-				</article>
-				<div className="grid md:grid-cols-3 gap-6 mt-6 xs:grid-cols-1">
-					<article className="bg-gray-200 p-5 rounded">
-						<img src="Icon1.png.png" />
-						<h3 className="py-4 text-xl font-bold">
-							Income details
-						</h3>
-						<p>Add the amount you earned.</p>
-					</article>
-					<article className="bg-gray-200 pt-4 pl-4 pb-5 rounded">
-						<img src="Icon2.png.png" />
-						<h3 className="py-4 text-xl font-bold">
-							Beneficiaries
-						</h3>
-						<p>
-							Enter the Name and Percentage/Amount of each person.{" "}
-							<br />
-							Made a mistake? No worries you can edit or delete.
-						</p>
-					</article>
-					<article className="bg-gray-200 pt-4 pl-4 pb-5 rounded">
-						<img src="Icon3.png.png" />
-						<h3 className="py-4 text-xl font-bold">Breakdown</h3>
-						<p>
-							See the break down of the amount. Click Restart to
-							<br />
-							start a fresh.
-						</p>
-					</article>
-				</div>
-			</section>
 			<section className="py-10">
 				<article>
 					<h2 className="text-3xl font-sans">
