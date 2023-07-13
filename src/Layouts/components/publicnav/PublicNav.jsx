@@ -24,6 +24,7 @@ function PublicNav() {
 			</div>
 			<nav>
 				<NavLink
+					to="/login"
 					className="mr-6 p-3"
 					onMouseEnter={() => handleMouseEnter("/")}
 					onMouseLeave={handleMouseLeave}>
@@ -31,8 +32,9 @@ function PublicNav() {
 				</NavLink>
 				<NavLink
 					className="text-primary-900 font-semibold bg-gray-200 p-4"
-					to="#">
-					Start Now, It's Free
+					to="https://github.com/ablestatehq/distributa"
+					target="_blank">
+					Github
 				</NavLink>
 			</nav>
 		</header>
