@@ -24,6 +24,20 @@ function PublicNav() {
 			</div>
 			<nav>
 				<NavLink
+					to="/expense"
+					className="mr-6 p-3"
+					onMouseEnter={() => handleMouseEnter("/")}
+					onMouseLeave={handleMouseLeave}>
+					Expenses
+				</NavLink>
+				<NavLink
+					to="/invoice"
+					className="mr-6 p-3"
+					onMouseEnter={() => handleMouseEnter("/")}
+					onMouseLeave={handleMouseLeave}>
+					Invoice
+				</NavLink>
+				<NavLink
 					to="/login"
 					className="mr-6 p-3"
 					onMouseEnter={() => handleMouseEnter("/")}
@@ -31,7 +45,7 @@ function PublicNav() {
 					Login
 				</NavLink>
 				<NavLink
-					className="text-primary-900 font-semibold bg-gray-200 p-4"
+					className="text-primary-900 font-semibold bg-gray-200 p-2 px-4 rounded-xl"
 					to="https://github.com/ablestatehq/distributa"
 					target="_blank">
 					Github
