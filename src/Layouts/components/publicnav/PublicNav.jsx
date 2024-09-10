@@ -4,7 +4,7 @@ import { useState } from "react";
 
 function PublicNav() {
 	const location = useLocation();
-	const [activeLink, setActiveLink] = useState(location.pathname);
+	const [, setActiveLink] = useState(location.pathname);
 
 	const handleMouseEnter = (link) => {
 		setActiveLink(link);
