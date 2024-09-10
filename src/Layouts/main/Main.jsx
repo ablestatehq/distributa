@@ -3,15 +3,13 @@ import { PublicNav } from "../components";
 import { Footer } from "../components";
 
 const Main = () => {
-	return (
-		<main className="container mx-auto">
-			<PublicNav />
-			{/* <div className="w-screen"> */}
-			<Outlet />
-			<Footer />
-			{/* </div> */}
-		</main>
-	);
+  return (
+    <main className="container mx-auto">
+      <PublicNav />
+      <Outlet />
+      <Footer />
+    </main>
+  );
 };
 
 export default Main;

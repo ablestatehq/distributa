@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { useAuth } from "../../../hooks";
+// import { useAuth } from "../../../hooks";
 
 function PublicNav() {
 	const location = useLocation();
@@ -13,6 +13,7 @@ function PublicNav() {
 	const handleMouseLeave = () => {
 		setActiveLink(location.pathname);
 	};
+	
 	return (
 		<header className="flex justify-between mt-5">
 			<div>
@@ -22,7 +23,7 @@ function PublicNav() {
 					Distributa
 				</NavLink>
 			</div>
-			<nav>
+			<nav className="hidden md:flex">
 				<NavLink
 					to="/expense"
 					className="mr-6 p-3"
