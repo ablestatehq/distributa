@@ -69,7 +69,7 @@ const Invoice = () => {
   };
 
   return (
-    <div className="h-fit w-full px-5 sm:px-10 md:px-20 border">
+    <div className="h-fit w-full px-5 sm:px-10 md:px-20">
       <h2 className="font-light text-md my-2">Generate Bill</h2>
       <Formik
         initialValues={initialValues}
@@ -154,7 +154,7 @@ const Invoice = () => {
                 Save
               </button>
             </div>
-            <div className="border border-gray-400 bg-white p-5 shadow-md pb-10">
+            <div className="border bg-white p-5 pb-10">
               <div className="flex justify-between sm:flex-col-reverse xs:flex-col-reverse md:flex-row sm:gap-y-2 xs:gap-y-2">
                 <div className="flex flex-col justify-end">
                   {values?.logo ? (
@@ -473,7 +473,7 @@ const Invoice = () => {
                     </section>
                     <div className="mt-2">
                       <button
-                        className="rounded border py-1 px-2 text-sm bg-green-600 text-white"
+                        className="rounded py-1 px-2 text-sm bg-green-600 text-white"
                         onClick={(event) => {
                           event.preventDefault();
                           arrayHelpers.push({
