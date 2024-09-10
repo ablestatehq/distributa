@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
+import { Formik, Field, Form, FieldArray } from "formik";
 import { AiOutlineClose } from "react-icons/ai";
 import { currencyFormatter } from "../../../../utils/currency.formatter";
 import PDFDoc from "../pdf";
@@ -60,7 +60,6 @@ const Invoice = () => {
   const [shipping, setShowShipping] = useState(false);
 
   const saveInvoice = (values) => {
-    console.log("save invoice");
     const getInvoices = localStorage.getItem("invoices");
     const oldInvoices = JSON.parse(getInvoices);
     const newInvoices =
@@ -70,7 +69,7 @@ const Invoice = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-45px)] w-screen xs: px-5 sm:px-10 md:px-20 border">
+    <div className="h-fit w-full px-5 sm:px-10 md:px-20 border">
       <h2 className="font-light text-md my-2">Generate Bill</h2>
       <Formik
         initialValues={initialValues}

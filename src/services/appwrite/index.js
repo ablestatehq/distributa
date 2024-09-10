@@ -14,7 +14,7 @@ import {
   DATABASE_ID,
   INVOICES_COLLECTION_ID,
   DISTRIBUTIONS_COLLECTION_ID,
-  LOGOS_BUCKET_ID,
+  // LOGOS_BUCKET_ID,
 } from "../../data/constants";
 
 const appwriteClient = new Appwrite();
