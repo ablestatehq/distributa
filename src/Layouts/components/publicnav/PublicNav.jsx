@@ -24,7 +24,7 @@ function PublicNav() {
     <header className="w-full flex justify-between mt-5 h-fit">
       <div className="h-full flex items-center">
         <NavLink to="/">
-          <Logo />
+          <Logo className="w-[5.758rem] h-[1.125rem] md:w-32 md:h-6" />
         </NavLink>
       </div>
       <nav className="hidden md:flex">

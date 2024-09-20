@@ -1,46 +1,82 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import Logo from "../../../components/Logo/Logo";
+import {
+  Facebook,
+  Instagram,
+  Twitter,
+  LinkedIn,
+} from "../../../components/icons";
+
 function Footer() {
   return (
-    <footer className="">
-      <section className="md:flex py-14">
-        <div className="w-3/4 flex flex-col gap-7">
-          <NavLink
-            className="text-accent underline decoration-slate-500 font-bold"
-            to="/"
-          >
-            Distributa
+    <footer>
+      <section className="flex flex-col justify-between gap-y-16 md:flex-row py-16">
+        <div className="w-[19.75rem] flex flex-col gap-y-8">
+          <NavLink to="/">
+            <Logo className="w-[5.875rem] h-[1.10125rem] md:w-[5.85375rem] md:h-[0.96125rem]" />
           </NavLink>
           <article>
-            <p>
-              Simplfying the process, making it easy for{" "}
-              <br className="hidden sm:block" />
-              you to track your expenses and generate{" "}
-              <br className="hidden sm:block" />
-              professional invoices in minutes
+            <p className="font-satoshi font-normal leading-150 tracking-tightest">
+              Simplfying the process, making it easy for you to track your
+              expenses and generate professional invoices in minutes
             </p>
           </article>
 
-          <figure className="flex flex-inline gap-5">
-            <img src="Facebook.png" alt="facebook icon" />
-            <img src="Instagram.png" alt="instagram icon" />
-            <img src="Twitter.png" alt="twitter icon" />
-            <img src="LinkedIn.png" alt="linkedin icon" />
-          </figure>
+          <nav className="flex flex-inline gap-6">
+            <Link to="#">
+              <Facebook />
+            </Link>
+            <Link to="#">
+              <Instagram />
+            </Link>
+            <Link to="#">
+              <Twitter />
+            </Link>
+            <Link to="#">
+              <LinkedIn />
+            </Link>
+          </nav>
         </div>
-        <br className="py-4 md:hidden" />
-        <nav className="md:w-1/4 ms-auto flex flex-col md:items-end gap-2">
-          <h4 className="font-bold">Links</h4>
-          <NavLink to="#">Sign Up</NavLink>
-          <NavLink to="#">Login</NavLink>
-          <NavLink to="#">FAQS</NavLink>
-          <NavLink to="#">Support</NavLink>
-          <NavLink to="myinvoice.html">Invoice</NavLink>
+        <nav className="w-fit flex flex-col md:items-start gap-y-3">
+          <h4 className="font-bold font-satoshi text-small leading-100 tracking-tightest">
+            Links
+          </h4>
+          <NavLink
+            to="/signup"
+            className="font-satoshi text-small font-normal leading-100 tracking-tightest"
+          >
+            Sign Up
+          </NavLink>
+          <NavLink
+            to="/login"
+            className="font-satoshi text-small font-normal leading-100 tracking-tightest"
+          >
+            Login
+          </NavLink>
+          <NavLink
+            to="#"
+            className="font-satoshi text-small font-normal leading-100 tracking-tightest"
+          >
+            FAQS
+          </NavLink>
+          <NavLink
+            to="#"
+            className="font-satoshi text-small font-normal leading-100 tracking-tightest"
+          >
+            Support
+          </NavLink>
+          <NavLink
+            to="/invoice"
+            className="font-satoshi text-small font-normal leading-100 tracking-tightest"
+          >
+            Invoice
+          </NavLink>
         </nav>
       </section>
-      <section className="md:flex justify-between py-6 border-t-2 border-black">
+      <section className="flex flex-col gap-y-4 md:flex-row justify-between items-center py-6 border-t-2 border-black font-satishi font-normal text-small">
         <article>
-          <p>&copy; 2023. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()}. All rights reserved.</p>
         </article>
         <nav className="flex gap-x-12 text-right">
           <NavLink to="#">Privacy Policy</NavLink>
