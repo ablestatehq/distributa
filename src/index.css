@@ -1,3 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* Regular weight (400) */
+@font-face {
+    font-family: "Satoshi";
+    src: url("./assets/fonts/Satoshi-Regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* Italic weight (400 italic) */
+@font-face {
+    font-family: 'Satoshi';
+    src: url("./assets/fonts/Satoshi-Italic.woff") format('woff');
+    font-weight: 400;
+    font-style: italic;
+}
+
+/* Light weight (300) */
+@font-face {
+    font-family: "Satoshi";
+    src: url("./assets/fonts/Satoshi-Light.woff") format("woff");
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Light Italic weight (300 italic) */
+@font-face {
+    font-family: "Satoshi";
+    src: url("./assets/fonts/Satoshi-LightItalic.woff") format("woff");
+    font-weight: 300;
+    font-style: italic;
+}
+
+/* Medium weight (500) */
+@font-face {
+    font-family: "Satoshi";
+    src: url("./assets/fonts/Satoshi-Medium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
