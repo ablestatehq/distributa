@@ -6,7 +6,7 @@ function Footer() {
       <section className="md:flex py-14">
         <div className="w-3/4 flex flex-col gap-7">
           <NavLink
-            className="text-primary-900 underline decoration-slate-500 font-bold"
+            className="text-accent underline decoration-slate-500 font-bold"
             to="/"
           >
             Distributa
