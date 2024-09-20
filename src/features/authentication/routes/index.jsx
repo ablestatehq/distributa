@@ -1,23 +1,55 @@
 import { Login, SignUp } from "../components";
 import { AppwriteService as Appwrite } from "../../../services";
-import { redirect } from "react-router-dom";
+import { json, redirect } from "react-router-dom";
+
 const appwrite = new Appwrite();
 
 export const authRoutes = [
   {
     path: "/login",
     element: <Login />,
-    loader: async () => {
+    loader: async ({ request }) => {
       try {
+        const url = new URL(request.url);
+        const from = url.searchParams.get("from") ?? "/dashboard";
         const user = await appwrite.getAccount();
-        return user;
+        if (user) return redirect(from, { replace: true });
       } catch (error) {
-        return null;
+        return json({ error });
+      }
+    },
+    action: async ({ request }) => {
+      try {
+        const formData = await request.formData();
+        const email = formData.get("email");
+        const password = formData.get("password");
+
+        const url = new URL(request.url);
+        const from = url.searchParams.get("from") ?? "/dashboard";
+
+        const session = await appwrite.createSession(email, password);
+        if (session) return redirect(from, { replace: true });
+      } catch (error) {
+        return json({ error: error.response });
       }
     },
   },
   {
     path: "/signup",
     element: <SignUp />,
+    action: async ({ request }) => {
+      try {
+        const formData = await request.formData();
+
+        const email = formData.get("email");
+        const password = formData.get("password");
+
+        await appwrite.createAccount(email, password);
+        const session = await appwrite.createSession(email, password);
+        if (session) return redirect("/dashboard", { replace: true });
+      } catch (error) {
+        return json({ error: error.response });
+      }
+    },
   },
 ];
