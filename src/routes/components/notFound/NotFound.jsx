@@ -9,10 +9,10 @@ function NotFound() {
   return (
     <main className="flex items-center min-h-screen container mx-auto lg:max-w-6xl">
       <section className="flex flex-col w-[40.5rem] gap-y-2">
-        <h1 className="font-archivo leading-110 tracking-tightest text-4xl">
+        <h1 className="font-archivo leading-110 tracking-normal text-4xl">
           404
         </h1>
-        <p className="font-satoshi font-normal leading-150 tracking-tightest text-large">
+        <p className="font-satoshi font-normal leading-150 tracking-normal text-large">
           The page you are looking is removed, not working or temporarily
           unavailable.
         </p>

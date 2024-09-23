@@ -17,7 +17,7 @@ function PublicNav() {
   };
 
   const styles = {
-    font: "font-satoshi font-normal text-small leading-100 tracking-tightest",
+    font: "font-satoshi font-normal text-small leading-100 tracking-normal",
   };
 
   return (

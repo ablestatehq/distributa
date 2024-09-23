@@ -4,7 +4,7 @@ import cn from "../../utils/cn";
 const Button = ({ className, size, kind = "primary", children, ...props }) => {
   const styles = {
     base: "py-3",
-    font: "font-satoshi text-large tracking-tightest leading-100",
+    font: "font-satoshi text-large tracking-normal leading-100",
   };
 
   return (

@@ -3,7 +3,7 @@ import { useField } from "formik";
 
 const Input = ({ label, className, ...props }) => {
   const styles = {
-    font: "font-normal font-satoshi text-tiny tracking-tightest",
+    font: "font-normal font-satoshi text-tiny tracking-normal",
     input:
       "border border-greyborder leading-100 p-3 w-[17.375rem] focus:outline-none focus:border-accent",
     errorText: "leading-150 text-error",

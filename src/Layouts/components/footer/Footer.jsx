@@ -17,7 +17,7 @@ function Footer() {
             <Logo className="w-[5.875rem] h-[1.10125rem] md:w-[5.85375rem] md:h-[0.96125rem]" />
           </NavLink>
           <article>
-            <p className="font-satoshi font-normal leading-150 tracking-tightest">
+            <p className="font-satoshi font-normal leading-150 tracking-normal">
               Simplfying the process, making it easy for you to track your
               expenses and generate professional invoices in minutes
             </p>
@@ -39,36 +39,36 @@ function Footer() {
           </nav>
         </div>
         <nav className="w-fit flex flex-col md:items-start gap-y-3">
-          <h4 className="font-bold font-satoshi text-small leading-100 tracking-tightest">
+          <h4 className="font-bold font-satoshi text-small leading-100 tracking-normal">
             Links
           </h4>
           <NavLink
             to="/signup"
-            className="font-satoshi text-small font-normal leading-100 tracking-tightest"
+            className="font-satoshi text-small font-normal leading-100 tracking-normal"
           >
             Sign Up
           </NavLink>
           <NavLink
             to="/login"
-            className="font-satoshi text-small font-normal leading-100 tracking-tightest"
+            className="font-satoshi text-small font-normal leading-100 tracking-normal"
           >
             Login
           </NavLink>
           <NavLink
             to="#"
-            className="font-satoshi text-small font-normal leading-100 tracking-tightest"
+            className="font-satoshi text-small font-normal leading-100 tracking-normal"
           >
             FAQS
           </NavLink>
           <NavLink
             to="#"
-            className="font-satoshi text-small font-normal leading-100 tracking-tightest"
+            className="font-satoshi text-small font-normal leading-100 tracking-normal"
           >
             Support
           </NavLink>
           <NavLink
             to="/invoice"
-            className="font-satoshi text-small font-normal leading-100 tracking-tightest"
+            className="font-satoshi text-small font-normal leading-100 tracking-normal"
           >
             Invoice
           </NavLink>

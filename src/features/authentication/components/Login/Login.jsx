@@ -38,7 +38,7 @@ function Login() {
         {() => {
           return (
             <Form className="bg-white p-8 w-fit flex flex-col gap-y-8">
-              <h2 className="font-normal font-archivo text-3xl leading-120 tracking-tightest text-start">
+              <h2 className="font-normal font-archivo text-3xl leading-120 tracking-normal text-start">
                 Login
               </h2>
               <Input
