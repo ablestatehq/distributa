@@ -1,44 +1,57 @@
-import { Link } from "react-router-dom";
-import { Folder, UserPlus, List, Zap, Book, Database } from "../../components/icons";
+import { useNavigate } from "react-router-dom";
+import {
+  Folder,
+  UserPlus,
+  List,
+  Zap,
+  Book,
+  Database,
+} from "../../components/icons";
 import Instruction from "../../components/cards/Instruction";
+import Button from "../../components/forms/Button";
 
 function Home() {
+  const navigate = useNavigate();
+
   return (
     <>
-      <section className="flex md:flex-row xs:flex-col-reverse py-10 md:gap-x-20 md:my-20">
-        <div className="md:w-1/2 bg-greyborder flex flex-col text-center md:h-8/12 items-center justify-center p-5">
-          <h1 className="xs:font-bold md:text-5xl font-archivo">
+      <section className="flex md:flex-row xs:flex-col-reverse py-10 md:my-20">
+        <div className="md:w-1/2 bg-grey flex flex-col text-center items-center justify-center p-5 gap-y-4">
+          <h1 className="font-archivo font-normal text-xl md:text-4xl leading-110 tracking-normal capitalize">
             I want to track my expenses.
           </h1>
-          <p className="md:text-2xl pt-6 font-satoshi">
+          <p className="font-satoshi font-normal text-small md:text-large leading-150 tracking-normal">
             Your expenses and budget are stored in the cloud if you're a member.
           </p>
-          <Link
-            to="/expense"
-            className="py-4 px-14 mt-14 bg-accent-400 text-white text-center md:w-fit"
+          <Button
+            type="button"
+            className="font-bold px-5 md:px-16 py-[0.625rem] md:py-5 mt-4 font-satoshi text-large leading-100"
+            onClick={() => navigate("/expense")}
           >
             Start Now, It's Free
-          </Link>
+          </Button>
         </div>
-        <div className="md:w-1/2 bg-accent-400 text-center p-5 flex flex-col md:h-8/12 justify-center items-center">
-          <h1 className="xs:font-bold md:text-5xl font-sans">
+        <div className="md:w-1/2 bg-accent/90 flex flex-col text-center items-center justify-center py-16 gap-y-4">
+          <h1 className="font-archivo font-normal text-xl md:text-4xl leading-110 tracking-normal capitalize">
             I want to generate invoices.
           </h1>
-          <p className="md:text-2xl pt-6">
-            Generate unlimited invoices for FREE. Invoices are stored in the
+          <p className="font-satoshi font-normal text-small md:text-large leading-150 tracking-normal">
+            Generate unlimited invoices for FREE. Invoices are store in the
             cloud for members.
           </p>
-          <Link
-            to="/invoice"
-            className="py-4 px-14 mt-14 border-white border-solid border-2 text-white text-center md:w-fit"
+          <Button
+            type="button"
+            className="font-bold px-5 md:px-16 py-[0.625rem] md:py-5 mt-4 font-satoshi text-large leading-100"
+            onClick={() => navigate("/invoice")}
+            kind="plain"
           >
             Start Now, It's Free
-          </Link>
+          </Button>
         </div>
       </section>
       <section className="py-16">
         <article>
-          <h2 className="font-archivo font-normal text-[1.75rem] md:text-3xl leading-120 tracking-tightest md:w-[33.625rem]">
+          <h2 className="font-archivo font-normal text-[1.75rem] md:text-3xl leading-120 tracking-normal md:w-[33.625rem]">
             Generate and Share Invoices In 3 Simple Steps
           </h2>
         </article>
@@ -62,7 +75,7 @@ function Home() {
       </section>
       <section className="py-16">
         <article>
-          <h2 className="font-archivo font-normal text-[1.75rem] md:text-3xl leading-120 tracking-tightest w-[21.375rem] md:w-[33.625rem]">
+          <h2 className="font-archivo font-normal text-[1.75rem] md:text-3xl leading-120 tracking-normal w-[21.375rem] md:w-[33.625rem]">
             Use Our Expense Tracker To
           </h2>
         </article>
