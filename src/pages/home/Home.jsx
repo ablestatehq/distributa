@@ -1,4 +1,7 @@
 import { Link } from "react-router-dom";
+import { Folder, UserPlus, List, Zap, Book, Database } from "../../components/icons";
+import Instruction from "../../components/cards/Instruction";
+
 function Home() {
   return (
     <>
@@ -33,79 +36,53 @@ function Home() {
           </Link>
         </div>
       </section>
-      <section className="py-10">
+      <section className="py-16">
         <article>
-          <h2 className="text-3xl font-sans">
-            Generate and Share <br className="xs:hidden" />
-            Invoices In 3 Simple Steps
+          <h2 className="font-archivo font-normal text-[1.75rem] md:text-3xl leading-120 tracking-tightest md:w-[33.625rem]">
+            Generate and Share Invoices In 3 Simple Steps
           </h2>
         </article>
-        <div className="grid md:grid-cols-3 gap-6 mt-6 xs:grid-cols-1">
-          <article className="bg-gray-200 p-5 rounded">
-            <img src="Icon1.png.png" alt="folder" />
-            <h3 className="py-4 text-xl font-bold">Income details</h3>
-            <p>Add the amount you earned.</p>
-          </article>
-          <article className="bg-gray-200 pt-4 pl-4 pb-5 rounded">
-            <img src="Icon2.png.png" alt="beneficiary" />
-            <h3 className="py-4 text-xl font-bold">Beneficiaries</h3>
-            <p>
-              Enter the Name and Percentage/Amount of each person. <br />
-              Made a mistake? No worries you can edit or delete.
-            </p>
-          </article>
-          <article className="bg-gray-200 pt-4 pl-4 pb-5 rounded">
-            <img src="Icon3.png.png" alt="breakdown" />
-            <h3 className="py-4 text-xl font-bold">Breakdown</h3>
-            <p>
-              See the break down of the amount. Click Restart to
-              <br />
-              start a fresh.
-            </p>
-          </article>
-        </div>
+        <section className="grid md:grid-cols-3 gap-8 mt-6 xs:grid-cols-1">
+          <Instruction
+            icon={<Folder />}
+            title="Initiate Pool"
+            description="Add the amount you want to share."
+          />
+          <Instruction
+            icon={<UserPlus />}
+            title="Beneficiaries"
+            description="Enter the Name and Percentage of each person. Made a mistake? No worries you can edit or delete."
+          />
+          <Instruction
+            icon={<List />}
+            title="Breakdown"
+            description="Enter the Name and Percentage of each person. Made a mistake? No worries you can edit or delete."
+          />
+        </section>
       </section>
-      <section className="py-10">
+      <section className="py-16">
         <article>
-          <h2 className="text-3xl font-sans">
-            Track your <br className="xs:hidden" />
-            Money
+          <h2 className="font-archivo font-normal text-[1.75rem] md:text-3xl leading-120 tracking-tightest w-[21.375rem] md:w-[33.625rem]">
+            Use Our Expense Tracker To
           </h2>
         </article>
-        <div className="grid md:grid-cols-3 xs:grid-cols-1 gap-6 mt-6">
-          <article className="bg-gray-200 p-6 rounded">
-            <img src="Icon4.png.png" alt="finance" />
-            <h3 className="py-4 text-xl font-bold">
-              Improve Your Financial Health
-            </h3>
-            <p>
-              Awareness <br className="hidden" />
-              Understand and take informed decisions about{" "}
-              <br className="hidden" />
-              your spending habits.
-            </p>
-          </article>
-
-          <article className="bg-gray-200 p-6 rounded">
-            <img src="Icon5.png.png" alt="budget" />
-            <h3 className="py-4 text-xl font-bold">Budgeting Assitance</h3>
-            <p>
-              Create and stick to a budget by showing your
-              <br className="hidden" />
-              spending and indetifying areas of overspending.
-            </p>
-          </article>
-
-          <article className="bg-gray-200 p-6 rounded">
-            <img src="Icon6.png.png" alt="savings" />
-            <h3 className="py-4 text-xl font-bold">Saving Money</h3>
-            <p>
-              Indentify and cut unnecessary expenses to save{" "}
-              <br className="hidden" />
-              money.
-            </p>
-          </article>
-        </div>
+        <section className="grid md:grid-cols-3 xs:grid-cols-1 gap-6 mt-6">
+          <Instruction
+            icon={<Zap />}
+            title="Improve Your Financial Awareness"
+            description="Understand and make informed decisions about your spending habits"
+          />
+          <Instruction
+            icon={<Book />}
+            title="Budgeting Assitance"
+            description="Create and stick to a budget by showing your spending and identifying areas of overspending."
+          />
+          <Instruction
+            icon={<Database />}
+            title="Saving money"
+            description="Identify and cut unnecessary expenses to save money."
+          />
+        </section>
       </section>
     </>
   );
