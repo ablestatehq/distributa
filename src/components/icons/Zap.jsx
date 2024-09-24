@@ -12,9 +12,9 @@ const Zap = () => {
       <path
         d="M32.303 22.481L22.303 34.481H31.303L30.303 42.481L40.303 30.481H31.303L32.303 22.481Z"
         stroke="#0D6EFD"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
