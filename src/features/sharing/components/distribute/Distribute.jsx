@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { currencyFormatter } from "../../../../utils/currency.formatter";
 import addThousandSeparators from "../../../../utils/add.thousand.separators";
@@ -25,6 +25,7 @@ function Distribute() {
   const [breakdown, setBreakdown] = useState([
     { name: "name", percentage: 0, amount: 0, default: true },
   ]);
+
   const projectField = useRef();
   const incomeAmountField = useRef();
   const incomeDetailsField = useRef();
@@ -43,6 +44,27 @@ function Distribute() {
   const nameFieldUpdateError = useRef();
   const percentageFieldUpdateError = useRef();
   const amountFieldUpdateError = useRef();
+
+  const isPercentageFieldDisabled = useMemo(() => {
+    console.log("Change: ");
+    return !(amount && nameField?.current?.value);
+  }, [amount, nameField]);
+
+  const isAmountFieldDisabled = useMemo(
+    () =>
+      !(amount && nameField?.current?.value && percentageField?.current?.value),
+    [amount, nameField?.current?.value, percentageField]
+  );
+
+  const [disabled, setDisabled] = useState({
+    nameField: !amount,
+    percentageField: !(amount && nameField?.current?.value),
+    amountField: !(
+      amount &&
+      nameField?.current.value &&
+      percentageField?.current?.value
+    ),
+  });
 
   const [distributions, setDistributions] = useState(null);
   const [
@@ -310,6 +332,12 @@ function Distribute() {
 
                       if (errorMessage) {
                         setAmount(0);
+                        setDisabled((disabled) => ({
+                          ...disabled,
+                          nameField: true,
+                          percentageField: true,
+                          amountField: true,
+                        }));
                         setError("Amount should be a number");
                         incomeAmountFieldError.current.classList.remove(
                           "hidden"
@@ -338,6 +366,10 @@ function Distribute() {
                         "border-greyborder",
                         "focus:border-accent"
                       );
+                      setDisabled((disabled) => ({
+                        ...disabled,
+                        nameField: false,
+                      }));
                       return;
                     }}
                     onKeyUp={(e) => {
@@ -501,52 +533,162 @@ function Distribute() {
                 className="flex xs:flex-wrap md:flex-nowrap justify-between xs:gap-y-3 md:gap-y-0"
                 onSubmit={handleAdd}
               >
-                <input
-                  className="font-normal font-satoshi text-tiny tracking-normal md:w-[30%] xs:w-[40%] border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
-                  type="text"
-                  placeholder="Name"
-                  ref={nameField}
-                  disabled={!amount}
-                />
-                <input
-                  className="font-normal font-satoshi text-tiny tracking-normal md:w-[10%] xs:w-[20%] border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
-                  type="text"
-                  placeholder="%"
-                  value={percentageField.value}
-                  ref={percentageField}
-                  disabled={!(amount && nameField?.current?.value)}
-                  onKeyUp={(e) => {
-                    const value = e.target?.value ?? null;
-                    const numericAmount = Number(value);
-                    if (value && numericAmount && amount > 0) {
-                      amountField.current.value =
-                        (numericAmount / 100) * amount;
-                      addThousandSeparators(amountField.current);
-                    }
-                  }}
-                />
-                <input
-                  className="font-normal font-satoshi text-tiny tracking-normal md:w-[30%] xs:w-[32%] border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
-                  type="text"
-                  placeholder="Amount"
-                  ref={amountField}
-                  disabled={
-                    !(
-                      amount &&
-                      nameField?.current?.value &&
-                      percentageField?.current?.value
-                    )
-                  }
-                  onKeyUp={(e) => {
-                    if (e.target?.value) {
-                      const inputValue = e.target.value.replace(/,/g, "");
-                      percentageField.current.value =
-                        (Number(inputValue) / amount) * 100;
+                <div className="md:w-[30%] xs:w-[40%]">
+                  <input
+                    className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
+                    type="text"
+                    placeholder="Name"
+                    ref={nameField}
+                    disabled={disabled.nameField}
+                    onChange={(e) => {
+                      let errorMessage;
+                      if (!e.target.value) {
+                        errorMessage = "Name is required";
+                      }
+                      if (errorMessage) {
+                        setError("Name should be a number");
+                        setDisabled((disabled) => ({
+                          ...disabled,
+                          percentageField: true,
+                          amountField: true,
+                        }));
+                        nameFieldError.current.classList.remove("hidden");
+                        nameFieldError.current.textContent = errorMessage;
+                        nameField.current.classList.remove(
+                          "border-greyborder",
+                          "focus:border-accent"
+                        );
+                        nameField?.current?.classList.add(
+                          "border-error",
+                          "focus:border-error"
+                        );
+                        return;
+                      }
 
-                      addThousandSeparators(e.target);
-                    }
-                  }}
-                />
+                      nameFieldError.current.textContent = "";
+                      nameFieldError.current.classList.add("hidden");
+                      nameField?.current?.classList.remove(
+                        "border-error",
+                        "focus:border-error"
+                      );
+                      nameField?.current?.classList.add(
+                        "border-greyborder",
+                        "focus:border-accent"
+                      );
+                      setDisabled((disabled) => ({
+                        ...disabled,
+                        percentageField: false,
+                      }));
+                      return;
+                    }}
+                  />
+                  <p
+                    ref={nameFieldError}
+                    className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error hidden"
+                  ></p>
+                </div>
+                <div className="md:w-[10%] xs:w-[20%]">
+                  <input
+                    className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
+                    type="text"
+                    placeholder="%"
+                    value={percentageField.value}
+                    ref={percentageField}
+                    disabled={disabled.percentageField}
+                    onKeyUp={(e) => {
+                      const value = e.target?.value ?? null;
+                      const percentage = Number(value);
+                      if (
+                        value &&
+                        percentage &&
+                        amount > 0 &&
+                        percentage <= 100 &&
+                        percentage > 0
+                      ) {
+                        amountField.current.value = (percentage / 100) * amount;
+                        addThousandSeparators(amountField.current);
+                      }
+                    }}
+                    onChange={(e) => {
+                      let errorMessage;
+                      if (!e.target.value) {
+                        errorMessage = "% is required";
+                      } else if (
+                        Number(e.target.value.replace(/,/g, "")) > 100
+                      ) {
+                        errorMessage = "% too high";
+                      } else if (
+                        Number(e.target.value.replace(/,/g, "")) === 0 ||
+                        Number(e.target.value.replace(/,/g, "")) < 0
+                      ) {
+                        errorMessage = "% too low";
+                      } else if (!Number(e.target.value.replace(/,/g, ""))) {
+                        errorMessage = "Invalid %";
+                      }
+
+                      if (errorMessage) {
+                        setError("Name should be a number");
+                        setDisabled((disabled) => ({
+                          ...disabled,
+                          amountField: true,
+                        }));
+                        percentageFieldError.current.classList.remove("hidden");
+                        percentageFieldError.current.textContent = errorMessage;
+                        percentageField.current.classList.remove(
+                          "border-greyborder",
+                          "focus:border-accent"
+                        );
+                        percentageField?.current?.classList.add(
+                          "border-error",
+                          "focus:border-error"
+                        );
+                        return;
+                      }
+
+                      percentageFieldError.current.textContent = "";
+                      percentageFieldError.current.classList.add("hidden");
+                      percentageField?.current?.classList.remove(
+                        "border-error",
+                        "focus:border-error"
+                      );
+                      percentageField?.current?.classList.add(
+                        "border-greyborder",
+                        "focus:border-accent"
+                      );
+                      setDisabled((disabled) => ({
+                        ...disabled,
+                        amountField: false,
+                      }));
+                      return;
+                    }}
+                  />
+                  <p
+                    ref={percentageFieldError}
+                    className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error hidden"
+                  ></p>
+                </div>
+                <div className="md:w-[30%] xs:w-[32%]">
+                  <input
+                    className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
+                    type="text"
+                    placeholder="Amount"
+                    ref={amountField}
+                    disabled={disabled.amountField}
+                    onKeyUp={(e) => {
+                      if (e.target?.value) {
+                        const inputValue = e.target.value.replace(/,/g, "");
+                        percentageField.current.value =
+                          (Number(inputValue) / amount) * 100;
+
+                        addThousandSeparators(e.target);
+                      }
+                    }}
+                  />
+                  <p
+                    ref={amountFieldError}
+                    className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error hidden"
+                  ></p>
+                </div>
                 <Button
                   type="submit"
                   className="xs:w-46% md:w-fit bg-grey font-bold text-tiny px-8"
@@ -559,7 +701,7 @@ function Distribute() {
             </div>
           </div>
           <br className="md:hidden" />
-          <div className="md:w-3/12 bg-gray-200 p-5">
+          <div className="md:w-3/12 bg-grey p-5">
             <h2 className="font-semibold py-2">Summary</h2>
             <hr className="border-solid border-b-1 border-gray-400 my-5" />
             <table className="w-full">
