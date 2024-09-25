@@ -34,6 +34,16 @@ function Distribute() {
   const nameFieldUpdate = useRef();
   const percentageFieldUpdate = useRef();
   const amountFieldUpdate = useRef();
+
+  // Errors
+  const incomeAmountFieldError = useRef();
+  const nameFieldError = useRef();
+  const percentageFieldError = useRef();
+  const amountFieldError = useRef();
+  const nameFieldUpdateError = useRef();
+  const percentageFieldUpdateError = useRef();
+  const amountFieldUpdateError = useRef();
+
   const [distributions, setDistributions] = useState(null);
   const [
     ,
@@ -198,7 +208,6 @@ function Distribute() {
 
   const retrieveFromLocal = () => {
     const distributions = localStorage.getItem("distributions");
-    // console.log(distributions);
     if (distributions) setDistributions(JSON.parse(distributions));
     return;
   };
@@ -270,7 +279,7 @@ function Distribute() {
         <section className="md:flex justify-between">
           <div className="md:w-8/12">
             <div className="flex flex-col justify-between">
-              <div className="flex flex-wrap gap-y-5 justify-between">
+              <div className="flex flex-wrap items-start gap-y-5 justify-between">
                 <div className="w-[60%] flex flex-col justify-end">
                   <label className="block font-normal font-satoshi text-tiny tracking-normal">
                     Income source
@@ -282,7 +291,7 @@ function Distribute() {
                     onChange={(e) => setProject(e.target.value)}
                   />
                 </div>
-                <div className="w-[34%] flex flex-col justify-end gap-y-2">
+                <div className="w-[34%] flex flex-col justify-end">
                   <label className="block font-normal font-satoshi text-tiny tracking-normal">
                     Amount
                   </label>
@@ -290,14 +299,55 @@ function Distribute() {
                     className="font-normal font-satoshi text-tiny tracking-normal w-full placeholder-black border border-greyborder leading-100 p-4 focus:outline-none focus:border-accent"
                     type="text"
                     placeholder="Amount"
+                    ref={incomeAmountField}
                     onChange={(e) => {
-                      const amount = Number(e.target.value.replace(/,/g, ""));
-                      setAmount(amount);
+                      let errorMessage;
+                      if (!e.target.value) {
+                        errorMessage = "Amount is required";
+                      } else if (!Number(e.target.value.replace(/,/g, ""))) {
+                        errorMessage = "Amount should be a number";
+                      }
+
+                      if (errorMessage) {
+                        setAmount(0);
+                        setError("Amount should be a number");
+                        incomeAmountFieldError.current.classList.remove(
+                          "hidden"
+                        );
+                        incomeAmountFieldError.current.textContent =
+                          errorMessage;
+                        incomeAmountField.current.classList.remove(
+                          "border-greyborder",
+                          "focus:border-accent"
+                        );
+                        incomeAmountField.current.classList.add(
+                          "border-error",
+                          "focus:border-error"
+                        );
+                        return;
+                      }
+
+                      setAmount(Number(e.target.value.replace(/,/g, "")));
+                      incomeAmountFieldError.current.textContent = "";
+                      incomeAmountFieldError.current.classList.add("hidden");
+                      incomeAmountField.current.classList.remove(
+                        "border-error",
+                        "focus:border-error"
+                      );
+                      incomeAmountField.current.classList.add(
+                        "border-greyborder",
+                        "focus:border-accent"
+                      );
+                      return;
                     }}
                     onKeyUp={(e) => {
                       addThousandSeparators(e.target);
                     }}
                   />
+                  <p
+                    ref={incomeAmountFieldError}
+                    className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error hidden"
+                  ></p>
                 </div>
                 <textarea
                   className="w-full font-normal font-satoshi text-tiny tracking-normal placeholder-black border border-greyborder leading-100 p-4 focus:outline-none focus:border-accent resize-none"
@@ -379,7 +429,7 @@ function Distribute() {
                                 !(
                                   amount &&
                                   nameFieldUpdate?.current?.value &&
-                                  percentageFieldUpdate
+                                  percentageFieldUpdate?.current?.value
                                 )
                               }
                               onKeyUp={(e) => {
@@ -391,7 +441,7 @@ function Distribute() {
                                   (Number(inputValue) / amount) * 100;
                                 addThousandSeparators(e.target);
                               }}
-                              className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder focus:border-accent outline-none p-4 placeholder-black leading-120"
+                              className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder focus:border-accent disabled:placeholder-greyborder disabled:text-greyborder outline-none p-4 placeholder-black leading-120"
                             />
                           </td>
                           <td className="p-2">
@@ -452,14 +502,14 @@ function Distribute() {
                 onSubmit={handleAdd}
               >
                 <input
-                  className="font-normal font-satoshi text-tiny tracking-normal md:w-[30%] xs:w-[40%] border border-greyborder outline-none focus:border-accent p-4 placeholder-black"
+                  className="font-normal font-satoshi text-tiny tracking-normal md:w-[30%] xs:w-[40%] border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
                   type="text"
                   placeholder="Name"
                   ref={nameField}
                   disabled={!amount}
                 />
                 <input
-                  className="font-normal font-satoshi text-tiny tracking-normal md:w-[10%] xs:w-[20%] border border-greyborder outline-none focus:border-accent p-4 placeholder-black"
+                  className="font-normal font-satoshi text-tiny tracking-normal md:w-[10%] xs:w-[20%] border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
                   type="text"
                   placeholder="%"
                   value={percentageField.value}
@@ -476,7 +526,7 @@ function Distribute() {
                   }}
                 />
                 <input
-                  className="font-normal font-satoshi text-tiny tracking-normal md:w-[30%] xs:w-[32%] border border-greyborder outline-none focus:border-accent p-4 placeholder-black"
+                  className="font-normal font-satoshi text-tiny tracking-normal md:w-[30%] xs:w-[32%] border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
                   type="text"
                   placeholder="Amount"
                   ref={amountField}
