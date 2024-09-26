@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { currencyFormatter } from "../../../../utils/currency.formatter";
 import addThousandSeparators from "../../../../utils/add.thousand.separators";
@@ -44,17 +44,6 @@ function Distribute() {
   const nameFieldUpdateError = useRef();
   const percentageFieldUpdateError = useRef();
   const amountFieldUpdateError = useRef();
-
-  const isPercentageFieldDisabled = useMemo(() => {
-    console.log("Change: ");
-    return !(amount && nameField?.current?.value);
-  }, [amount, nameField]);
-
-  const isAmountFieldDisabled = useMemo(
-    () =>
-      !(amount && nameField?.current?.value && percentageField?.current?.value),
-    [amount, nameField?.current?.value, percentageField]
-  );
 
   const [disabled, setDisabled] = useState({
     nameField: !amount,
@@ -603,20 +592,27 @@ function Distribute() {
                         percentage &&
                         amount > 0 &&
                         percentage <= 100 &&
-                        percentage > 0
+                        percentage > 0 &&
+                        percentage <= (balance / amount) * 100
                       ) {
                         amountField.current.value = (percentage / 100) * amount;
                         addThousandSeparators(amountField.current);
+                        return;
                       }
+
+                      amountField.current.value = 0;
                     }}
                     onChange={(e) => {
                       let errorMessage;
                       if (!e.target.value) {
                         errorMessage = "% is required";
                       } else if (
-                        Number(e.target.value.replace(/,/g, "")) > 100
+                        Number(e.target.value.replace(/,/g, "")) >
+                        (balance / amount) * 100
                       ) {
-                        errorMessage = "% too high";
+                        errorMessage = `% too high, Max(${
+                          (balance / amount) * 100
+                        })`;
                       } else if (
                         Number(e.target.value.replace(/,/g, "")) === 0 ||
                         Number(e.target.value.replace(/,/g, "")) < 0
@@ -674,14 +670,80 @@ function Distribute() {
                     placeholder="Amount"
                     ref={amountField}
                     disabled={disabled.amountField}
+                    onChange={(e) => {
+                      let errorMessage;
+                      if (!e.target.value) {
+                        errorMessage = "Amount is required";
+                      } else if (
+                        Number(e.target.value.replace(/,/g, "")) > balance
+                      ) {
+                        errorMessage = `Too high, Max(${balance.toLocaleString()})`;
+                      } else if (
+                        Number(e.target.value.replace(/,/g, "")) === 0 ||
+                        Number(e.target.value.replace(/,/g, "")) < 0
+                      ) {
+                        errorMessage = "Too low";
+                      } else if (!Number(e.target.value.replace(/,/g, ""))) {
+                        errorMessage = "Invalid Amount";
+                      }
+
+                      if (errorMessage) {
+                        setError(errorMessage);
+                        setDisabled((disabled) => ({
+                          ...disabled,
+                          percentageField: true,
+                        }));
+                        amountFieldError.current.classList.remove("hidden");
+                        amountFieldError.current.textContent = errorMessage;
+                        amountField.current.classList.remove(
+                          "border-greyborder",
+                          "focus:border-accent"
+                        );
+                        amountField?.current?.classList.add(
+                          "border-error",
+                          "focus:border-error"
+                        );
+                        return;
+                      }
+
+                      amountFieldError.current.textContent = "";
+                      amountFieldError.current.classList.add("hidden");
+                      amountField?.current?.classList.remove(
+                        "border-error",
+                        "focus:border-error"
+                      );
+                      amountField?.current?.classList.add(
+                        "border-greyborder",
+                        "focus:border-accent"
+                      );
+                      setDisabled((disabled) => ({
+                        ...disabled,
+                        percentageField: false,
+                      }));
+                      return;
+                    }}
                     onKeyUp={(e) => {
-                      if (e.target?.value) {
-                        const inputValue = e.target.value.replace(/,/g, "");
-                        percentageField.current.value =
-                          (Number(inputValue) / amount) * 100;
+                      const inputValue = e.target.value.replace(/,/g, "");
+                      const numericInputValue = Number(inputValue);
+
+                      if (numericInputValue) {
+                        if (
+                          numericInputValue <= balance &&
+                          numericInputValue > 0
+                        ) {
+                          const inputValue = e.target.value.replace(/,/g, "");
+                          percentageField.current.value =
+                            (Number(inputValue) / amount) * 100;
+                        } else {
+                          percentageField.current.value = 0;
+                        }
 
                         addThousandSeparators(e.target);
+                        return;
                       }
+
+                      percentageField.current.value = 0;
+                      return;
                     }}
                   />
                   <p
@@ -691,7 +753,7 @@ function Distribute() {
                 </div>
                 <Button
                   type="submit"
-                  className="xs:w-46% md:w-fit bg-grey font-bold text-tiny px-8"
+                  className="xs:w-46% md:w-fit bg-grey font-bold px-8 h-fit text-small py-3.5 md:text-medium md:py-4"
                   onClick={handleAdd}
                   kind="plain"
                 >
