@@ -389,7 +389,7 @@ function Distribute() {
                   onChange={(e) => setIncomeDetails(e.target.value)}
                 ></textarea>
               </div>
-              <br className="mt-5" />
+              <br className="mt-4" />
               <h2 className="font-archivo font-normal text-[1.75rem] md:text-3xl leading-120 tracking-normal w-[21.375rem] md:w-[33.625rem]">
                 Expenditure/Budget info
               </h2>
@@ -868,7 +868,7 @@ function Distribute() {
             <div className="flex gap-4">
               <button
                 className="w-1/2 py-2 text-error border border-solid border-error text-center font-satoshi font-bold text-small leading-100 tracking-normal"
-                onClick={handleReset}
+                // onClick={handleReset}
               >
                 Reset
               </button>
