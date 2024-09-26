@@ -393,7 +393,7 @@ function Distribute() {
               <h2 className="font-archivo font-normal text-[1.75rem] md:text-3xl leading-120 tracking-normal w-[21.375rem] md:w-[33.625rem]">
                 Expenditure/Budget info
               </h2>
-              <p className="font-normal font-satoshi text-small tracking-normal">
+              <p className="font-normal font-satoshi text-tiny tracking-normal">
                 Provide details about expenditure or budget. Specify name,
                 percentage or amount per item. Click Add Item to add more items
                 or beneficiaries.
@@ -807,7 +807,7 @@ function Distribute() {
           </div>
           <br className="md:hidden" />
           <section className="md:w-3/12 bg-grey p-4 flex flex-col gap-y-4">
-            <h4 className="font-archivo font-normal text-medium ">Summary</h4>
+            <h4 className="font-archivo font-normal text-medium leading-140 tracking-normal">Summary</h4>
             <hr className="border-b-1 border-greyborder" />
             <table className="w-full">
               <tbody>
