@@ -69,7 +69,7 @@ const Invoice = () => {
   };
 
   return (
-    <div className="h-fit w-full px-5 sm:px-10 md:px-20">
+    <div className="h-fit w-full px-5 sm:px-10 md:px-0">
       <h2 className="font-light text-md my-2">Generate Bill</h2>
       <Formik
         initialValues={initialValues}
@@ -137,7 +137,7 @@ const Invoice = () => {
               </div>
               {subTotal(values) > 0 && (
                 <PDFDownloadLink
-                  className="btn btn-primary"
+                  className="btn btn-accent"
                   document={<PDFDoc data={values} />}
                   fileName={`#${values?.bill_number}.pdf` || "#invoice.pdf"}
                 >
@@ -473,7 +473,7 @@ const Invoice = () => {
                     </section>
                     <div className="mt-2">
                       <button
-                        className="rounded py-1 px-2 text-sm bg-green-600 text-white"
+                        className="rounded py-1 px-2 text-sm bg-success text-white"
                         onClick={(event) => {
                           event.preventDefault();
                           arrayHelpers.push({
@@ -539,7 +539,7 @@ const Invoice = () => {
                   <div className="flex justify-end gap-x-4 pr-8">
                     {!discount && (
                       <button
-                        className="text-green-600 font-semibold text-sm"
+                        className="text-success font-semibold text-sm"
                         onClick={(event) => {
                           event.preventDefault();
                           setShowDiscount(true);
@@ -550,7 +550,7 @@ const Invoice = () => {
                     )}
                     {!tax && (
                       <button
-                        className="text-green-600 font-semibold text-sm"
+                        className="text-success font-semibold text-sm"
                         onClick={(event) => {
                           event.preventDefault();
                           setShowTax(true);
@@ -561,7 +561,7 @@ const Invoice = () => {
                     )}
                     {!shipping && (
                       <button
-                        className="text-green-600 font-semibold text-sm"
+                        className="text-success font-semibold text-sm"
                         onClick={(event) => {
                           event.preventDefault();
                           setShowShipping(true);

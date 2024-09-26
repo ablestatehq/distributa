@@ -15,6 +15,7 @@ function PrivateNav() {
   const handleMouseLeave = () => {
     setActiveLink(location.pathname);
   };
+
   return (
     <div className="w-screen xs:px-5 sm:px-10 md:px-20 bg-gray-100 flex items-center justify-between">
       <nav className="flex gap-x-2 items-center">

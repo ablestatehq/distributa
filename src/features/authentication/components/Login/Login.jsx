@@ -1,39 +1,35 @@
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form } from "formik";
 import { Link } from "react-router-dom";
 import { loginSchema } from "../../utils/validator";
-import { useAuth } from "../../../../hooks";
-import { useNavigate, useLocation, useLoaderData, Navigate } from "react-router-dom";
+import { useSubmit, useActionData } from "react-router-dom";
+import Input from "../../../../components/forms/Input";
+import Button from "../../../../components/forms/Button";
+import { useNavigationLoadingState } from "../../../../hooks";
+import { toast } from "react-toastify";
 
 function Login() {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location?.state?.from ?? "/dashboard";
-  const user = useLoaderData();
+  const submit = useSubmit();
+  const response = useActionData();
+  if (response) console.log("Response: ", response);
+
+  const { isLoading, isReloading, isRedirecting, isSubmitting } =
+    useNavigationLoadingState();
+
+  if (response?.error && isReloading)
+    toast.error(response?.error?.message ?? "Unknown error occured");
+
+  if (isRedirecting) toast.success("Successfully logged in");
+
+  const handleLogin = async (values) =>
+    submit(values, { method: "POST", action: "/login" });
 
   const initialValues = {
     email: "",
     password: "",
   };
 
-  const handleLogin = async (
-    { email, password },
-    { resetForm, setSubmitting }
-  ) => {
-    try {
-      const session = await login(email, password);
-      if (session) navigate(from, { replace: true });
-    } catch (error) {
-      console.log("Error: ", error);
-    } finally {
-      setSubmitting(false);
-      resetForm({ values: { email: "", password: "" } });
-    }
-  };
-
   return (
-    user ? <Navigate to={from} replace={true} /> :
-    <div className="h-[calc(100vh-45px)] flex justify-center items-center">
+    <div className="min-h-screen flex justify-center items-center">
       <Formik
         initialValues={initialValues}
         validationSchema={loginSchema}
@@ -41,65 +37,47 @@ function Login() {
       >
         {() => {
           return (
-            <Form className="shadow-md rounded-sm px-10 w-fit py-5">
-              <h2 className="font-semibold text-center mt-3 text-xl text-gray-900">
+            <Form className="bg-white p-8 w-fit flex flex-col gap-y-8">
+              <h2 className="font-normal font-archivo text-3xl leading-120 tracking-normal text-start">
                 Login
               </h2>
-              <div>
-                <label htmlFor="email" className="font-light text-sm">
-                  Email
-                </label>
-                <Field
-                  id="email"
-                  name="email"
-                  type="text"
-                  className="border border-gray-200 rounded w-full py-1.5 px-2 text-black focus:outline-none text-sm font-light flex items-center"
-                  placeholder="johndoe@gmail.com"
-                ></Field>
-                <div className="h-5">
-                  <ErrorMessage name="email">
-                    {(msg) => (
-                      <div className="text-red-500 text-xs font-light">
-                        {msg}
-                      </div>
-                    )}
-                  </ErrorMessage>
-                </div>
-              </div>
-              <div>
-                <label htmlFor="password" className="font-light text-sm">
-                  Password
-                </label>
-                <Field
+              <Input
+                id="email"
+                name="email"
+                label="Email"
+                placeholder="Email"
+              />
+              <div className="flex flex-col gap-y-3 w-full">
+                <Input
                   id="password"
                   name="password"
+                  label="Password"
+                  placeholder="Password"
                   type="password"
-                  className="border border-gray-200 rounded w-full py-1.5 px-2 text-black focus:outline-none text-sm font-light flex items-center"
-                  placeholder="********"
-                ></Field>
-                <div className="h-5">
-                  <ErrorMessage name="password">
-                    {(msg) => (
-                      <div className="text-red-500 text-xs font-light">
-                        {msg}
-                      </div>
-                    )}
-                  </ErrorMessage>
-                </div>
-              </div>
-              <button
-                className="text-white bg-[#007BFF] hover:bg-[#0B5ED7] text-sm py-2 rounded-sm cursor-pointer mb-3 w-full duration-200 ease-in-out"
-                type="submit"
-              >
-                Login
-              </button>
-              <div className="text-sm mb-5">
-                <span className="font-light">Don't have an account?</span>
-                {"  "}
-                <Link to="/signup" className="underline text-blue-500">
-                  Sign Up
+                />
+                <Link
+                  to="/forgot-password"
+                  className="font-satoshi font-medium text-tiny leading-150 mb-2"
+                >
+                  ForgotPassword?
                 </Link>
               </div>
+              <Button
+                type="submit"
+                disabled={
+                  isLoading || isReloading || isSubmitting || isRedirecting
+                }
+                className="text-large"
+              >
+                Login
+              </Button>
+              <p className="font-satoshi font-normal text-tiny leading-150 mb-2">
+                <span className="font-normal">Don't have an account?</span>
+                {"  "}
+                <Link to="/signup" className="underline">
+                  Signup here
+                </Link>
+              </p>
             </Form>
           );
         }}

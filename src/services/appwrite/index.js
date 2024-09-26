@@ -62,9 +62,9 @@ class AppwriteService {
       DATABASE_ID,
       INVOICES_COLLECTION_ID,
       DISTRIBUTIONS_COLLECTION_ID,
-    }
+    };
 
-    return variables
+    return variables;
   }
 
   /**
@@ -118,7 +118,7 @@ class AppwriteService {
    * @returns <Promise> A promise that resolves to the session object
    */
   createSession(email, pass) {
-    return this.account.createEmailSession(email, pass);
+    return this.account.createEmailPasswordSession(email, pass);
   }
 
   /**

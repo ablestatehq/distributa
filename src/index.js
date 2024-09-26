@@ -4,12 +4,15 @@ import "./index.css";
 import Router from "./routes";
 import reportWebVitals from "./reportWebVitals";
 import { AuthProvider } from "./providers";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
   <AuthProvider>
+    <ToastContainer />
     <Router />
   </AuthProvider>
 );
