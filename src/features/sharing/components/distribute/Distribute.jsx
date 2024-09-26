@@ -5,6 +5,7 @@ import addThousandSeparators from "../../../../utils/add.thousand.separators";
 import Instruction from "../../../../components/cards/Instruction";
 import { Zap, Book, Database } from "../../../../components/icons";
 import Button from "../../../../components/forms/Button";
+import cn from "../../../../utils/cn";
 
 function Distribute() {
   const params = useParams();
@@ -53,6 +54,13 @@ function Distribute() {
       nameField?.current.value &&
       percentageField?.current?.value
     ),
+    nameFieldUpdate: !balance,
+    percentageFieldUpdate: !(amount && nameFieldUpdate?.current?.value),
+    amountField: !(
+      balance &&
+      nameFieldUpdate?.current?.value &&
+      percentageFieldUpdate?.current?.value
+    ),
   });
 
   const [distributions, setDistributions] = useState(null);
@@ -74,8 +82,6 @@ function Distribute() {
     }
 
     if (error) return;
-
-    // const myAmount = (parseInt(percentage) / 100) * parseInt(amount);
     const myAmount = parseInt(amount);
 
     setBreakdown([
@@ -85,6 +91,11 @@ function Distribute() {
     nameField.current.value = "";
     percentageField.current.value = "";
     amountField.current.value = "";
+    setDisabled((disabled) => ({
+      ...disabled,
+      percentageField: true,
+      amountField: true,
+    }));
   };
 
   const submitToServer = (e) => {
@@ -296,7 +307,7 @@ function Distribute() {
                     Income source
                   </label>
                   <input
-                    className="font-normal font-satoshi text-tiny tracking-normal w-full placeholder-black border border-greyborder leading-100 p-4 focus:outline-none focus:border-accent"
+                    className="font-normal font-satoshi text-tiny tracking-normal w-full placeholder-black border border-greyborder leading-100 p-3 focus:outline-none focus:border-accent"
                     type="text"
                     placeholder="Income source"
                     onChange={(e) => setProject(e.target.value)}
@@ -307,7 +318,7 @@ function Distribute() {
                     Amount
                   </label>
                   <input
-                    className="font-normal font-satoshi text-tiny tracking-normal w-full placeholder-black border border-greyborder leading-100 p-4 focus:outline-none focus:border-accent"
+                    className="font-normal font-satoshi text-tiny tracking-normal w-full placeholder-black border border-greyborder leading-100 p-3 focus:outline-none focus:border-accent"
                     type="text"
                     placeholder="Amount"
                     ref={incomeAmountField}
@@ -371,7 +382,7 @@ function Distribute() {
                   ></p>
                 </div>
                 <textarea
-                  className="w-full font-normal font-satoshi text-tiny tracking-normal placeholder-black border border-greyborder leading-100 p-4 focus:outline-none focus:border-accent resize-none"
+                  className="w-full font-normal font-satoshi text-tiny tracking-normal placeholder-black border border-greyborder leading-100 p-3 focus:outline-none focus:border-accent resize-none"
                   placeholder="Provide some details about your income source."
                   ref={incomeDetailsField}
                   rows="3"
@@ -389,38 +400,67 @@ function Distribute() {
               </p>
               <br className="mt-5" />
 
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b-2 border-b-greyborder">
-                    <th className="text-left p-2 font-normal font-satoshi text-tiny tracking-normal leading-100">
+              <table className="w-full text-sm table-auto">
+                <thead className="w-full">
+                  <tr
+                    className={`border-b-2 border-b-greyborder ${cn({
+                      "grid grid-cols-6 gap-x-1": edit !== null,
+                      "grid grid-cols-10 md:grid-cols-8 gap-x-2": edit === null,
+                    })}`}
+                  >
+                    <th
+                      className={`text-left p-2 font-normal font-satoshi text-tiny tracking-normal leading-100 ${cn(
+                        {
+                          "col-span-2": edit !== null,
+                          "col-span-3": edit === null,
+                        }
+                      )}`}
+                    >
                       Name
                     </th>
-                    <th className="text-left p-2 font-normal font-satoshi text-tiny tracking-normal leading-100">
+                    <th
+                      className={`text-left p-2 font-normal font-satoshi text-tiny tracking-normal leading-100 ${cn(
+                        {
+                          "col-span-1": edit !== null,
+                          "col-span-2 md:col-span-1": edit === null,
+                        }
+                      )}`}
+                    >
                       Percentage
                     </th>
-                    <th className="text-left p-2 font-normal font-satoshi text-tiny tracking-normal leading-100">
+                    <th
+                      className={`text-left p-2 font-normal font-satoshi text-tiny tracking-normal leading-100 ${cn(
+                        {
+                          "col-span-2": edit !== null,
+                          "col-span-2": edit === null,
+                        }
+                      )}`}
+                    >
                       Amount
                     </th>
                   </tr>
                 </thead>
-                {breakdown.length > 0 && (
-                  <tbody>
-                    {breakdown.map((person, index) => {
+                <tbody className="w-full">
+                  {breakdown.length > 0 &&
+                    breakdown.map((person, index) => {
                       return edit === index ? (
                         <tr
                           key={index.toString()}
-                          className={index % 2 > 0 ? `bg-grey` : "bg-white"}
+                          className={`grid grid-cols-6 gap-x-2 ${cn({
+                            "bg-grey": index % 2 > 0,
+                            "bg-white": index % 2 === 0,
+                          })}`}
                         >
-                          <td className="py-2">
+                          <td className="py-2 col-span-2">
                             <input
                               type="text"
                               defaultValue={person.name}
                               ref={nameFieldUpdate}
                               disabled={!amount}
-                              className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder focus:border-accent outline-none p-4 placeholder-black leading-120"
+                              className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder focus:border-accent outline-none p-2 placeholder-black leading-120"
                             />
                           </td>
-                          <td className="p-2">
+                          <td className="py-2 col-span-1">
                             <input
                               type="text"
                               defaultValue={person.percentage}
@@ -438,10 +478,10 @@ function Distribute() {
                                   );
                                 }
                               }}
-                              className="font-normal font-satoshi text-tiny tracking-normal w-16 p-4 border border-greyborder focus:border-accent outline-none  placeholder-black disabled:placeholder-greyborder disabled:text-greyborder leading-120"
+                              className="font-normal font-satoshi text-tiny tracking-normal w-full p-2 border border-greyborder focus:border-accent outline-none  placeholder-black disabled:placeholder-greyborder disabled:text-greyborder leading-120"
                             />
                           </td>
-                          <td className="p-2">
+                          <td className="py-2 col-span-2">
                             <input
                               type="text"
                               defaultValue={person.amount.toLocaleString()}
@@ -462,49 +502,53 @@ function Distribute() {
                                   (Number(inputValue) / amount) * 100;
                                 addThousandSeparators(e.target);
                               }}
-                              className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder focus:border-accent disabled:placeholder-greyborder disabled:text-greyborder outline-none p-4 placeholder-black leading-120"
+                              className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder focus:border-accent disabled:placeholder-greyborder disabled:text-greyborder outline-none p-2 placeholder-black leading-120"
                             />
                           </td>
-                          <td className="p-2">
-                            <button
-                              className="w-fit md:w-full bg-gray-200 font-bold text-accent py-4 px-6 md:px-8"
+                          <td className="py-2 col-span-1">
+                            <Button
+                              kind="plain"
                               onClick={() => handleUpdate(index)}
+                              className="text-tiny md:text-small md:py-2.5 font-medium w-full"
                             >
                               Save
-                            </button>
+                            </Button>
                           </td>
                         </tr>
                       ) : (
                         <tr
                           key={index.toString()}
-                          className={index % 2 > 0 ? `bg-grey` : "bg-white"}
+                          className={`grid grid-cols-8 gap-x-2 ${cn({
+                            "bg-grey": index % 2 > 0,
+                            "bg-white": index % 2 === 0,
+                          })}`}
                         >
-                          <td className="text-left p-2 font-medium font-satoshi text-tiny tracking-normal leading-120">
+                          <td className="p-2 font-medium font-satoshi text-tiny tracking-normal leading-120 col-span-3 flex items-center">
                             {person.name}
                           </td>
-                          <td className="text-left p-2 font-medium font-satoshi text-tiny tracking-normal leading-120">
+                          <td className="p-2 font-medium font-satoshi text-tiny tracking-normal leading-120 col-span-1 flex items-center">
                             {person.percentage}%
                           </td>
-                          <td className="text-left p-2 font-medium font-satoshi text-tiny tracking-normal leading-120">
+                          <td className="p-2 font-medium font-satoshi text-tiny tracking-normal leading-120 col-span-2 flex items-center">
                             {currencyFormatter(person.amount)}
                           </td>
-                          <td className="p-2">
+                          <td className="p-2 col-span-1 text-start">
                             <button
                               data-index={index}
                               onClick={handleRemove}
                               variant="outline-danger"
                               size="sm"
-                              className="text-red-600 underline p-2 cursor-pointer"
+                              className="text-error underline p-2 font-satoshi text-tiny font-normal tracking-normal leading-100"
                             >
                               Delete
                             </button>
                           </td>
-                          <td className="p-2">
+                          <td className="py-2 col-span-1 text-start">
                             <button
                               data-edit-index={index}
                               onClick={handleEdit}
                               variant="outline-info"
-                              className="underline p-2 cursor-pointer"
+                              className="text-black underline p-2 font-satoshi text-tiny font-normal tracking-normal leading-100"
                               size="sm"
                             >
                               Edit
@@ -513,18 +557,17 @@ function Distribute() {
                         </tr>
                       );
                     })}
-                  </tbody>
-                )}
+                </tbody>
               </table>
 
               <br className="mt-3" />
               <form
-                className="flex xs:flex-wrap md:flex-nowrap justify-between xs:gap-y-3 md:gap-y-0"
+                className="grid grid-cols-10 md:grid-cols-8 gap-x-2 gap-y-3"
                 onSubmit={handleAdd}
               >
-                <div className="md:w-[30%] xs:w-[40%]">
+                <div className="col-span-4 md:col-span-3">
                   <input
-                    className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
+                    className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder outline-none focus:border-accent p-2 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
                     type="text"
                     placeholder="Name"
                     ref={nameField}
@@ -576,9 +619,9 @@ function Distribute() {
                     className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error hidden"
                   ></p>
                 </div>
-                <div className="md:w-[10%] xs:w-[20%]">
+                <div className="col-span-2 md:col-span-1">
                   <input
-                    className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
+                    className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder outline-none focus:border-accent p-2 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
                     type="text"
                     placeholder="%"
                     value={percentageField.value}
@@ -663,9 +706,9 @@ function Distribute() {
                     className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error hidden"
                   ></p>
                 </div>
-                <div className="md:w-[30%] xs:w-[32%]">
+                <div className="col-span-4 md:col-span-2">
                   <input
-                    className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder outline-none focus:border-accent p-4 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
+                    className="font-normal font-satoshi text-tiny tracking-normal w-full border border-greyborder outline-none focus:border-accent p-2 placeholder-black disabled:placeholder-greyborder disabled:text-greyborder"
                     type="text"
                     placeholder="Amount"
                     ref={amountField}
@@ -753,7 +796,7 @@ function Distribute() {
                 </div>
                 <Button
                   type="submit"
-                  className="xs:w-46% md:w-fit bg-grey font-bold px-8 h-fit text-small py-3.5 md:text-medium md:py-4"
+                  className="col-span-4 md:col-span-2 bg-grey font-medium px-8 h-fit text-tiny md:text-small md:py-2.5"
                   onClick={handleAdd}
                   kind="plain"
                 >
@@ -763,33 +806,45 @@ function Distribute() {
             </div>
           </div>
           <br className="md:hidden" />
-          <div className="md:w-3/12 bg-grey p-5">
-            <h2 className="font-semibold py-2">Summary</h2>
-            <hr className="border-solid border-b-1 border-gray-400 my-5" />
+          <section className="md:w-3/12 bg-grey p-4 flex flex-col gap-y-4">
+            <h4 className="font-archivo font-normal text-medium ">Summary</h4>
+            <hr className="border-b-1 border-greyborder" />
             <table className="w-full">
               <tbody>
                 <tr>
-                  <td className="py-2">Income source</td>
-                  <td className="py-2 text-right">{project}</td>
+                  <td className="font-satoshi text-tiny font-normal leading-100 tracking-normal py-3">
+                    Income source
+                  </td>
+                  <td className="font-satoshi text-tiny font-medium leading-120 tracking-normal py-3 text-right">
+                    {project}
+                  </td>
                 </tr>
                 <tr>
-                  <td className="py-2">Income</td>
-                  <td className="py-2 text-right">
+                  <td className="font-satoshi text-tiny font-normal leading-100 tracking-normal py-3">
+                    Income
+                  </td>
+                  <td className="font-satoshi text-tiny font-medium leading-120 tracking-normal py-3 text-right">
                     {currencyFormatter(amount)}
                   </td>
                 </tr>
                 <tr>
-                  <td className="py-2">Beneficiaries/Items</td>
-                  <td className="py-2 text-right">{breakdown?.length}</td>
+                  <td className="font-satoshi text-tiny font-normal leading-100 tracking-normal py-3">
+                    Beneficiaries/Items
+                  </td>
+                  <td className="font-satoshi text-tiny font-medium leading-120 tracking-normal py-3 text-right">
+                    {breakdown?.length}
+                  </td>
                 </tr>
               </tbody>
             </table>
-            <hr className="border-b-1 border-gray-400 my-5" />
+            <hr className="border-b-1 border-greyborder" />
             <table className="w-full">
               <tbody>
                 <tr>
-                  <td className="py-2">Balance</td>
-                  <td className="py-2 text-right">
+                  <td className="font-satoshi text-tiny font-normal leading-100 tracking-normal py-3">
+                    Balance
+                  </td>
+                  <td className="font-satoshi text-tiny font-medium leading-120 tracking-normal py-3 text-right">
                     {currencyFormatter(
                       breakdown?.length === 0 ? Number(amount) : balance
                     )}
@@ -797,29 +852,31 @@ function Distribute() {
                   </td>
                 </tr>
                 <tr>
-                  <td className="py-2">Spent</td>
-                  <td className="py-2 text-right">
-                    {" "}
+                  <td className="font-satoshi text-tiny font-normal leading-100 tracking-normal py-3">
+                    Spent
+                  </td>
+                  <td className="font-satoshi text-tiny font-medium leading-120 tracking-normal py-3 text-right">
                     {currencyFormatter(total)} / {totalPercentage}%
                   </td>
                 </tr>
               </tbody>
             </table>
-            <hr className="border-solid border-b-1 border-gray-400 my-5" />
-            <br className="py-10" />
-            <button className="bg-accent w-full h-10 text-white">Share</button>
-            <div className="flex gap-5 pt-5">
+            <hr className="border-solid border-b-1 border-greyborder" />
+            <Button type="button" className="capitalize py-3 mt-8">
+              share
+            </Button>
+            <div className="flex gap-4">
               <button
-                className="w-1/2 py-2 text-red-700 border border-solid border-red-600 text-center"
+                className="w-1/2 py-2 text-error border border-solid border-error text-center font-satoshi font-bold text-small leading-100 tracking-normal"
                 onClick={handleReset}
               >
                 Reset
               </button>
-              <button className="w-1/2 py-2 text-accent border border-solid border-accent text-center">
+              <button className="w-1/2 py-3 text-accent border border-solid border-accent text-center font-satoshi font-bold text-small leading-100 tracking-normal">
                 Save
               </button>
             </div>
-          </div>
+          </section>
         </section>
       </section>
     </>
