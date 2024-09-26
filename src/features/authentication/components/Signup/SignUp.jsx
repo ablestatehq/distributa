@@ -59,6 +59,7 @@ function SignUp() {
                 disabled={
                   isLoading || isReloading || isSubmitting || isRedirecting
                 }
+                className="text-large"
               >
                 Signup
               </Button>
