@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 function Login() {
   const submit = useSubmit();
   const response = useActionData();
-  if (response ) console.log("Response: ", response)
+  if (response) console.log("Response: ", response);
 
   const { isLoading, isReloading, isRedirecting, isSubmitting } =
     useNavigationLoadingState();
@@ -67,6 +67,7 @@ function Login() {
                 disabled={
                   isLoading || isReloading || isSubmitting || isRedirecting
                 }
+                className="text-large"
               >
                 Login
               </Button>
