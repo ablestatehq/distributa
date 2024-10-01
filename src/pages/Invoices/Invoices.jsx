@@ -31,7 +31,7 @@ function Invoices() {
           <hr className="invisible h-4" />
         </header>
       </section>
-      <div className="flex-1 flex justify-center items-center">
+      <main className="flex-1 flex justify-center items-center">
         <article className="flex flex-col items-center gap-y-4">
           <div className="flex justify-center items-center rounded-full bg-grey w-24 h-24">
             <FileText variation="black" />
@@ -51,7 +51,7 @@ function Invoices() {
             Create New Invoice
           </Button>
         </article>
-      </div>
+      </main>
     </ContentViewAreaWrapper>
   );
 }

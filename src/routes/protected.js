@@ -1,7 +1,7 @@
 import { PrivateRoute } from "./components";
 import { AppwriteService as Appwrite } from "../services";
 import { redirect, defer } from "react-router-dom";
-import { Invoices } from "../pages";
+import { Invoices, Transactions } from "../pages";
 
 const appwrite = new Appwrite();
 
@@ -41,11 +41,7 @@ export const protectedRoutes = [
       },
       {
         path: "/transactions",
-        element: (
-          <ContentViewArea>
-            <div>Transactions</div>
-          </ContentViewArea>
-        ),
+        element: <Transactions />,
       },
       {
         path: "/settings",
