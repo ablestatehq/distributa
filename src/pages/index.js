@@ -1,2 +1,3 @@
-import Dashboard from "./Dashboard/Dashboard";
-export { Dashboard };
+import Invoices from "./Invoices/Invoices";
+
+export { Invoices };

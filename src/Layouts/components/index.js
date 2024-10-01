@@ -4,4 +4,7 @@ import Footer from "./footer/Footer";
 import Header from "./header/Header";
 import MobileNav from "./mobileNav/MobileNav";
 
-export { PublicNav, SideBar, Footer, Header, MobileNav };
+// Wrappers
+import ContentViewAreaWrapper from "./wrappers/ContentViewArea";
+
+export { PublicNav, SideBar, Footer, Header, MobileNav, ContentViewAreaWrapper };

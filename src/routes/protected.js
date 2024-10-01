@@ -1,13 +1,17 @@
-import { Dashboard } from "../pages";
 import { PrivateRoute } from "./components";
 import { AppwriteService as Appwrite } from "../services";
 import { redirect, defer } from "react-router-dom";
+import { Invoices } from "../pages";
 
 const appwrite = new Appwrite();
 
+function ContentViewArea({ children }) {
+  return <section className="p-6 flex flex-col h-full">{children}</section>;
+}
+
 export const protectedRoutes = [
   {
-    element: <PrivateRoute className="border border-red-500 h-20 w-20" />,
+    element: <PrivateRoute />,
     loader: async () => {
       let user = null;
       try {
@@ -23,24 +27,33 @@ export const protectedRoutes = [
     },
     children: [
       {
-        path: "/dashboard",
-        element: <Dashboard />,
-      },
-      {
         path: "/invoices",
-        element: <div>My Invoices</div>,
+        element: <Invoices />,
+        // TODO: create the ivoices loader to create the invoice
       },
       {
         path: "/invoices/new",
-        element: <div>New Invoice</div>,
+        element: (
+          <ContentViewArea>
+            <div>New nvoice</div>
+          </ContentViewArea>
+        ),
       },
       {
         path: "/transactions",
-        element: <div>My Transactions</div>,
+        element: (
+          <ContentViewArea>
+            <div>Transactions</div>
+          </ContentViewArea>
+        ),
       },
       {
         path: "/settings",
-        element: <div>Settings</div>,
+        element: (
+          <ContentViewArea>
+            <div>Settings</div>
+          </ContentViewArea>
+        ),
       },
     ],
   },
