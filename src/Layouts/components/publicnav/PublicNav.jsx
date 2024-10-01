@@ -1,8 +1,8 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
-import Logo from "../../../components/Logo/Logo";
+import Logo from "../../../components/common/Logos/Logo";
 import cn from "../../../utils/cn";
-import Button from "../../../components/forms/Button";
+import Button from "../../../components/common/forms/Button";
 
 function PublicNav() {
   const location = useLocation();
