@@ -16,7 +16,7 @@ function SideBar() {
 
   return (
     <aside
-      className={`h-full hidden md:flex flex-col justify-between py-16 ${cn({
+      className={`h-full hidden md:flex flex-col justify-between py-16 border-r border-r-gray-100 ${cn({
         "px-8": !collapseMenu,
         "px-4": collapseMenu,
       })}`}
