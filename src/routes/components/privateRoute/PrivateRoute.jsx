@@ -14,7 +14,7 @@ function PrivateRoute() {
         <div className="w-screen h-screen overflow-scroll flex flex-col md:flex-row justify-end">
           <Header handleToggleMenu={handleToggleMenu} toggleMenu={toggleMenu} />
           <SideBar />
-          <div className="relative md:static flex-1 h-full w-full md:flex md:flex-row border border-red-500">
+          <div className="relative md:static flex-1 h-full w-full md:flex md:flex-row">
             <MobileNav
               toggleMenu={toggleMenu}
               handleMenuToggle={handleToggleMenu}
