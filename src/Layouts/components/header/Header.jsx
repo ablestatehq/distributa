@@ -6,7 +6,7 @@ const Header = ({ handleToggleMenu, toggleMenu }) => {
     <header className="flex md:hidden w-full px-5  py-4 justify-between">
       <Logo
         className="w-[5.758rem] h-[1.125rem] md:w-32 md:h-6"
-        variant="blue"
+        variant="black"
       />
       <button className="md:hidden" onClick={handleToggleMenu}>
         {toggleMenu ? (
