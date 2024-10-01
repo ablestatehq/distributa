@@ -15,14 +15,14 @@ function Invoices() {
     <ContentViewAreaWrapper>
       <section className="flex flex-col gap-y-2">
         <header className="flex flex-col gap-y-2">
-          <h1 className="font-archivo font-normal text-xl leading-110 tracking-normal">
+          <h1 className="font-archivo font-normal text-xl md:text-4xl leading-110 tracking-normal">
             My Invoices
           </h1>
           <hr className="invisible h-8" />
           <div className="flex justify-end">
             <Button
               type="button"
-              className="w-fit px-6 py-3 font-bold text-medium"
+              className="w-fit px-6 py-3 font-bold text-small"
               onClick={handleCreateNewInvoice}
             >
               Create New Invoice
