@@ -19,12 +19,28 @@ export const protectedRoutes = [
         return redirect("/login");
       }
 
-      return defer({user});
+      return defer({ user });
     },
     children: [
       {
         path: "/dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "/invoices",
+        element: <div>My Invoices</div>,
+      },
+      {
+        path: "/invoices/new",
+        element: <div>New Invoice</div>,
+      },
+      {
+        path: "/transactions",
+        element: <div>My Transactions</div>,
+      },
+      {
+        path: "/settings",
+        element: <div>Settings</div>,
       },
     ],
   },
