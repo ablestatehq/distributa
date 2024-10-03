@@ -4,7 +4,7 @@ import { invoicingRoutes } from "../features/invoicing";
 import { Outlet } from "react-router-dom";
 import { Footer, PublicNav } from "../Layouts/components";
 
-import Home from "../pages/home";
+import Home from "../pages/Home";
 
 function AuthLayout() {
   return (

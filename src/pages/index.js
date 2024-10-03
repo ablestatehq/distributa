@@ -1,2 +1,5 @@
-import Dashboard from "./Dashboard/Dashboard";
-export { Dashboard };
+import Invoices from "./Invoices/Invoices";
+import NewInvoice from "./Invoices/NewInvoice";
+import Transactions from "./Transactions/Transactions";
+
+export { Invoices, NewInvoice, Transactions };

@@ -65,7 +65,8 @@ In the env file replace your-api-key, your-project-id, and your-project-endpoint
 
 5. Run the code to initialise your appwrite project with database, users, teams, and appropriate collections.
 
-```node appwrite-init
+```js 
+node appwrite-init
 
 ```
 

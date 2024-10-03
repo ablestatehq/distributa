@@ -1,5 +1,5 @@
 import React from "react";
-import cn from "../../utils/cn";
+import cn from "../../../utils/cn";
 
 const Button = ({ className, size, kind = "primary", children, ...props }) => {
   const styles = {

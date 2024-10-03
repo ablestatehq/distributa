@@ -11,7 +11,7 @@ export const authRoutes = [
     loader: async ({ request }) => {
       try {
         const url = new URL(request.url);
-        const from = url.searchParams.get("from") ?? "/dashboard";
+        const from = url.searchParams.get("from") ?? "/invoices";
         const user = await appwrite.getAccount();
         if (user) return redirect(from, { replace: true });
       } catch (error) {
@@ -25,7 +25,7 @@ export const authRoutes = [
         const password = formData.get("password");
 
         const url = new URL(request.url);
-        const from = url.searchParams.get("from") ?? "/dashboard";
+        const from = url.searchParams.get("from") ?? "/invoices";
 
         const session = await appwrite.createSession(email, password);
         if (session) return redirect(from, { replace: true });
@@ -37,6 +37,16 @@ export const authRoutes = [
   {
     path: "/signup",
     element: <SignUp />,
+    loader: async ({ request }) => {
+      try {
+        const url = new URL(request.url);
+        const from = url.searchParams.get("from") ?? "/invoices";
+        const user = await appwrite.getAccount();
+        if (user) return redirect(from, { replace: true });
+      } catch (error) {
+        return json({ error });
+      }
+    },
     action: async ({ request }) => {
       try {
         const formData = await request.formData();
@@ -46,7 +56,7 @@ export const authRoutes = [
 
         await appwrite.createAccount(email, password);
         const session = await appwrite.createSession(email, password);
-        if (session) return redirect("/dashboard", { replace: true });
+        if (session) return redirect("/invoices", { replace: true });
       } catch (error) {
         return json({ error: error.response });
       }

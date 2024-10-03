@@ -33,6 +33,6 @@ export default function useAuthorization() {
     // Fetch from the teams api and get the roles
     if (user) {
     }
-  }, [user.id]);
+  }, [user]);
   return { checkAccess, roles, user };
 }

@@ -1,5 +1,10 @@
 import PublicNav from "./publicnav/PublicNav";
-import PrivateNav from "./privatenav/PrivateNav";
+import SideBar from "./sidebar/SideBar";
 import Footer from "./footer/Footer";
+import Header from "./header/Header";
+import MobileNav from "./mobileNav/MobileNav";
 
-export { PublicNav, PrivateNav, Footer };
+// Wrappers
+import ContentViewAreaWrapper from "./wrappers/ContentViewArea";
+
+export { PublicNav, SideBar, Footer, Header, MobileNav, ContentViewAreaWrapper };

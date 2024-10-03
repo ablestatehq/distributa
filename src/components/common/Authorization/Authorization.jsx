@@ -1,4 +1,4 @@
-import useAuthorization from "../../hooks/useAuthorization";
+import useAuthorization from "../../../hooks/useAuthorization";
 
 export default function Authorization({
   policyCheck,

@@ -2,8 +2,8 @@ import { Formik, Form } from "formik";
 import { Link } from "react-router-dom";
 import { loginSchema } from "../../utils/validator";
 import { useSubmit, useActionData } from "react-router-dom";
-import Input from "../../../../components/forms/Input";
-import Button from "../../../../components/forms/Button";
+import Input from "../../../../components/common/forms/Input";
+import Button from "../../../../components/common/forms/Button";
 import { useNavigationLoadingState } from "../../../../hooks";
 import { toast } from "react-toastify";
 

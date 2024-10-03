@@ -1,21 +1,22 @@
 import { useNavigate } from "react-router-dom";
 import {
-  Folder,
+  FolderPlus,
   UserPlus,
   List,
   Zap,
   Book,
   Database,
-} from "../../components/icons";
+} from "../../components/common/icons";
 import Instruction from "../../components/cards/Instruction";
-import Button from "../../components/forms/Button";
+import Button from "../../components/common/forms/Button";
+import IconWrapper from "../../components/Home/IconWrapper";
 
 function Home() {
   const navigate = useNavigate();
 
   return (
     <>
-      <section className="flex md:flex-row xs:flex-col-reverse py-10 md:my-20">
+      <section className="flex md:flex-row flex-col-reverse py-10 md:my-20">
         <div className="md:w-1/2 bg-grey flex flex-col text-center items-center justify-center p-5 gap-y-4">
           <h1 className="font-archivo font-normal text-xl md:text-4xl leading-110 tracking-normal capitalize">
             I want to track my expenses.
@@ -57,17 +58,29 @@ function Home() {
         </article>
         <section className="grid md:grid-cols-3 gap-8 mt-6 xs:grid-cols-1">
           <Instruction
-            icon={<Folder />}
+            icon={
+              <IconWrapper>
+                <FolderPlus />
+              </IconWrapper>
+            }
             title="Initiate Pool"
             description="Add the amount you want to share."
           />
           <Instruction
-            icon={<UserPlus />}
+            icon={
+              <IconWrapper>
+                <UserPlus />
+              </IconWrapper>
+            }
             title="Beneficiaries"
             description="Enter the Name and Percentage of each person. Made a mistake? No worries you can edit or delete."
           />
           <Instruction
-            icon={<List />}
+            icon={
+              <IconWrapper>
+                <List />
+              </IconWrapper>
+            }
             title="Breakdown"
             description="Enter the Name and Percentage of each person. Made a mistake? No worries you can edit or delete."
           />
@@ -81,17 +94,29 @@ function Home() {
         </article>
         <section className="grid md:grid-cols-3 xs:grid-cols-1 gap-6 mt-6">
           <Instruction
-            icon={<Zap />}
+            icon={
+              <IconWrapper>
+                <Zap />
+              </IconWrapper>
+            }
             title="Improve Your Financial Awareness"
             description="Understand and make informed decisions about your spending habits"
           />
           <Instruction
-            icon={<Book />}
+            icon={
+              <IconWrapper>
+                <Book />
+              </IconWrapper>
+            }
             title="Budgeting Assitance"
             description="Create and stick to a budget by showing your spending and identifying areas of overspending."
           />
           <Instruction
-            icon={<Database />}
+            icon={
+              <IconWrapper>
+                <Database />
+              </IconWrapper>
+            }
             title="Saving money"
             description="Identify and cut unnecessary expenses to save money."
           />

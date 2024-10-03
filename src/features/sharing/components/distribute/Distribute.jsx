@@ -3,8 +3,8 @@ import { useParams } from "react-router-dom";
 import { currencyFormatter } from "../../../../utils/currency.formatter";
 import addThousandSeparators from "../../../../utils/add.thousand.separators";
 import Instruction from "../../../../components/cards/Instruction";
-import { Zap, Book, Database } from "../../../../components/icons";
-import Button from "../../../../components/forms/Button";
+import { Zap, Book, Database } from "../../../../components/common/icons";
+import Button from "../../../../components/common/forms/Button";
 import cn from "../../../../utils/cn";
 
 function Distribute() {
@@ -56,7 +56,7 @@ function Distribute() {
     ),
     nameFieldUpdate: !balance,
     percentageFieldUpdate: !(amount && nameFieldUpdate?.current?.value),
-    amountField: !(
+    amountFieldUpdate: !(
       balance &&
       nameFieldUpdate?.current?.value &&
       percentageFieldUpdate?.current?.value
@@ -429,12 +429,7 @@ function Distribute() {
                       Percentage
                     </th>
                     <th
-                      className={`text-left p-2 font-normal font-satoshi text-tiny tracking-normal leading-100 ${cn(
-                        {
-                          "col-span-2": edit !== null,
-                          "col-span-2": edit === null,
-                        }
-                      )}`}
+                      className={`text-left p-2 font-normal font-satoshi text-tiny tracking-normal leading-100 col-span-2`}
                     >
                       Amount
                     </th>
@@ -807,7 +802,9 @@ function Distribute() {
           </div>
           <br className="md:hidden" />
           <section className="md:w-3/12 bg-grey p-4 flex flex-col gap-y-4">
-            <h4 className="font-archivo font-normal text-medium leading-140 tracking-normal">Summary</h4>
+            <h4 className="font-archivo font-normal text-medium leading-140 tracking-normal">
+              Summary
+            </h4>
             <hr className="border-b-1 border-greyborder" />
             <table className="w-full">
               <tbody>
