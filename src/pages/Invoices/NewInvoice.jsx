@@ -227,7 +227,7 @@ const NewInvoice = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {[...Array(12)].map((_, index) =>
+                    {[...Array(3)].map((_, index) =>
                       editIndex === index ? (
                         <tr key={index}>
                           <td className="text-start pr-4 py-2">
