@@ -3,8 +3,7 @@ import { sharingRoutes } from "../features";
 import { invoicingRoutes } from "../features/invoicing";
 import { Outlet } from "react-router-dom";
 import { Footer, PublicNav } from "../Layouts/components";
-
-import Home from "../pages/Home";
+import { Home } from "../pages";
 
 function AuthLayout() {
   return (
