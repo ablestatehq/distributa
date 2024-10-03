@@ -3,7 +3,7 @@ import { Menu, CircleX } from "../../../components/common/icons";
 
 const Header = ({ handleToggleMenu, toggleMenu }) => {
   return (
-    <header className="flex md:hidden w-full px-5  py-4 justify-between">
+    <header className="flex md:hidden w-full h-fit px-5  py-4 justify-between border border-red-500">
       <Logo
         className="w-[5.758rem] h-[1.125rem] md:w-32 md:h-6"
         variant="black"

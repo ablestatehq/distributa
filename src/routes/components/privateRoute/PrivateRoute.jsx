@@ -11,10 +11,10 @@ function PrivateRoute() {
   return (
     <Suspense fallback={<div>loading...</div>}>
       <Await resolve={data}>
-        <div className="w-screen h-screen overflow-scroll flex flex-col md:flex-row justify-end">
+        <div className="h-screen w-screen overflow-hidden flex flex-1 flex-col md:flex-row justify-start">
           <Header handleToggleMenu={handleToggleMenu} toggleMenu={toggleMenu} />
           <SideBar />
-          <div className="relative md:static flex-1 h-full w-full md:flex md:flex-row">
+          <div className="relative lg:static flex flex-1 md:flex md:flex-row overflow-hidden">
             <MobileNav
               toggleMenu={toggleMenu}
               handleMenuToggle={handleToggleMenu}

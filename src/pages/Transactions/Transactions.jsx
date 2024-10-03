@@ -1,7 +1,6 @@
 import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
 import { Book } from "../../components/common/icons";
-import { useNavigate } from "react-router-dom";
 
 const Transactions = () => {
   // TODO: use loader data to determine if there are some transactions.
