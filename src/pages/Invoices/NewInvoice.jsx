@@ -3,28 +3,28 @@ import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
 import { Formik, Field, Form, FieldArray } from "formik";
 import { AiOutlineClose } from "react-icons/ai";
+import getBase64 from "../../utils/getBase64";
+import { newInvoiceSchema } from "../../utils/validators";
+import cn from "../../utils/cn";
 
-const getBase64 = (file) => {
-  return new Promise((resolve) => {
-    let baseURL = "";
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      baseURL = reader.result;
-      resolve(baseURL);
-    };
-    reader.onerror = (error) => {
-      console.log("Error: ", error);
-    };
-  });
-};
+const calculateSubTotal = (items) =>
+  items.reduce((acc, { quantity, price }) => {
+    const total = quantity * price;
+    return acc + total;
+  }, 0);
+
+const calculateAmountDue = ({ tax, shipping, discount, sub_total }) =>
+  sub_total + tax + shipping - discount;
+
+const calculateBalance = ({ amount_due, amount_paid }) =>
+  amount_paid - amount_due;
 
 const NewInvoice = () => {
   const [editIndex, setEditIndex] = useState(null);
-  const [addItem, setAddItem] = useState(false);
+  const [addItem, setAddItem] = useState(null);
 
   const initialValues = {
-    logo: "",
+    logo: null,
     paper_size: "",
     orientation: "",
     currency: "",
@@ -42,29 +42,29 @@ const NewInvoice = () => {
     invoice_no: "",
     issue_date: "",
     due_date: "",
-    breakdown: [
+    items: [
       {
         title: "Mackooks",
-        quantity: "",
-        units: "",
-        price: "",
+        quantity: 1,
+        units: "Piece",
+        price: 0,
       },
     ],
-    subtotal: "",
-    discount: "",
-    tax: "",
-    shipping: "",
-    amount_due: "",
-    amount_paid: "",
-    balance_due: "",
-    notes: "",
-    terms: "",
+    subtotal: 0,
+    discount: null,
+    tax: null,
+    shipping: null,
+    amount_due: 0,
+    amount_paid: null,
+    balance_due: null,
+    notes: null,
+    terms: null,
   };
   const handleSubmit = () => {};
 
   return (
     <ContentViewAreaWrapper>
-      <section className="flex flex-col gap-y-2">
+      <section className="flex h-fit flex-shrink-0 flex-col gap-y-2">
         <header className="flex flex-col gap-y-2">
           <h1 className="font-archivo font-normal text-xl md:text-4xl leading-110 tracking-normal">
             New Invoice
@@ -72,11 +72,15 @@ const NewInvoice = () => {
         </header>
         <hr className="invisible h-8" />
       </section>
-      <main className="flex w-full flex-col gap-y-4 lg:pt-6 border border-red-500 overflow-auto">
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {({ values, setFieldValue }) => {
+      <main className="flex w-full flex-col h-fit gap-y-4 lg:pt-6">
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validationSchema={newInvoiceSchema}
+        >
+          {({ values, setFieldValue, touched, errors }) => {
             return (
-              <Form>
+              <Form className="flex flex-col gap-y-4">
                 <div className="flex justify-between items-start h-fit md:items-end w-full p-4 bg-grey rounded md:h-24 flex-wrap gap-y-2">
                   <section className="flex flex-1 md:flex-none w-fit gap-x-4 items-start">
                     {values?.logo ? (
@@ -95,19 +99,24 @@ const NewInvoice = () => {
                         <img
                           src={values.logo}
                           alt="Logo"
-                          className="static lg:absolute -top-7 w-24 h-24 object-cover border border-greyborder"
+                          className="static bg-white lg:absolute -top-7 w-24 h-24 object-cover border border-greyborder"
                         />
                       </div>
                     ) : (
                       <label
                         htmlFor="logo"
-                        className="bg-white border border-greyborder w-24 h-24 flex justify-center items-center cursor-pointer p-2 md:-mt-7"
+                        className={`${cn(
+                          "bg-white border border-greyborder w-24 h-24 flex justify-center items-center cursor-pointer p-2 md:-mt-7",
+                          {
+                            "border-error": touched?.logo && errors?.logo,
+                          }
+                        )}`}
                       >
                         <input
                           type="file"
                           id="logo"
                           name="logo"
-                          className="hidden"
+                          className="hidden group"
                           accept="image/*"
                           onChange={(event) => {
                             getBase64(event.currentTarget.files[0]).then(
@@ -132,7 +141,13 @@ const NewInvoice = () => {
                         <Field
                           id="paper_size"
                           name="paper_size"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer",
+                            {
+                              "border-error focus:border-error":
+                                touched?.paper_size && errors?.paper_size,
+                            }
+                          )}
                           as="select"
                         >
                           <option value="">Select one</option>
@@ -152,7 +167,13 @@ const NewInvoice = () => {
                         <Field
                           id="orientation"
                           name="orientation"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer"
+                          className={cn(
+                            "w-full border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer",
+                            {
+                              "border-error focus:border-error":
+                                touched?.orientation && errors?.orientation,
+                            }
+                          )}
                           as="select"
                         >
                           <option value="">Select one</option>
@@ -170,7 +191,13 @@ const NewInvoice = () => {
                         <Field
                           id="currency"
                           name="currency"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer"
+                          className={cn(
+                            "w-full border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer",
+                            {
+                              "border-error focus:border-error":
+                                touched?.currency && errors?.currency,
+                            }
+                          )}
                           as="select"
                         >
                           <option value="">Select one</option>
@@ -201,20 +228,41 @@ const NewInvoice = () => {
                           id="billed_from.name"
                           name="billed_from.name"
                           type="text"
-                          className="col-span-1 border outline-none border-greyborder p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                          className={cn(
+                            "col-span-1 border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.billed_from?.name &&
+                                errors?.billed_from?.name,
+                            }
+                          )}
                           placeholder="Name"
                         />
                         <Field
                           id="billed_from.email"
                           name="billed_from.email"
                           type="text"
-                          className="col-span-1 border outline-none border-greyborder p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                          className={cn(
+                            "col-span-1 border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.billed_from?.email &&
+                                errors?.billed_from?.email,
+                            }
+                          )}
                           placeholder="Email"
                         />
                         <Field
                           name="billed_from.address"
                           id="billed_from.address"
-                          className="col-span-2 resize-none border outline-none border-greyborder p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                          className={cn(
+                            "col-span-2 resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.billed_from?.address &&
+                                errors?.billed_from?.address,
+                            }
+                          )}
                           rows={3}
                           placeholder="Address"
                           as="textarea"
@@ -228,21 +276,42 @@ const NewInvoice = () => {
                           name="billed_to.name"
                           id="billed_to.name"
                           type="text"
-                          className="col-span-1 border outline-none border-greyborder p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                          className={cn(
+                            "col-span-1 border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.billed_to?.name &&
+                                errors?.billed_to?.name,
+                            }
+                          )}
                           placeholder="Name"
                         />
                         <Field
                           name="billed_to.email"
                           id="billed_to.email"
                           type="text"
-                          className="col-span-1 border outline-none border-greyborder p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                          className={cn(
+                            "col-span-1 border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.billed_to?.email &&
+                                errors?.billed_to?.email,
+                            }
+                          )}
                           placeholder="Email"
                         />
                         <Field
                           name="billed_to.address"
                           id="billed_to.address"
                           as="textarea"
-                          className="col-span-2 resize-none border outline-none border-greyborder p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                          className={cn(
+                            "col-span-2 resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.billed_to?.address &&
+                                errors?.billed_to?.address,
+                            }
+                          )}
                           rows={3}
                           placeholder="Address"
                         />
@@ -261,7 +330,13 @@ const NewInvoice = () => {
                           name="title"
                           type="text"
                           placeholder="Title"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.title && errors?.title,
+                            }
+                          )}
                         />
                       </div>
                       <div className="w-full flex flex-col gap-y-2">
@@ -272,11 +347,17 @@ const NewInvoice = () => {
                           # Invoice
                         </label>
                         <Field
-                          id="title"
-                          name="title"
+                          id="invoice_no"
+                          name="invoice_no"
                           type="text"
                           placeholder="00001"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.invoice_no && errors?.invoice_no,
+                            }
+                          )}
                         />
                       </div>
                       <div className="w-full flex flex-col gap-y-2">
@@ -290,7 +371,13 @@ const NewInvoice = () => {
                           id="issue_date"
                           name="issue_date"
                           type="date"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.issue_date && errors?.issue_date,
+                            }
+                          )}
                         />
                       </div>
                       <div className="w-full flex flex-col gap-y-2">
@@ -304,74 +391,109 @@ const NewInvoice = () => {
                           id="due_date"
                           name="due_date"
                           type="date"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.due_date && errors?.due_date,
+                            }
+                          )}
                         />
                       </div>
                     </div>
-                    <div className="bg-grey rounded p-4 w-full">
-                      <div className="overflow-x-auto max-h-fit">
-                        <table className="min-w-full table-auto max-w-full overflow-x-scroll">
-                          <thead>
-                            <tr className="border-b border-b-greyborder">
-                              <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
-                                Title
-                              </th>
-                              <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
-                                Quantity
-                              </th>
-                              <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
-                                Units
-                              </th>
-                              <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
-                                Price/Unit
-                              </th>
-                              <th
-                                className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2"
-                                colSpan="2"
-                              ></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <FieldArray
-                              name="breakdown"
-                              render={(arrayHelpers) => {
-                                console.log("Breakdown: ", values.breakdown);
-                                return (
-                                  values.breakdown &&
-                                  values.breakdown?.length > 0 &&
-                                  values.breakdown.map((item, index) => {
-                                    console.log("Item: ", item);
+                    <FieldArray
+                      name="items"
+                      render={(arrayHelpers) => {
+                        return (
+                          <div className="bg-grey rounded p-4 w-full">
+                            <div className="overflow-x-auto max-h-fit">
+                              <table className="min-w-full table-auto max-w-full overflow-x-scroll">
+                                <thead>
+                                  <tr className="border-b border-b-greyborder">
+                                    <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
+                                      Title
+                                    </th>
+                                    <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
+                                      Quantity
+                                    </th>
+                                    <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
+                                      Units
+                                    </th>
+                                    <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
+                                      Price/Unit
+                                    </th>
+                                    <th
+                                      className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2"
+                                      colSpan="2"
+                                    ></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {values.items.map((_, index) => {
                                     return editIndex === index ? (
                                       <tr key={index}>
                                         <td className="text-start pr-4 py-2">
                                           <Field
-                                            name={`breakdown.${index}.title`}
+                                            name={`items.${index}.title`}
                                             type="text"
-                                            className="border border-greyborder font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black"
+                                            className={cn(
+                                              "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black",
+                                              {
+                                                "border-error focus:border-error":
+                                                  touched?.items?.[index]
+                                                    ?.title &&
+                                                  errors?.items?.[index]?.title,
+                                              }
+                                            )}
                                             placeholder="Title"
                                           />
                                         </td>
                                         <td className="text-start pr-4 py-2">
                                           <Field
-                                            name={`breakdown.${index}.quantity`}
+                                            name={`items.${index}.quantity`}
                                             type="text"
-                                            className="border border-greyborder font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black"
+                                            className={cn(
+                                              "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black",
+                                              {
+                                                "border-error focus:border-error":
+                                                  touched?.items?.[index]
+                                                    ?.quantity &&
+                                                  errors?.items?.[index]
+                                                    ?.quantity,
+                                              }
+                                            )}
                                             placeholder="Quantity"
                                           />
                                         </td>
                                         <td className="text-start pr-4 py-2">
                                           <Field
-                                            name={`breakdown.${index}.units`}
+                                            name={`items.${index}.units`}
                                             type="text"
-                                            className="border border-greyborder font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black"
+                                            className={cn(
+                                              "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black",
+                                              {
+                                                "border-error focus:border-error":
+                                                  touched?.items?.[index]
+                                                    ?.units &&
+                                                  errors?.items?.[index]?.units,
+                                              }
+                                            )}
                                             placeholder="Units"
                                           />
                                         </td>
                                         <td className="text-start pr-4 py-2">
                                           <Field
-                                            name={`breakdown.${index}.price`}
+                                            name={`items.${index}.price`}
                                             type="text"
-                                            className="border border-greyborder font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black"
+                                            className={cn(
+                                              "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black",
+                                              {
+                                                "border-error focus:border-error":
+                                                  touched?.items?.[index]
+                                                    ?.price &&
+                                                  errors?.items?.[index]?.price,
+                                              }
+                                            )}
                                             placeholder="Price"
                                           />
                                         </td>
@@ -381,10 +503,114 @@ const NewInvoice = () => {
                                         >
                                           <Button
                                             type="button"
-                                            className="w-fit px-6 py-3 font-medium text-[0.5rem] lg:text-tiny"
+                                            className="w-fit px-6 py-3 font-medium text-[0.5rem] lg:text-tiny outline-none"
                                             kind="plain"
-                                            onClick={() =>
-                                              setEditIndex(() => null)
+                                            onClick={() => {
+                                              const subtotal =
+                                                calculateSubTotal(values.items);
+                                              setFieldValue(
+                                                "subtotal",
+                                                subtotal
+                                              );
+                                              setEditIndex(() => null);
+                                            }}
+                                            disabled={
+                                              !touched.items?.[index] ||
+                                              (errors.items?.[index] &&
+                                                touched.items?.[index])
+                                            }
+                                          >
+                                            Save
+                                          </Button>
+                                        </td>
+                                      </tr>
+                                    ) : addItem === index ? (
+                                      <tr>
+                                        <td className="text-start pr-4 py-2">
+                                          <Field
+                                            name={`items.${index}.title`}
+                                            type="text"
+                                            className={cn(
+                                              "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black",
+                                              {
+                                                "border-error focus:border-error":
+                                                  touched?.items?.[index]
+                                                    ?.title &&
+                                                  errors?.items?.[index]?.title,
+                                              }
+                                            )}
+                                            placeholder="Title"
+                                          />
+                                        </td>
+                                        <td className="text-start pr-4 py-2">
+                                          <Field
+                                            name={`items.${index}.quantity`}
+                                            type="text"
+                                            className={cn(
+                                              "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black",
+                                              {
+                                                "border-error focus:border-error":
+                                                  touched?.items?.[index]
+                                                    ?.quantity &&
+                                                  errors?.items?.[index]
+                                                    ?.quantity,
+                                              }
+                                            )}
+                                            placeholder="Quantity"
+                                          />
+                                        </td>
+                                        <td className="text-start pr-4 py-2">
+                                          <Field
+                                            name={`items.${index}.units`}
+                                            type="text"
+                                            className={cn(
+                                              "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black",
+                                              {
+                                                "border-error focus:border-error":
+                                                  touched?.items?.[index]
+                                                    ?.units &&
+                                                  errors?.items?.[index]?.units,
+                                              }
+                                            )}
+                                            placeholder="Units"
+                                          />
+                                        </td>
+                                        <td className="text-start pr-4 py-2">
+                                          <Field
+                                            name={`items.${index}.price`}
+                                            className={cn(
+                                              "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black",
+                                              {
+                                                "border-error focus:border-error":
+                                                  touched?.items?.[index]
+                                                    ?.price &&
+                                                  errors?.items?.[index]?.price,
+                                              }
+                                            )}
+                                            placeholder="Price"
+                                          />
+                                        </td>
+                                        <td
+                                          className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2"
+                                          colSpan={2}
+                                        >
+                                          <Button
+                                            type="button"
+                                            className="w-fit px-6 py-3 font-medium text-[0.5rem] lg:text-tiny outline-none"
+                                            kind="plain"
+                                            onClick={() => {
+                                              const subtotal =
+                                                calculateSubTotal(values.items);
+                                              setFieldValue(
+                                                "subtotal",
+                                                subtotal
+                                              );
+                                              setAddItem(() => null);
+                                            }}
+                                            disabled={
+                                              !touched.items?.[index] ||
+                                              (errors.items?.[index] &&
+                                                touched.items?.[index])
                                             }
                                           >
                                             Save
@@ -394,21 +620,46 @@ const NewInvoice = () => {
                                     ) : (
                                       <tr key={index}>
                                         <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
-                                          {values.breakdown[index]["title"]}
+                                          {values.items[index]["title"]}
                                         </td>
                                         <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
-                                          {values.breakdown[index]["quantity"]}
+                                          {values.items[index]["quantity"]}
                                         </td>
                                         <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
-                                          LBs
+                                          {values.items[index]["units"]}
                                         </td>
                                         <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
-                                          $500
+                                          {values.items[index]["price"]}
                                         </td>
                                         <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
                                           <button
                                             type="button"
-                                            className="font-satoshi font-normal underline text-error leading-100 tracking-normal capitalize text-tiny"
+                                            className="font-satoshi font-normal underline text-error leading-100 tracking-normal capitalize text-tiny outline-none"
+                                            onClick={async () => {
+                                              const items = JSON.parse(
+                                                JSON.stringify(values.items)
+                                              );
+                                              const subtotal =
+                                                await items.reduce(
+                                                  (
+                                                    acc,
+                                                    { quantity, price },
+                                                    currentIndex
+                                                  ) =>
+                                                    currentIndex === index
+                                                      ? acc
+                                                      : quantity * price + acc,
+                                                  0
+                                                );
+                                              if (subtotal >= 0) {
+                                                arrayHelpers.remove(index);
+                                                setFieldValue(
+                                                  "subtotal",
+                                                  subtotal
+                                                );
+                                              }
+                                            }}
+                                            disabled={values.items?.length <= 1}
                                           >
                                             Delete
                                           </button>
@@ -426,81 +677,39 @@ const NewInvoice = () => {
                                         </td>
                                       </tr>
                                     );
-                                  })
-                                );
-                              }}
-                            />
-
-                            {addItem && (
-                              <tr>
-                                <td className="text-start pr-4 py-2">
-                                  <input
-                                    type="text"
-                                    className="border border-greyborder font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black"
-                                    placeholder="Title"
-                                  />
-                                </td>
-                                <td className="text-start pr-4 py-2">
-                                  <input
-                                    type="text"
-                                    className="border border-greyborder font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black"
-                                    placeholder="Quantity"
-                                  />
-                                </td>
-                                <td className="text-start pr-4 py-2">
-                                  <input
-                                    type="text"
-                                    className="border border-greyborder font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black"
-                                    placeholder="Units"
-                                  />
-                                </td>
-                                <td className="text-start pr-4 py-2">
-                                  <input
-                                    type="text"
-                                    className="border border-greyborder font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal w-[4.5rem] md:min-w-[4.5rem] md:w-full h-[2.5rem] p-3 placeholder-black"
-                                    placeholder="Price"
-                                  />
-                                </td>
-                                <td
-                                  className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2"
-                                  colSpan={2}
-                                >
-                                  <Button
-                                    type="button"
-                                    className="w-fit px-6 py-3 font-medium text-[0.5rem] lg:text-tiny"
-                                    kind="plain"
-                                    onClick={() => {
-                                      setAddItem(() => false);
-                                    }}
-                                  >
-                                    Save
-                                  </Button>
-                                </td>
-                              </tr>
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
+                            {!addItem && (
+                              <Button
+                                type="button"
+                                className="my-2 px-3 py-1.5 font-satoshi font-medium text-tiny leading-100 tracking-normal outline-none"
+                                onClick={() => {
+                                  const totalItems = values.items.length;
+                                  arrayHelpers.push({
+                                    title: "",
+                                    quantity: "",
+                                    units: "",
+                                    price: "",
+                                  });
+                                  setAddItem(() => totalItems);
+                                }}
+                              >
+                                Add Item
+                              </Button>
                             )}
-                          </tbody>
-                        </table>
-                      </div>
-                      {!addItem && (
-                        <Button
-                          type="button"
-                          className="my-2 px-3 py-1.5 font-satoshi font-medium text-tiny leading-100 tracking-normal"
-                          onClick={() => {
-                            console.log(values);
-                            setAddItem(() => true);
-                          }}
-                        >
-                          Add Item
-                        </Button>
-                      )}
-                    </div>
+                          </div>
+                        );
+                      }}
+                    />
                     <div className="bg-grey rounded p-4 flex flex-col gap-y-4 w-full lg:hidden">
                       <div className="flex justify-between py-2">
                         <span className="font-satoshi font-normal text-tiny leading-100 tracking-normal">
                           Sub Total
                         </span>
                         <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                          $2500
+                          ${values.subtotal}
                         </span>
                       </div>
                       <hr className="border-b border-t-0 border-greyborder" />
@@ -511,12 +720,12 @@ const NewInvoice = () => {
                         >
                           Discount
                         </label>
-                        <input
+                        <Field
                           id="discount"
                           name="discount"
                           type="text"
                           placeholder="Discount"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
                         />
                       </div>
                       <div className="w-full flex flex-col gap-y-2">
@@ -526,12 +735,12 @@ const NewInvoice = () => {
                         >
                           Tax
                         </label>
-                        <input
+                        <Field
                           id="tax"
                           name="tax"
                           type="text"
                           placeholder="Tax"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
                         />
                       </div>
                       <div className="w-full flex flex-col gap-y-2">
@@ -541,12 +750,12 @@ const NewInvoice = () => {
                         >
                           Shipping
                         </label>
-                        <input
+                        <Field
                           id="shipping"
                           name="shipping"
                           type="text"
                           placeholder="Shipping"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
                         />
                       </div>
 
@@ -568,12 +777,12 @@ const NewInvoice = () => {
                         >
                           Amount Paid
                         </label>
-                        <input
+                        <Field
                           id="amount_paid"
                           name="amount_paid"
                           type="text"
                           placeholder="Amount Paid"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
                         />
                       </div>
 
@@ -600,7 +809,7 @@ const NewInvoice = () => {
                         <textarea
                           name="notes"
                           id="notes"
-                          className="col-span-2 resize-none border outline-none border-greyborder p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                          className="col-span-2 resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
                           rows={3}
                           placeholder="Notes"
                         ></textarea>
@@ -615,7 +824,7 @@ const NewInvoice = () => {
                         <textarea
                           name="terms"
                           id="terms"
-                          className="col-span-2 resize-none border outline-none border-greyborder p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                          className="col-span-2 resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
                           rows={3}
                           placeholder="Terms & Conditions"
                         ></textarea>
@@ -631,12 +840,18 @@ const NewInvoice = () => {
                         >
                           Title
                         </label>
-                        <input
+                        <Field
                           id="title"
                           name="title"
                           type="text"
                           placeholder="Title"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.title && errors?.title,
+                            }
+                          )}
                         />
                       </div>
                       <div className="w-full flex flex-col gap-y-2">
@@ -646,12 +861,18 @@ const NewInvoice = () => {
                         >
                           # Invoice
                         </label>
-                        <input
-                          id="title"
-                          name="title"
+                        <Field
+                          id="invoice_no"
+                          name="invoice_no"
                           type="text"
                           placeholder="00001"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.invoice_no && errors?.invoice_no,
+                            }
+                          )}
                         />
                       </div>
                       <div className="w-full flex flex-col gap-y-2">
@@ -661,11 +882,17 @@ const NewInvoice = () => {
                         >
                           Issue Date
                         </label>
-                        <input
+                        <Field
                           id="issue_date"
                           name="issue_date"
                           type="date"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.issue_date && errors?.issue_date,
+                            }
+                          )}
                         />
                       </div>
                       <div className="w-full flex flex-col gap-y-2">
@@ -675,11 +902,17 @@ const NewInvoice = () => {
                         >
                           Due Date
                         </label>
-                        <input
+                        <Field
                           id="due_date"
                           name="due_date"
                           type="date"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.due_date && errors?.due_date,
+                            }
+                          )}
                         />
                       </div>
                     </div>
@@ -689,7 +922,7 @@ const NewInvoice = () => {
                           Sub Total
                         </span>
                         <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                          $2500
+                          ${values.subtotal}
                         </span>
                       </div>
 
@@ -702,12 +935,18 @@ const NewInvoice = () => {
                         >
                           Discount
                         </label>
-                        <input
+                        <Field
                           id="discount"
                           name="discount"
                           type="text"
                           placeholder="Discount"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.discount && errors?.discount,
+                            }
+                          )}
                         />
                       </div>
                       <div className="w-full flex flex-col gap-y-2">
@@ -717,12 +956,18 @@ const NewInvoice = () => {
                         >
                           Tax
                         </label>
-                        <input
+                        <Field
                           id="tax"
                           name="tax"
                           type="text"
                           placeholder="Tax"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.tax && errors?.tax,
+                            }
+                          )}
                         />
                       </div>
                       <div className="w-full flex flex-col gap-y-2">
@@ -732,12 +977,18 @@ const NewInvoice = () => {
                         >
                           Shipping
                         </label>
-                        <input
+                        <Field
                           id="shipping"
                           name="shipping"
                           type="text"
                           placeholder="Shipping"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.shipping && errors?.shipping,
+                            }
+                          )}
                         />
                       </div>
 
@@ -759,12 +1010,18 @@ const NewInvoice = () => {
                         >
                           Amount Paid
                         </label>
-                        <input
+                        <Field
                           id="amount_paid"
                           name="amount_paid"
                           type="text"
                           placeholder="Amount Paid"
-                          className="w-full border border-greyborder p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.amount_paid && errors?.amount_paid,
+                            }
+                          )}
                         />
                       </div>
 
