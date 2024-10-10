@@ -9,13 +9,13 @@ const Transactions = () => {
     <ContentViewAreaWrapper>
       <section className="flex-1 flex flex-col gap-y-2">
         <header className="flex flex-col gap-y-2">
-          <h1 className="font-archivo font-normal text-xl md:text-4xl leading-110 tracking-normal">
+          <h1 className="font-archivo font-normal text-xl lg:text-4xl leading-110 tracking-normal">
             My Transactions
           </h1>
           <hr className="invisible h-8" />
         </header>
-        <div className="flex-1 flex flex-col md:flex-row-reverse md:gap-x-4">
-          <div className="flex flex-col gap-y-2 md:w-1/3">
+        <div className="flex-1 flex flex-col lg:flex-row-reverse md:gap-x-4">
+          <div className="flex flex-col gap-y-2 lg:w-1/3">
             <section className="flex flex-col gap-y-2">
               <div className="flex gap-x-2">
                 <article className="flex flex-col gap-y-2 w-1/2 px-4 py-8 rounded-lg bg-grey">
@@ -51,8 +51,8 @@ const Transactions = () => {
               </Button>
             </section>
           </div>
-          <hr className="invisible h-8 md:hidden" />
-          <main className="flex-1 flex justify-center items-center md:w-2/3 md:bg-grey rounded-lg">
+          <hr className="invisible h-8 lg:hidden" />
+          <main className="flex-1 flex justify-center items-center lg:w-2/3 lg:bg-grey rounded-lg">
             <article className="flex flex-col items-center gap-y-4">
               <div className="flex justify-center items-center rounded-full bg-grey w-24 h-24">
                 <Book variation="black" />
