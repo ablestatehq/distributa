@@ -1,11 +1,12 @@
 import { createPortal } from "react-dom";
 import { CircleX } from "../common/icons";
 import { Button } from "../common/forms";
-import DocPreview from "../../features/invoicing/components/document/DocPreview";
 import { Root, Viewport, Pages, Page } from "@fileforge/pdfreader";
 import { CanvasLayer } from "@fileforge/pdfreader";
+import { Document } from "../../features/invoicing/components";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
-const InvoicePreview = ({ togglePreview, path }) => {
+const InvoicePreview = ({ togglePreview, path, data }) => {
   return createPortal(
     <div className="fixed top-0 bg-white py h-screen w-screen overflow-y-auto">
       <div className="flex flex-col h-full container mx-auto pt-16 lg:pt-8">
@@ -49,7 +50,14 @@ const InvoicePreview = ({ togglePreview, path }) => {
                   <div className="relative w-11 h-6 ring-1 ring-black peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-black rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-black after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-black after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-white peer-checked:bg-accent"></div>
                 </label>
               </div>
-              <Button className="font-bold text-large py-5">Download</Button>
+
+              <PDFDownloadLink
+                className="font-satoshi tracking-normal text-center leading-100 font-bold text-large py-5 bg-accent border border-accent text-white disabled:bg-greyborder disabled:text-white disabled:border-greyborder hover:border-black hover:bg-black hover:text-white"
+                document={<Document data={data} />}
+                fileName={`#${data?.invoice_no}.pdf` || "#invoice.pdf"}
+              >
+                {({ loading }) => (loading ? "Loading ..." : "Download")}
+              </PDFDownloadLink>
             </div>
           </section>
         </main>
