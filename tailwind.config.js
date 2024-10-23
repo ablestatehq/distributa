@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 const defaultTheme = require("tailwindcss/defaultTheme");
 module.exports = {
-  content: ["./public/**/*.html", "./src/**/*.{html,js,jsx}"],
+  content: ["./index.html", "./src/**/*.{html,js,jsx}"],
   theme: {
     extend: {
       colors: {
@@ -18,10 +18,10 @@ module.exports = {
           50: "rgba(13,110,253,0.05)",
         },
         accent: {
-          DEFAULT: "#0D6EFD", 
-          light: "#66B2FF", 
-          dark: "#0049B2", 
-          50: "#E6F0FF", 
+          DEFAULT: "#0D6EFD",
+          light: "#66B2FF",
+          dark: "#0049B2",
+          50: "#E6F0FF",
           100: "#CCE1FF",
           200: "#99C2FF",
           300: "#66A3FF",

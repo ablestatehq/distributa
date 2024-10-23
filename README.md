@@ -31,8 +31,8 @@ An actively running Appwrite instance. The instance can be a self-hosted install
 1. Clone the repository to your computer.
 2. Navigate to the project directory and:-
 
-    - Run `yarn add` or `npm install`
-    - Run `yarn start` or `npm start`
+   - Run `yarn add` or `npm install`
+   - Run `yarn start` or `npm start`
 
 3. Login to the Appwrite console:
    Open a web browser and navigate to your Appwrite instance's URL. Login to the Appwrite console using your account credentials.
@@ -41,13 +41,13 @@ An actively running Appwrite instance. The instance can be a self-hosted install
    In the Appwrite console, create a project or select an existing project create an API key for the project:
    Navigate to your project in the Appwrite console and find the "API Keys" section and create a new API key.
 
--   Provide a name for the API key and choose the necessary permissions for your project.
--   Give the API key access to the following scopes: auth, databases, functions, storage and others.
--   The redirect url for redirecting the user on accepting team membership.
+- Provide a name for the API key and choose the necessary permissions for your project.
+- Give the API key access to the following scopes: auth, databases, functions, storage and others.
+- The redirect url for redirecting the user on accepting team membership.
 
 After creating the API key, make sure to copy and store the API key, project ID, and project endpoint in a .env file:
 
--   Create a new file named .env in the root directory of your project and add the following lines to the .env file:
+- Create a new file named .env in the root directory of your project and add the following lines to the .env file:
 
 ```dotenv
 API_KEY=your-api-key
@@ -60,38 +60,37 @@ In the env file replace your-api-key, your-project-id, and your-project-endpoint
 
 **Note:**
 
--   Keep the .env file secret, as it contains sensitive information.
--   Use these variables exclusively under the server environment.
+- Keep the .env file secret, as it contains sensitive information.
+- Use these variables exclusively under the server environment.
 
 5. Run the code to initialise your appwrite project with database, users, teams, and appropriate collections.
 
-```js 
+```js
 node appwrite-init
 
 ```
 
 This script will create initial project configuration for Distributa.
 Once the script completes execution, the distributa database, invoices collection, and distributions collection will be created the project whose ID is specified in the project of your Appwrite instance.
-Additionaly, an *environment.txt* file will be generated that contains the user details and project enviroment varibles. The user credentials are the details that will be for user authentication to the application. To test the features of the application.  
+Additionaly, an _environment.txt_ file will be generated that contains the user details and project enviroment varibles. The user credentials are the details that will be for user authentication to the application. To test the features of the application.
 
-**Note** 
-It is advised to add text *enviroments.txt* to your *.gitingnore* on file to keep your project secure. 
+**Note**
+It is advised to add text _enviroments.txt_ to your _.gitingnore_ on file to keep your project secure.
 
 6. Set environment variables for React:
    In your project's environment configuration file (e.g., .env.local or .env.development), add the following lines:
 
 ```dotenv
-REACT_APP_APPWRITE_PROJECT_ENDPOINT=your-project-endpoint
-REACT_APP_APPWRITE_DATABASE_ID=your-distributa-database-id
-REACT_APP_APPWRITE_INVOICES_COLLECTION_ID=your-invoices-collection-id
-REACT_APP_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=your-distributions-collection-id
+VITE_APPWRITE_PROJECT_ENDPOINT=your-project-endpoint
+VITE_APPWRITE_DATABASE_ID=your-distributa-database-id
+VITE_APPWRITE_INVOICES_COLLECTION_ID=your-invoices-collection-id
+VITE_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=your-distributions-collection-id
 ```
 
--   Replace your-project-endpoint, your-distributa-database-id, your-invoices-collection-id, and your-distributions-collection-id with the actual values obtained from the previous steps.
+- Replace your-project-endpoint, your-distributa-database-id, your-invoices-collection-id, and your-distributions-collection-id with the actual values obtained from the previous steps.
 
 Your inital Project configuartion is now set and ready! Voilà! Let's distribute:
 With the configurations in place, you can use Distributa to distribute earnings, generate invoices, and perform other application-specific actions.
-
 
 ### Prerequisites
 
@@ -110,8 +109,8 @@ You can also give it a star. This will help me put more resources into this proj
 1. Fork to get your copy.
 2. Clone Fork to your computer.
 3. Navigate to the project directory and:-
-    - Run `yarn add` or `npm install`
-    - Run `yarn start` or `npm start`
+   - Run `yarn add` or `npm install`
+   - Run `yarn start` or `npm start`
 4. Test your code and make sure it works.
 5. Commit and use a concise commit message.
 6. Push to your repo.

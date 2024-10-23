@@ -24,8 +24,8 @@ function Login() {
     submit(values, { method: "POST", action: "/login" });
 
   const initialValues = {
-    email: "",
-    password: "",
+    email: "admin@distributa.com",
+    password: "07ReHGjOqdKM",
   };
 
   return (

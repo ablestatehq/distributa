@@ -30,7 +30,7 @@ export const authRoutes = [
         const session = await appwrite.createSession(email, password);
         if (session) return redirect(from, { replace: true });
       } catch (error) {
-        return json({ error: error.response });
+        return json({ error: error.message });
       }
     },
   },
