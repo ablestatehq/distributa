@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
 
 // Create Document Component
 const PDFDoc = ({ data, includeBorder = false }) => {
+  console.log(data);
   const {
     logo,
     currency,
@@ -227,7 +228,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
         <View
           style={[
             {
-              // flexGrow: 1,
+              flex: 1,
               flexDirection: "column",
               gap: 11,
             },
