@@ -350,7 +350,6 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             );
           })}
         </View>
-
         <View
           style={[
             {

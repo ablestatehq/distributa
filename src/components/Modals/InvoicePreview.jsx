@@ -30,7 +30,7 @@ const InvoicePreview = ({ togglePreview, path }) => {
               >
                 <Viewport className="w-full h-full">
                   <Pages>
-                    <Page>
+                    <Page className="mb-4">
                       <CanvasLayer />
                     </Page>
                   </Pages>
