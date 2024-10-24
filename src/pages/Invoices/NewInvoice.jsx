@@ -7,9 +7,6 @@ import getBase64 from "../../utils/getBase64";
 import getValidNumber from "../../utils/getValidNumber";
 import { newInvoiceSchema } from "../../utils/validators";
 import cn from "../../utils/cn";
-// import InvoicePreview from "../../components/Modals/InvoicePreview";
-// import { Document } from "../../features/invoicing/components";
-// import { pdf } from "@react-pdf/renderer";
 import { useSubmit } from "react-router-dom";
 
 const calculateSubTotal = (items) =>
@@ -41,9 +38,6 @@ const NewInvoice = () => {
   const submit = useSubmit();
   const [editIndex, setEditIndex] = useState(null);
   const [addItem, setAddItem] = useState(null);
-  // const [preview, setPreview] = useState(false);
-  // const [path, setPath] = useState(null);
-  // const togglePreview = () => setPreview((preview) => !preview);
 
   // const initialValues = {
   //   logo: null,
@@ -134,22 +128,24 @@ const NewInvoice = () => {
   };
 
   const handleSubmit = (values) => {
-    const { orientation, paper_size, ...data } = values;
-
     // Type cast.
-    data.invoice_no = parseInt(data.invoice_no);
-    data.discount = parseFloat(discount) ? parseFloat(discount) : null;
-    data.tax = parseFloat(tax) ? parseFloat(tax) : null;
-    data.shipping = parseFloat(shipping) ? parseFloat(shipping) : null;
-    data.amount_paid = parseFloat(amount_paid ?? 0);
-    data.items = data.items.map((item) => ({
+    values.invoice_no = parseInt(values.invoice_no);
+    values.discount = parseFloat(values.discount)
+      ? parseFloat(values.discount)
+      : null;
+    values.tax = parseFloat(values.tax) ? parseFloat(values.tax) : null;
+    values.shipping = parseFloat(values.shipping)
+      ? parseFloat(values.shipping)
+      : null;
+    values.amount_paid = parseFloat(values.amount_paid ?? 0);
+    values.items = values.items.map((item) => ({
       ...item,
       price: parseFloat(item.price),
       quantity: parseInt(item.quantity),
     }));
 
     // Submit
-    submit(JSON.stringify(data), {
+    submit(JSON.stringify(values), {
       method: "post",
       encType: "application/json",
     });
