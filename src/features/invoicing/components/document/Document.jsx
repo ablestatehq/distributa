@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
 
 // Create Document Component
 const PDFDoc = ({ data, includeBorder = false }) => {
-  console.log(data);
   const {
     logo,
     currency,
@@ -462,7 +461,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                   { fontSize: 8, lineHeight: 1.2, letterSpacing: 0 },
                 ]}
               >
-                {discount ? currencyFormatter(discount ?? 0, currency) : "N/A"}
+                {currencyFormatter(discount ?? 0, currency)}
               </Text>
             </View>
             <View
@@ -488,7 +487,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                   { fontSize: 8, lineHeight: 1.2, letterSpacing: 0 },
                 ]}
               >
-                {tax ? currencyFormatter(tax ?? 0, currency) : "N/A"}
+                {currencyFormatter(tax ?? 0, currency)}
               </Text>
             </View>
             <View
@@ -517,7 +516,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                   { fontSize: 8, lineHeight: 1.2, letterSpacing: 0 },
                 ]}
               >
-                {shipping ? currencyFormatter(shipping ?? 0, currency) : "N/A"}
+                {currencyFormatter(shipping ?? 0, currency)}
               </Text>
             </View>
             <View
@@ -621,4 +620,3 @@ const PDFDoc = ({ data, includeBorder = false }) => {
 };
 
 export default PDFDoc;
-// ReactPDF.render(<PDFDoc />, `downloads/example.pdf`);
