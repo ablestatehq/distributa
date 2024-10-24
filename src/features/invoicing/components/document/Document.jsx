@@ -11,6 +11,7 @@ import {
 import { currencyFormatter } from "../../../../utils/currency.formatter";
 import SatoshiBold from "../../../../assets/fonts/satoshi/Satoshi-Bold.ttf";
 import SatoshiRegular from "../../../../assets/fonts/satoshi/Satoshi-Regular.ttf";
+import { format } from "date-fns";
 
 Font.register({
   family: "Satoshi",
@@ -80,9 +81,10 @@ const PDFDoc = ({ data, includeBorder = false }) => {
   const [orientation, setOrientation] = React.useState("");
 
   React.useEffect(() => {
-    setSize(data?.size || "A4");
-    setOrientation(data?.orientation || "landscape");
+    setSize(data?.paper_size || "A4");
+    setOrientation(data?.orientation || "portrait");
   }, [data]);
+
   return (
     <Document>
       <Page
@@ -130,7 +132,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                     Date Issued:{" "}
                   </Text>
                   <Text style={[styles.fontNormal, { fontSize: 8 }]}>
-                    {issue_date}
+                    {format(issue_date, "dd-MM-yyyy")}
                   </Text>
                 </View>
                 <View
@@ -147,7 +149,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                     Due Date:{" "}
                   </Text>
                   <Text style={[styles.fontNormal, { fontSize: 8 }]}>
-                    {due_date}
+                    {format(due_date, "dd-MM-yyyy")}
                   </Text>
                 </View>
               </View>
