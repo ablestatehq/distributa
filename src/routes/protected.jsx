@@ -2,6 +2,7 @@ import { PrivateRoute } from "./components";
 import { AppwriteService as Appwrite, InvoiceService } from "../services";
 import { redirect, defer } from "react-router-dom";
 import { Invoices, NewInvoice, Transactions, Settings } from "../pages";
+import InvoicePreview from "../components/Modals/InvoicePreview";
 
 const appwrite = new Appwrite();
 
@@ -44,10 +45,14 @@ export const protectedRoutes = [
       },
       {
         path: "/invoices/:id/preview",
+        loader: async ({ params }) => {
+          const invoice = await InvoiceService.getInvoice(params.id);
+          return defer({ invoice });
+        },
         // TODO: Add a loader to fetch the invoice whose value is specified by the param "id" in the route path.
         // TODO: Handle the state and load it.
         // TODO: Create a component for editing the information of a specific invoice. Setting the initial state of the form to the values of the invoice
-        element: <div>invoices</div>,
+        element: <InvoicePreview />,
       },
       {
         path: "/invoices/new",
