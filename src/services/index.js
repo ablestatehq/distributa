@@ -1,2 +1,4 @@
 import AppwriteService from "./appwrite";
-export { AppwriteService };
+import InvoiceService from "./invoice.service";
+
+export { AppwriteService, InvoiceService };
