@@ -64,6 +64,8 @@ class AppwriteService {
       DATABASE_ID,
       INVOICES_COLLECTION_ID,
       DISTRIBUTIONS_COLLECTION_ID,
+      BILLING_ADDRESS_COLLECTION_ID,
+      ITEMS_COLLECTION_ID,
     };
 
     return variables;
