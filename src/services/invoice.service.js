@@ -43,8 +43,12 @@ class Invoice extends AppwriteService {
    * @returns {Promise} A promise that resolves to the invoice document
    */
   async getInvoice(invoiceId) {
-    const { INVOICES_COLLECTION_ID } = this.getVariables();
-    return this.database.getDocument(INVOICES_COLLECTION_ID, invoiceId);
+    const { INVOICES_COLLECTION_ID, DATABASE_ID } = this.getVariables();
+    return this.database.getDocument(
+      DATABASE_ID,
+      INVOICES_COLLECTION_ID,
+      invoiceId
+    );
   }
 
   /**
