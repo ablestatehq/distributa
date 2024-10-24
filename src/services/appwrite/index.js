@@ -14,6 +14,8 @@ import {
   DATABASE_ID,
   INVOICES_COLLECTION_ID,
   DISTRIBUTIONS_COLLECTION_ID,
+  BILLING_ADDRESS_COLLECTION_ID,
+  ITEMS_COLLECTION_ID,
   // LOGOS_BUCKET_ID,
 } from "../../data/constants";
 
@@ -147,7 +149,7 @@ class AppwriteService {
    * @returns <Promise> A promise that resolves to the user object.
    */
   updatepass(pass) {
-    return this.account.updatepassword(pass);
+    return this.account.updatePassword(pass);
   }
 
   /**
