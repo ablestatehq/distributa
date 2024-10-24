@@ -1,5 +1,5 @@
 import { PrivateRoute } from "./components";
-import { AppwriteService as Appwrite } from "../services";
+import { AppwriteService as Appwrite, InvoiceService } from "../services";
 import { redirect, defer } from "react-router-dom";
 import { Invoices, NewInvoice, Transactions, Settings } from "../pages";
 
@@ -24,12 +24,49 @@ export const protectedRoutes = [
     children: [
       {
         path: "/invoices",
+        // TODO: Add a loader to fetch the invoices
         element: <Invoices />,
-        // TODO: create the ivoices loader to create the invoice
+      },
+      {
+        path: "/invoices/:id",
+        // TODO: Add a loader to fetch the invoice whose value is specified by the param "id" in the route path.
+        // TODO: Handle the state and load it.
+        // TODO: Create a component for viewing the information of a specific invoice.
+        element: <div>Invoice Id</div>,
+      },
+      {
+        path: "/invoices/:id/edit",
+        // TODO: Add a loader to fetch the invoice whose value is specified by the param "id" in the route path.
+        // TODO: Handle the state and load it.
+        // TODO: Create a component for editing the information of a specific invoice. Setting the initial state of the form to the values of the invoice
+        // TODO: Create an action to save the information to the database.
+        element: <div>Edit invoice</div>,
+      },
+      {
+        path: "/invoices/:id/preview",
+        // TODO: Add a loader to fetch the invoice whose value is specified by the param "id" in the route path.
+        // TODO: Handle the state and load it.
+        // TODO: Create a component for editing the information of a specific invoice. Setting the initial state of the form to the values of the invoice
+        element: <div>invoices</div>,
       },
       {
         path: "/invoices/new",
         element: <NewInvoice />,
+        action: async ({ request }) => {
+          try {
+            const currentUrl = new URL(request.url);
+            const data = await request.json();
+            const invoice = await InvoiceService.createInvoice(data);
+
+            return redirect(
+              `/invoices/${invoice.$id}/preview?from=${encodeURIComponent(
+                currentUrl.pathname
+              )}`
+            );
+          } catch (error) {
+            throw error;
+          }
+        },
       },
       {
         path: "/transactions",
