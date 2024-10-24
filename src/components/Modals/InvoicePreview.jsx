@@ -1,12 +1,26 @@
 import { createPortal } from "react-dom";
 import { CircleX } from "../common/icons";
-import { Button } from "../common/forms";
-import { Root, Viewport, Pages, Page } from "@fileforge/pdfreader";
-import { CanvasLayer } from "@fileforge/pdfreader";
 import { Document } from "../../features/invoicing/components";
 import { PDFDownloadLink } from "@react-pdf/renderer";
+import {
+  useLoaderData,
+  useSearchParams,
+  useNavigate,
+  Await,
+} from "react-router-dom";
+import DocPreview from "../../features/invoicing/components/document/DocPreview";
+import { Suspense } from "react";
+import { Button } from "../common/forms";
+import { format } from "date-fns";
 
-const InvoicePreview = ({ togglePreview, path, data }) => {
+const InvoicePreview = () => {
+  const data = useLoaderData();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const from = searchParams.get("from") ?? "/invoices";
+
+  const handleClose = () => navigate(from, { replace: true });
+
   return createPortal(
     <div className="fixed top-0 bg-white py h-screen w-screen overflow-y-auto">
       <div className="flex flex-col h-full container mx-auto pt-16 lg:pt-8">
@@ -14,29 +28,20 @@ const InvoicePreview = ({ togglePreview, path, data }) => {
           <h1 className="font-archivo font-normal text-xl leading-110 tracking-normal">
             Preview
           </h1>
-          <button
-            onClick={togglePreview}
-            className="outline-none bg-transparent"
-          >
+          <button onClick={handleClose} className="outline-none bg-transparent">
             <CircleX variation="black" />
           </button>
         </header>
         <main className="grid grid-cols-1 lg:grid-cols-2 flex-1 overflow-hidden">
           <section className="flex flex-1 overflow-hidden flex-col lg:py-4 px-6 lg:px-0 gap-y-4 lg:col-span-1">
-            <div className="h-full w-full">
-              <Root
-                fileURL={path}
-                className="bg-white relative overflow-hidden h-full w-full "
-                loader
-              >
-                <Viewport className="w-full h-full">
-                  <Pages>
-                    <Page className="mb-4">
-                      <CanvasLayer />
-                    </Page>
-                  </Pages>
-                </Viewport>
-              </Root>
+            <div className="h-full w-full overflow-y-auto">
+              <Suspense fallback={<div>loading...</div>}>
+                <Await resolve={data?.invoice}>
+                  {(data) => {
+                    return <DocPreview data={data} />;
+                  }}
+                </Await>
+              </Suspense>
             </div>
           </section>
           <section className="flex lg:h-full flex-col p-8 justify-center flex-shrink-0">
@@ -50,14 +55,29 @@ const InvoicePreview = ({ togglePreview, path, data }) => {
                   <div className="relative w-11 h-6 ring-1 ring-black peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-black rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-black after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-black after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-white peer-checked:bg-accent"></div>
                 </label>
               </div>
-
-              <PDFDownloadLink
-                className="font-satoshi tracking-normal text-center leading-100 font-bold text-large py-5 bg-accent border border-accent text-white disabled:bg-greyborder disabled:text-white disabled:border-greyborder hover:border-black hover:bg-black hover:text-white"
-                document={<Document data={data} />}
-                fileName={`#${data?.invoice_no}.pdf` || "#invoice.pdf"}
+              <Suspense
+                fallback={
+                  <Button className="font-bold text-large py-5" disabled>
+                    Loading ...
+                  </Button>
+                }
               >
-                {({ loading }) => (loading ? "Loading ..." : "Download")}
-              </PDFDownloadLink>
+                <Await resolve={data?.invoice}>
+                  {(data) => {
+                    return (
+                      <PDFDownloadLink
+                        className="font-satoshi tracking-normal text-center leading-100 font-bold text-large py-5 bg-accent border border-accent text-white disabled:bg-greyborder disabled:text-white disabled:border-greyborder hover:border-black hover:bg-black hover:text-white"
+                        document={<Document data={data} />}
+                        fileName={`#${data?.invoice_no}.pdf` || "#invoice.pdf"}
+                      >
+                        {({ loading }) =>
+                          loading ? "Loading ..." : "Download"
+                        }
+                      </PDFDownloadLink>
+                    );
+                  }}
+                </Await>
+              </Suspense>
             </div>
           </section>
         </main>
