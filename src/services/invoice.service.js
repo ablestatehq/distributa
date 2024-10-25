@@ -58,10 +58,10 @@ class Invoice extends AppwriteService {
    * @returns {Promise} A promise that resolves to the list of invoice documents
    */
   async listInvoices(options = {}) {
-    const { INVOICES_COLLECTION_ID } = this.getVariables();
+    const { DATABASE_ID, INVOICES_COLLECTION_ID } = this.getVariables();
     const { limit = 50, offset = 0 } = options;
 
-    return this.database.listDocuments(INVOICES_COLLECTION_ID, [
+    return this.database.listDocuments(DATABASE_ID, INVOICES_COLLECTION_ID, [
       Query.limit(limit),
       Query.offset(offset),
     ]);
