@@ -12,6 +12,7 @@ import FileText from "./FileText";
 import CircleX from "./CircleX";
 import Menu from "./Menu";
 import PlusSquare from "./PlusSquare";
+import Edit from "./Edit";
 
 export {
   Facebook,
@@ -27,5 +28,6 @@ export {
   FileText,
   CircleX,
   Menu,
-  PlusSquare
+  PlusSquare,
+  Edit
 };
