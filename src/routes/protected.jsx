@@ -27,8 +27,8 @@ export const protectedRoutes = [
         path: "/invoices",
         // TODO: Add a loader to fetch the invoices
         loader: async () => {
-          const invoices = await InvoiceService.listInvoices();
-          return defer({ invoices });
+          const invoicesPromise = InvoiceService.listInvoices();
+          return defer({ invoices: invoicesPromise });
         },
         element: <Invoices />,
       },
@@ -50,8 +50,8 @@ export const protectedRoutes = [
       {
         path: "/invoices/:id/preview",
         loader: async ({ params }) => {
-          const invoice = await InvoiceService.getInvoice(params.id);
-          return defer({ invoice });
+          const invoicePromise = InvoiceService.getInvoice(params.id);
+          return defer({ invoice: invoicePromise });
         },
         // TODO: Add a loader to fetch the invoice whose value is specified by the param "id" in the route path.
         // TODO: Handle the state and load it.
