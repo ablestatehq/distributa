@@ -26,6 +26,10 @@ export const protectedRoutes = [
       {
         path: "/invoices",
         // TODO: Add a loader to fetch the invoices
+        loader: async () => {
+          const invoices = await InvoiceService.listInvoices();
+          return defer({ invoices });
+        },
         element: <Invoices />,
       },
       {
