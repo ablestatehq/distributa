@@ -1,11 +1,12 @@
+import { Suspense } from "react";
 import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
-import { FileText } from "../../components/common/icons";
-import { useNavigate } from "react-router-dom";
+import { FileText, Edit } from "../../components/common/icons";
+import { useNavigate, useLoaderData, Await } from "react-router-dom";
 
 function Invoices() {
-  // TODO: use loader data to determine there are some invoices.
-  // TODO: handle loading state and display the empty state.
+  const data = useLoaderData();
+
   const navigate = useNavigate();
   const handleCreateNewInvoice = () => {
     navigate("/invoices/new");
@@ -19,7 +20,7 @@ function Invoices() {
             My Invoices
           </h1>
           <hr className="invisible h-8" />
-          <div className="flex justify-end">
+          <div className="flex justify-end lg:p-4">
             <Button
               type="button"
               className="w-fit px-6 py-3 font-bold text-small"
@@ -32,25 +33,90 @@ function Invoices() {
         </header>
       </section>
       <main className="flex-1 flex justify-center items-center overflow-auto">
-        <article className="flex flex-col items-center gap-y-4">
-          <div className="flex justify-center items-center rounded-full bg-grey w-24 h-24">
-            <FileText variation="black" />
-          </div>
-          <div className="flex flex-col gap-y-2">
-            <h3 className="font-archivo font-normal text-xl leading-120 tracking-normal text-center">
-              No Invoices
-            </h3>
-            <p className="font-satoshi font-normal text-medium leading-150 tracking-normal text-center">
-              You haven't created any invoice yet.
-            </p>
-          </div>
-          <Button
-            className="w-fit px-12 py-3 font-bold text-medium"
-            onClick={handleCreateNewInvoice}
-          >
-            Create New Invoice
-          </Button>
-        </article>
+        <Suspense fallback={<div>loading...</div>}>
+          <Await resolve={data?.invoices}>
+            {(data) =>
+              data?.total > 0 ? (
+                <div className="h-full w-full overflow-x-auto">
+                  <table className="min-w-full table-fixed">
+                    <thead>
+                      <tr className="border-b border-b-greyborder">
+                        <th className="w-auto min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+                          Invoice #
+                        </th>
+                        <th className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+                          Billed To
+                        </th>
+                        <th className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+                          Status
+                        </th>
+                        <th className="w-auto lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start"></th>
+                        <th className="w-auto min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+                          Amount Due
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data?.documents?.map((invoice, index) => (
+                        <tr
+                          key={invoice?.$id}
+                          className={`cursor-pointer ${
+                            index % 2 === 0 ? "bg-white" : "bg-grey"
+                          }`}
+                        >
+                          <td className="w-auto min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
+                            {invoice?.invoice_no}
+                          </td>
+                          <td className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
+                            {invoice?.billed_to?.name}
+                          </td>
+                          <td className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
+                            {invoice?.status}
+                          </td>
+                          <td className="w-auto font-satoshi font-medium text-tiny leading-100 tracking-normal lg:px-4 py-3 text-start">
+                            <button
+                              type="button"
+                              className="outline-none"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                console.log("Let's Edit");
+                              }}
+                            >
+                              <Edit />
+                            </button>
+                          </td>
+                          <td className="w-auto min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
+                            {invoice?.amount_due}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <article className="flex flex-col items-center gap-y-4">
+                  <div className="flex justify-center items-center rounded-full bg-grey w-24 h-24">
+                    <FileText variation="black" />
+                  </div>
+                  <div className="flex flex-col gap-y-2">
+                    <h3 className="font-archivo font-normal text-xl leading-120 tracking-normal text-center">
+                      No Invoices
+                    </h3>
+                    <p className="font-satoshi font-normal text-medium leading-150 tracking-normal text-center">
+                      You haven't created any invoice yet.
+                    </p>
+                  </div>
+                  <Button
+                    className="w-fit px-12 py-3 font-bold text-medium"
+                    onClick={handleCreateNewInvoice}
+                  >
+                    Create New Invoice
+                  </Button>
+                </article>
+              )
+            }
+          </Await>
+        </Suspense>
       </main>
     </ContentViewAreaWrapper>
   );
