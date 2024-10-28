@@ -75,11 +75,41 @@ class Invoice extends AppwriteService {
    * @returns {Promise} A promise that resolves to the updated invoice document
    */
   async updateInvoice(invoiceId, updateData) {
-    const { INVOICES_COLLECTION_ID } = this.getVariables();
+    const { DATABASE_ID, INVOICES_COLLECTION_ID } = this.getVariables();
     return this.database.updateDocument(
       INVOICES_COLLECTION_ID,
       invoiceId,
       updateData
+    );
+  }
+
+  /**
+   * @function updateInvoiceStatus
+   * @description Updates the status of an invoice
+   * @param {String} invoiceId The ID of the invoice to update
+   * @param {InvoiceStatus} newStatus The new status of the invoice
+   * @param {string[]} permissions The permissions for the invoice
+   * @returns
+   */
+
+  async updateInvoiceStatus(invoiceId, newStatus, permissions = []) {
+    const { DATABASE_ID, INVOICES_COLLECTION_ID } = this.getVariables();
+
+    if (permissions.length > 0) {
+      return this.database.updateDocument(
+        DATABASE_ID,
+        INVOICES_COLLECTION_ID,
+        invoiceId,
+        { status: newStatus },
+        permissions
+      );
+    }
+
+    return this.database.updateDocument(
+      DATABASE_ID,
+      INVOICES_COLLECTION_ID,
+      invoiceId,
+      { status: newStatus }
     );
   }
 
