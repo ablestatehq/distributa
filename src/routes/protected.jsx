@@ -25,7 +25,6 @@ export const protectedRoutes = [
     children: [
       {
         path: "/invoices",
-        // TODO: Add a loader to fetch the invoices
         loader: async () => {
           const invoicesPromise = InvoiceService.listInvoices();
           return defer({ invoices: invoicesPromise });
@@ -34,10 +33,11 @@ export const protectedRoutes = [
       },
       {
         path: "/invoices/:id",
-        // TODO: Add a loader to fetch the invoice whose value is specified by the param "id" in the route path.
-        // TODO: Handle the state and load it.
-        // TODO: Create a component for viewing the information of a specific invoice.
-        element: <div>Invoice Id</div>,
+        loader: async ({ params }) => {
+          const invoicePromise = InvoiceService.getInvoice(params.id);
+          return defer({ invoice: invoicePromise });
+        },
+        element: <InvoicePreview />,
       },
       {
         path: "/invoices/:id/edit",
@@ -45,7 +45,33 @@ export const protectedRoutes = [
         // TODO: Handle the state and load it.
         // TODO: Create a component for editing the information of a specific invoice. Setting the initial state of the form to the values of the invoice
         // TODO: Create an action to save the information to the database.
+        action: async ({ request, params }) => {
+          try {
+            const data = await request.json();
+            const invoice = await InvoiceService.updateInvoice(params.id, data);
+
+            return redirect(`/invoices/${invoice.$id}/preview`);
+          } catch (error) {
+            throw error;
+          }
+        },
         element: <div>Edit invoice</div>,
+      },
+      {
+        path: "/invoices/:id/edit-status",
+        action: async ({ request, params }) => {
+          try {
+            const { status: newStatus } = await request.json();
+            console.log("newStatus", newStatus);
+            const updatedInvoice = await InvoiceService.updateInvoiceStatus(
+              params.id,
+              newStatus
+            );
+            return { success: true, data: updatedInvoice };
+          } catch (error) {
+            throw error;
+          }
+        },
       },
       {
         path: "/invoices/:id/preview",
