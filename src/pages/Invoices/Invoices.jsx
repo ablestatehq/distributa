@@ -1,13 +1,18 @@
-import { Suspense } from "react";
+import { Fragment, Suspense, useState, useEffect } from "react";
 import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
-import { FileText, Edit } from "../../components/common/icons";
-import { useNavigate, useLoaderData, Await } from "react-router-dom";
+import { FileText } from "../../components/common/icons";
+import {
+  useNavigate,
+  useLoaderData,
+  Await,
+} from "react-router-dom";
+import InvoiceRow from "../../features/invoicing/components/table/InvoiceRow";
 
 function Invoices() {
   const data = useLoaderData();
-
   const navigate = useNavigate();
+
   const handleCreateNewInvoice = () => {
     navigate("/invoices/new");
   };
@@ -58,37 +63,11 @@ function Invoices() {
                     </thead>
                     <tbody>
                       {data?.documents?.map((invoice, index) => (
-                        <tr
+                        <InvoiceRow
                           key={invoice?.$id}
-                          className={`cursor-pointer ${
-                            index % 2 === 0 ? "bg-white" : "bg-grey"
-                          }`}
-                        >
-                          <td className="w-auto min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
-                            {invoice?.invoice_no}
-                          </td>
-                          <td className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
-                            {invoice?.billed_to?.name}
-                          </td>
-                          <td className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
-                            {invoice?.status}
-                          </td>
-                          <td className="w-auto font-satoshi font-medium text-tiny leading-100 tracking-normal lg:px-4 py-3 text-start">
-                            <button
-                              type="button"
-                              className="outline-none"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                console.log("Let's Edit");
-                              }}
-                            >
-                              <Edit />
-                            </button>
-                          </td>
-                          <td className="w-auto min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
-                            {invoice?.amount_due}
-                          </td>
-                        </tr>
+                          invoiceData={invoice}
+                          index={index}
+                        />
                       ))}
                     </tbody>
                   </table>

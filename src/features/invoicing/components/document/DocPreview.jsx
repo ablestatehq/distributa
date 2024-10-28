@@ -1,10 +1,10 @@
 import React from "react";
-import Pages from "./Page";
+import Content from "./Content";
 
 const DocPreview = ({ data }) => {
   return (
     <div className="flex gap-2 justify-center lg:justify-start flex-wrap">
-      <Pages data={data} />
+      <Content data={data} />
     </div>
   );
 };

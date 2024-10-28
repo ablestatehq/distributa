@@ -1,12 +1,12 @@
 import React from "react";
 import cn from "../../../utils/cn";
 
-function CircleX({ variation = "blue" }) {
+function CircleX({ variation = "blue", className = "" }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      className="fill-none w-6 h-6"
+      className={cn("fill-none w-6 h-6", className)}
     >
       <path
         strokeLinecap="round"

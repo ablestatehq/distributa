@@ -1489,14 +1489,6 @@ const NewInvoice = () => {
                 >
                   Create Invoice
                 </Button>
-                {/* {preview && path && (
-                  <InvoicePreview
-                    preview={preview}
-                    togglePreview={togglePreview}
-                    data={values}
-                    path={path}
-                  />
-                )} */}
               </Form>
             );
           }}
