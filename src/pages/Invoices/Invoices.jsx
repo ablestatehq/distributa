@@ -1,12 +1,8 @@
-import { Fragment, Suspense, useState, useEffect } from "react";
+import { Suspense } from "react";
 import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
 import { FileText } from "../../components/common/icons";
-import {
-  useNavigate,
-  useLoaderData,
-  Await,
-} from "react-router-dom";
+import { useNavigate, useLoaderData, Await } from "react-router-dom";
 import InvoiceRow from "../../features/invoicing/components/table/InvoiceRow";
 
 function Invoices() {
