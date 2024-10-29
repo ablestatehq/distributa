@@ -1,5 +1,9 @@
 import { PrivateRoute } from "./components";
-import { AppwriteService as Appwrite, InvoiceService } from "../services";
+import {
+  AppwriteService as Appwrite,
+  InvoiceService,
+  TransactionService,
+} from "../services";
 import { redirect, defer } from "react-router-dom";
 import { Invoices, NewInvoice, Transactions, Settings } from "../pages";
 import InvoicePreview from "../components/Modals/InvoicePreview";
@@ -104,6 +108,10 @@ export const protectedRoutes = [
         },
       },
       {
+        loader: async () => {
+          const transactionsPromise = TransactionService.listTransactions();
+          return defer({ transactions: transactionsPromise });
+        },
         path: "/transactions",
         element: <Transactions />,
       },
