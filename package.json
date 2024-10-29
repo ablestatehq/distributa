@@ -23,6 +23,7 @@
     "formik": "^2.4.6",
     "fs": "^0.0.1-security",
     "inquirer": "^12.0.0",
+    "lodash": "^4.17.21",
     "node-appwrite": "^14.1.0",
     "path": "^0.12.7",
     "react": "^18.3.1",
