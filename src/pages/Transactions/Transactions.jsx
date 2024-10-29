@@ -2,7 +2,7 @@ import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
 import { Book } from "../../components/common/icons";
 import { useLoaderData, Await } from "react-router-dom";
-import { CreateTransaction } from "../../components/Modals";
+import { CreateTransaction, TransactionDetails } from "../../components/Modals";
 import { useState, Suspense } from "react";
 import { groupBy, map, sumBy } from "lodash";
 import { format, parse } from "date-fns";
@@ -11,9 +11,16 @@ const Transactions = () => {
   const data = useLoaderData();
 
   const [createTransaction, setCreateTransaction] = useState(false);
+  const [showTransactionDetails, setShowTransactionDetails] = useState(false);
+  const [transactionDetails, setTransactionDetails] = useState(null);
 
   const toggleCreateTransactionModal = () =>
     setCreateTransaction((createTransaction) => !createTransaction);
+
+  const toggleTransactionDetailsModal = () =>
+    setShowTransactionDetails(
+      (showTransactionDetails) => !showTransactionDetails
+    );
 
   const groupTransactionsByCreatedDate = (transactions) => {
     const grouped = groupBy(transactions, (transaction) =>
@@ -155,7 +162,15 @@ const Transactions = () => {
                                           {transaction.amount}
                                         </td>
                                         <td className="pt-4 pb-2 font-satoshi font-normal text-tiny leading-100 tracking-normal">
-                                          <button className="underline min-w-[58px]">
+                                          <button
+                                            className="underline min-w-[58px]"
+                                            onClick={() => {
+                                              setTransactionDetails(
+                                                transaction
+                                              );
+                                              toggleTransactionDetailsModal();
+                                            }}
+                                          >
                                             See Details
                                           </button>
                                         </td>
@@ -200,6 +215,15 @@ const Transactions = () => {
       </section>
       {createTransaction && (
         <CreateTransaction handleClose={toggleCreateTransactionModal} />
+      )}
+      {showTransactionDetails && transactionDetails && (
+        <TransactionDetails
+          handleClose={() => {
+            setTransactionDetails(null);
+            toggleTransactionDetailsModal();
+          }}
+          transaction={transactionDetails}
+        />
       )}
     </ContentViewAreaWrapper>
   );
