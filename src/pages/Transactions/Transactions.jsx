@@ -1,17 +1,58 @@
 import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
 import { Book } from "../../components/common/icons";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, Await } from "react-router-dom";
 import { CreateTransaction } from "../../components/Modals";
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { groupBy, map, sumBy } from "lodash";
+import { format, parse } from "date-fns";
 
 const Transactions = () => {
-  // TODO: use loader data to determine if there are some transactions.
-  // TODO: handle loading state and display the empty state or the transactions.
-  const [createTransaction, setCreateTransaction] = useState(true);
+  const data = useLoaderData();
+
+  const [createTransaction, setCreateTransaction] = useState(false);
 
   const toggleCreateTransactionModal = () =>
     setCreateTransaction((createTransaction) => !createTransaction);
+
+  const groupTransactionsByCreatedDate = (transactions) => {
+    const grouped = groupBy(transactions, (transaction) =>
+      format(transaction.date, "yyyy-MM-dd")
+    );
+
+    return map(grouped, (groupedTransactions, date) => ({
+      date,
+      transactions: groupedTransactions,
+    }));
+  };
+
+  /**
+   * @function formatDateString
+   * @description converts a date string from the format yyyy-MM-dd to the format of month year for example, January 1
+   * @param {string} dateString takes in a date string in the format yyyy-MM-dd
+   * @returns {string} in the format of month year for example, January 1
+   */
+
+  const formatDateString = (dateString) => {
+    const date = parse(dateString, "yyyy-MM-dd", new Date());
+    return format(date, "MMMM d");
+  };
+
+  /**
+   * @function getNetBalance
+   * @description returns the difference between the total income and expenditure of a days transactions
+   * @param { Array } transactions An array of transactions
+   * @returns { number } The difference between the income and expenditure
+   */
+  const getNetBalance = (transactions) => {
+    const groupedByType = groupBy(transactions, "type");
+    const totalIncome = sumBy(groupedByType["income"] || [], "amount") || 0;
+    const totalExpenditure =
+      sumBy(groupedByType["expense"] || [], "amount") || 0;
+    return totalIncome - totalExpenditure;
+  };
+
+  const getPrefix = (amount) => (amount < 0 ? "-" : "+");
 
   return (
     <ContentViewAreaWrapper>
@@ -62,25 +103,98 @@ const Transactions = () => {
           </div>
           <hr className="invisible h-8 lg:hidden" />
           <main className="flex-1 flex justify-center items-center lg:w-2/3 lg:bg-grey rounded-lg">
-            <article className="flex flex-col items-center gap-y-4">
-              <div className="flex justify-center items-center rounded-full bg-grey w-24 h-24">
-                <Book variation="black" />
-              </div>
-              <div className="flex flex-col gap-y-2">
-                <h3 className="font-archivo font-normal text-xl leading-120 tracking-normal text-center">
-                  No Transactions
-                </h3>
-                <p className="font-satoshi font-normal text-medium leading-150 tracking-normal text-center">
-                  You haven't created any transaction yet.
-                </p>
-              </div>
-              <Button
-                className="w-fit px-12 py-3 font-bold text-medium"
-                onClick={toggleCreateTransactionModal}
-              >
-                Create Transaction
-              </Button>
-            </article>
+            <Suspense
+              fallback={
+                <div className="h-full w-full bg-grey animate-pulse flex justify-center items-center">
+                  loading ...
+                </div>
+              }
+            >
+              <Await resolve={data?.transactions}>
+                {(data) => {
+                  if (data?.total > 0) {
+                    const processedTransactions =
+                      groupTransactionsByCreatedDate(data?.documents);
+
+                    return (
+                      <ul className="flex flex-col h-full w-full  gap-y-4 bg-white">
+                        {processedTransactions.map(({ date, transactions }) => {
+                          const netBalance = getNetBalance(transactions);
+                          const prefix = getPrefix(netBalance);
+
+                          return (
+                            <li
+                              key={date}
+                              className="flex flex-col gap-y-2 p-4 rounded-lg bg-grey overflow-x-auto"
+                            >
+                              <header className="flex justify-between">
+                                <h6 className="font-archivo font-normal text-tiny leading-150 tracking-normal">
+                                  {formatDateString(date)}
+                                </h6>
+                                <h6 className="font-archivo font-normal text-tiny leading-150 tracking-normal">
+                                  {prefix}
+                                  {netBalance}
+                                </h6>
+                              </header>
+                              <table className="w-full">
+                                <tbody>
+                                  {transactions.map((transaction) => {
+                                    const prefix = getPrefix(
+                                      transaction.amount
+                                    );
+                                    return (
+                                      <tr
+                                        key={transaction.$id}
+                                        className="border-b border-b-greyborder"
+                                      >
+                                        <td className="w-full pr-6 pt-4 pb-2 font-satoshi font-normal text-tiny leading-120 tracking-normal">
+                                          {transaction.item}
+                                        </td>
+                                        <td className="pr-6 pt-4 pb-2 font-satoshi font-normal text-tiny leading-120 tracking-normal">
+                                          {prefix}
+                                          {transaction.amount}
+                                        </td>
+                                        <td className="pt-4 pb-2 font-satoshi font-normal text-tiny leading-100 tracking-normal">
+                                          <button className="underline min-w-[58px]">
+                                            See Details
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    );
+                  }
+
+                  return (
+                    <article className="flex flex-col items-center gap-y-4">
+                      <div className="flex justify-center items-center rounded-full bg-grey w-24 h-24">
+                        <Book variation="black" />
+                      </div>
+                      <div className="flex flex-col gap-y-2">
+                        <h3 className="font-archivo font-normal text-xl leading-120 tracking-normal text-center">
+                          No Transactions
+                        </h3>
+                        <p className="font-satoshi font-normal text-medium leading-150 tracking-normal text-center">
+                          You haven't created any transaction yet.
+                        </p>
+                      </div>
+                      <Button
+                        className="w-fit px-12 py-3 font-bold text-medium"
+                        onClick={toggleCreateTransactionModal}
+                      >
+                        Create Transaction
+                      </Button>
+                    </article>
+                  );
+                }}
+              </Await>
+            </Suspense>
           </main>
         </div>
       </section>
