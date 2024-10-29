@@ -1,30 +1,39 @@
-import { useState } from "react";
 import { CircleX } from "../common/icons";
 import { Button } from "../common/forms";
 import cn from "../../utils/cn";
 import { createPortal } from "react-dom";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import { TransactionService } from "../../services";
+import { useNavigate } from "react-router-dom";
 const CreateTransaction = ({ handleClose }) => {
-  // const [transactionType, setTransactionType] = useState("income");
+  const navigate = useNavigate();
+
   const initialValues = {
     type: "income",
     date: "",
     item: "",
     amount: "",
     description: "",
-    payee_payee: "",
-    receipt_no: "",
+    payer_payee: "",
+    invoice_receipt_no: "",
     payment_method: "",
     category: "",
   };
 
-  const handleSubmit = (values) => {
-    console.log("Values: ", values);
-  };
+  const handleSubmit = async (values, { setSubmitting }) => {
+    values.amount = parseFloat(values.amount);
+    values.invoice_receipt_no = parseInt(values.invoice_receipt_no);
 
-  // TODO: Implement a function to load the categories of a specific person.
-  // TODO: Implement a function to load a users payment methods.
+    try {
+      await TransactionService.createTransaction(values);
+      navigate(`/transactions/`);
+    } catch (error) {
+      throw error;
+    } finally {
+      setSubmitting(false);
+      handleClose();
+    }
+  };
 
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
@@ -212,25 +221,26 @@ const CreateTransaction = ({ handleClose }) => {
                 </div>
                 <div className="flex flex-col gap-y-2">
                   <label
-                    htmlFor="receipt_no"
+                    htmlFor="invoice_receipt_no"
                     className="font-satoshi font-normal text-small leading-100 tracking-normal"
                   >
                     Receipt/Voucher #
                   </label>
                   <Field
-                    id="receipt_no"
-                    name="receipt_no"
+                    id="invoice_receipt_no"
+                    name="invoice_receipt_no"
                     type="text"
                     placeholder="00007"
                     className={cn(
                       "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
                       {
                         "border-error focus:border-error":
-                          touched?.receipt_no && errors?.receipt_no,
+                          touched?.invoice_receipt_no &&
+                          errors?.invoice_receipt_no,
                       }
                     )}
                   />
-                  <ErrorMessage name="receipt_no">
+                  <ErrorMessage name="invoice_receipt_no">
                     {(msg) => (
                       <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                         {msg}
@@ -306,11 +316,10 @@ const CreateTransaction = ({ handleClose }) => {
                       as="select"
                     >
                       <option value="">Select one</option>
-
-                      <option value="">Select one</option>
                       <option value="sales">Sales</option>
                       <option value="salary">Salary</option>
                       <option value="consulting">Consulting</option>
+                      <option value="category">Development</option>
                       <option value="rent">Rent</option>
                       <option value="utilities">Utilities</option>
                       <option value="supplies">Supplies</option>
@@ -321,6 +330,7 @@ const CreateTransaction = ({ handleClose }) => {
                       <option value="professional_services">
                         Professional Services
                       </option>
+                      <option value="development">development</option>
                       <option value="taxes">Taxes</option>
                       <option value="other">Other</option>
                     </Field>
@@ -346,7 +356,7 @@ const CreateTransaction = ({ handleClose }) => {
                 <Button
                   type="submit"
                   className="font-bold text-small col-span-2"
-                  disabled={isSubmitting}
+                  // disabled={isSubmitting}
                 >
                   Add
                 </Button>
