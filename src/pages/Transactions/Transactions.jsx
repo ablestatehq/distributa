@@ -1,10 +1,18 @@
 import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
 import { Book } from "../../components/common/icons";
+import { useLoaderData } from "react-router-dom";
+import { CreateTransaction } from "../../components/Modals";
+import { useState } from "react";
 
 const Transactions = () => {
   // TODO: use loader data to determine if there are some transactions.
   // TODO: handle loading state and display the empty state or the transactions.
+  const [createTransaction, setCreateTransaction] = useState(true);
+
+  const toggleCreateTransactionModal = () =>
+    setCreateTransaction((createTransaction) => !createTransaction);
+
   return (
     <ContentViewAreaWrapper>
       <section className="flex-1 flex flex-col gap-y-2">
@@ -46,6 +54,7 @@ const Transactions = () => {
               <Button
                 type="button"
                 className="w-full px-6 py-3 font-bold text-small"
+                onClick={toggleCreateTransactionModal}
               >
                 Add New
               </Button>
@@ -65,13 +74,19 @@ const Transactions = () => {
                   You haven't created any transaction yet.
                 </p>
               </div>
-              <Button className="w-fit px-12 py-3 font-bold text-medium">
+              <Button
+                className="w-fit px-12 py-3 font-bold text-medium"
+                onClick={toggleCreateTransactionModal}
+              >
                 Create Transaction
               </Button>
             </article>
           </main>
         </div>
       </section>
+      {createTransaction && (
+        <CreateTransaction handleClose={toggleCreateTransactionModal} />
+      )}
     </ContentViewAreaWrapper>
   );
 };
