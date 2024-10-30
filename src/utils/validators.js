@@ -90,3 +90,20 @@ export const newInvoiceSchema = Yup.object({
   notes: Yup.string().nullable(),
   terms: Yup.string().nullable(),
 });
+
+export const createTransactionSchema = Yup.object({
+  type: Yup.string().required("Type is required"),
+  item: Yup.string().required("Title is required"),
+  date: Yup.date().required("Date is required").nullable(),
+  amount: Yup.number()
+    .typeError("Amount must be a valid number")
+    .min(0, "Amount must be a positive number")
+    .required("Amount is required"),
+  description: Yup.string(),
+  payer_payee: Yup.string().required("Payer/Payee is required"),
+  invoice_receipt_no: Yup.string().required(
+    "Invoice/Receipt number is required"
+  ),
+  payment_method: Yup.string().required("Payment method is required"),
+  category: Yup.string().required("Category is required"),
+});

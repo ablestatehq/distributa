@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { TransactionService } from "../../services";
 import { useNavigate } from "react-router-dom";
+import { createTransactionSchema } from "../../utils/validators";
 const CreateTransaction = ({ handleClose }) => {
   const navigate = useNavigate();
 
@@ -22,7 +23,6 @@ const CreateTransaction = ({ handleClose }) => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     values.amount = parseFloat(values.amount);
-    values.invoice_receipt_no = parseInt(values.invoice_receipt_no);
 
     try {
       await TransactionService.createTransaction(values);
@@ -46,7 +46,11 @@ const CreateTransaction = ({ handleClose }) => {
             <CircleX variation="black" className="w-4 h-4" />
           </button>
         </header>
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={createTransactionSchema}
+          onSubmit={handleSubmit}
+        >
           {({ values, touched, errors, isSubmitting, setFieldValue }) => (
             <Form>
               <div className="w-full flex p-4 lg:px-16 gap-x-4">
@@ -207,7 +211,7 @@ const CreateTransaction = ({ handleClose }) => {
                       "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
                       {
                         "border-error focus:border-error":
-                          touched?.payee && errors?.payee,
+                          touched?.payer_payee && errors?.payer_payee,
                       }
                     )}
                   />
@@ -344,7 +348,7 @@ const CreateTransaction = ({ handleClose }) => {
                       </svg>
                     </div>
                   </div>
-                  <ErrorMessage name="payment_method">
+                  <ErrorMessage name="category">
                     {(msg) => (
                       <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                         {msg}
@@ -356,9 +360,9 @@ const CreateTransaction = ({ handleClose }) => {
                 <Button
                   type="submit"
                   className="font-bold text-small col-span-2"
-                  // disabled={isSubmitting}
+                  disabled={isSubmitting}
                 >
-                  Add
+                  {isSubmitting ? "Adding Transaction ..." : "Add"}
                 </Button>
               </div>
             </Form>
