@@ -112,9 +112,14 @@ const Transactions = () => {
           <main className="flex-1 flex justify-center items-center lg:w-2/3 lg:bg-grey rounded-lg">
             <Suspense
               fallback={
-                <div className="h-full w-full bg-grey animate-pulse flex justify-center items-center">
-                  loading ...
-                </div>
+                <ul className="h-full w-full animate-pulse flex flex-col bg-white gap-y-4 justify-center items-center">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <li
+                      key={index}
+                      className="w-full h-36 bg-grey animate-pulse rounded-lg"
+                    ></li>
+                  ))}
+                </ul>
               }
             >
               <Await resolve={data?.transactions}>
