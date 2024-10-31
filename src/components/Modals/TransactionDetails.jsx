@@ -47,7 +47,7 @@ const TransactionDetails = ({ handleClose, transaction }) => {
               Category
             </span>
             <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
-              {transaction.category}
+              {transaction.category?.name}
             </span>
           </div>
           <div className="flex justify-between pb-2 pt-4 border-b border-b-greyborder">
