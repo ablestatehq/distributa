@@ -3,14 +3,21 @@ import { Button } from "../common/forms";
 import cn from "../../utils/cn";
 import { createPortal } from "react-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import { TransactionService } from "../../services";
+import {
+  TransactionService,
+  BalancesService,
+  CategoryService,
+} from "../../services";
 import { useNavigate } from "react-router-dom";
 import { createTransactionSchema } from "../../utils/validators";
+import { useEffect, useState } from "react";
+
 const CreateTransaction = ({ handleClose }) => {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
 
   const initialValues = {
-    type: "income",
+    type: "expense",
     date: "",
     item: "",
     amount: "",
@@ -21,19 +28,49 @@ const CreateTransaction = ({ handleClose }) => {
     category: "",
   };
 
+  // const initialValues = {
+  //   type: "expense",
+  //   date: "2024-10-10",
+  //   item: "Software Subscription",
+  //   amount: "175.25",
+  //   description: "Renewal of the adobe premium license",
+  //   payer_payee: "Adobe",
+  //   invoice_receipt_no: "SUB-003",
+  //   payment_method: "debit_card",
+  //   category: "67223612001b5cbd59c9",
+  // };
+
   const handleSubmit = async (values, { setSubmitting }) => {
     values.amount = parseFloat(values.amount);
 
+    console.log("Values: ", values);
+
     try {
       await TransactionService.createTransaction(values);
+      await BalancesService.updateBalances(
+        parseFloat(values.amount),
+        values.type,
+        values.category,
+        values.date
+      );
       navigate(`/transactions/`);
     } catch (error) {
+      console.log("Error: ", error);
       throw error;
     } finally {
       setSubmitting(false);
       handleClose();
     }
   };
+
+  const fetchCategories = async () => {
+    const categories = await CategoryService.getCategoryTree();
+    setCategories(() => categories);
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
@@ -320,23 +357,12 @@ const CreateTransaction = ({ handleClose }) => {
                       as="select"
                     >
                       <option value="">Select one</option>
-                      <option value="sales">Sales</option>
-                      <option value="salary">Salary</option>
-                      <option value="consulting">Consulting</option>
-                      <option value="category">Development</option>
-                      <option value="rent">Rent</option>
-                      <option value="utilities">Utilities</option>
-                      <option value="supplies">Supplies</option>
-                      <option value="travel">Travel</option>
-                      <option value="marketing">Marketing</option>
-                      <option value="insurance">Insurance</option>
-                      <option value="maintenance">Maintenance</option>
-                      <option value="professional_services">
-                        Professional Services
-                      </option>
-                      <option value="development">development</option>
-                      <option value="taxes">Taxes</option>
-                      <option value="other">Other</option>
+                      {categories?.length > 0 &&
+                        categories.map((category) => (
+                          <option key={category.$id} value={category.$id}>
+                            {category.name}
+                          </option>
+                        ))}
                     </Field>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                       <svg
