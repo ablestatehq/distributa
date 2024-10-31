@@ -4,8 +4,10 @@ import { createPortal } from "react-dom";
 import { format } from "date-fns";
 
 const TransactionDetails = ({ handleClose, transaction }) => {
-  const getPrefix = (amount) => (amount < 0 ? "-" : "+");
-  const prefix = getPrefix(transaction.amount);
+  const getPrefix = (transaction) =>
+    transaction?.type === "income" < 0 ? "+" : "-";
+
+  const prefix = getPrefix(transaction);
 
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
