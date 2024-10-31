@@ -59,7 +59,7 @@ const Transactions = () => {
     return totalIncome - totalExpenditure;
   };
 
-  const getPrefix = (amount) => (amount < 0 ? "-" : "+");
+  const getPrefix = (amount) => (amount < 0 ? null : "+");
 
   return (
     <ContentViewAreaWrapper>
@@ -71,43 +71,76 @@ const Transactions = () => {
           <hr className="invisible h-8" />
         </header>
         <div className="flex-1 flex flex-col lg:flex-row-reverse md:gap-x-4">
-          <div className="flex flex-col gap-y-2 lg:w-1/3">
-            <section className="flex flex-col gap-y-2">
-              <div className="flex gap-x-2">
-                <article className="flex flex-col gap-y-2 w-1/2 px-4 py-8 rounded-lg bg-grey">
-                  <h3 className="font-archivo font-normal text-xl leading-120 tracking-0">
-                    N/A
-                  </h3>
-                  <p className="font-satoshi font-regular text-tiny leading-100 tracking-normal">
-                    Income this month
-                  </p>
-                </article>
-                <article className="flex flex-col gap-y-2 w-1/2 px-4 py-8 rounded-lg bg-grey">
-                  <h3 className="font-archivo font-normal text-xl leading-120 tracking-0">
-                    N/A
-                  </h3>
-                  <p className="font-satoshi font-regular text-tiny leading-100 tracking-normal">
-                    Expenses this month
-                  </p>
-                </article>
+          <Suspense
+            fallback={
+              <div className="flex flex-col gap-y-2 lg:w-1/3">
+                <section className="flex flex-col gap-y-2">
+                  <div className="flex gap-x-2">
+                    <article className="flex flex-col gap-y-2 w-1/2 px-4 py-8 rounded-lg bg-grey/20 animate-pulse">
+                      <div className="h-7 w-16 bg-grey/40 rounded"></div>
+                      <div className="h-4 w-24 bg-grey/40 rounded"></div>
+                    </article>
+                    <article className="flex flex-col gap-y-2 w-1/2 px-4 py-8 rounded-lg bg-grey/20 animate-pulse">
+                      <div className="h-7 w-16 bg-grey/40 rounded"></div>
+                      <div className="h-4 w-24 bg-grey/40 rounded"></div>
+                    </article>
+                  </div>
+                  <div className="w-full h-12 bg-grey rounded-lg animate-pulse"></div>
+                  <div className="w-full h-12 bg-grey rounded-lg animate-pulse"></div>
+                </section>
               </div>
-              <Button
-                type="button"
-                className="w-full px-6 py-3 font-bold text-small"
-                kind="plain"
-                disabled={true}
-              >
-                Export PDF Report
-              </Button>
-              <Button
-                type="button"
-                className="w-full px-6 py-3 font-bold text-small"
-                onClick={toggleCreateTransactionModal}
-              >
-                Add New
-              </Button>
-            </section>
-          </div>
+            }
+          >
+            <Await resolve={data?.currentMonthSummary}>
+              {(data) => {
+                const income =
+                  data?.total > 0 ? data.documents?.[0]?.income : "N/A";
+                const expense =
+                  data?.total > 0 ? data.documents?.[0]?.expense : "N/A";
+
+                return (
+                  <div className="flex flex-col gap-y-2 lg:w-1/3">
+                    <section className="flex flex-col gap-y-2">
+                      <div className="flex gap-x-2">
+                        <article className="flex flex-col gap-y-2 w-1/2 px-4 py-8 rounded-lg bg-grey">
+                          <h3 className="font-archivo font-normal text-xl leading-120 tracking-0">
+                            {income}
+                          </h3>
+                          <p className="font-satoshi font-regular text-tiny leading-100 tracking-normal">
+                            Income this month
+                          </p>
+                        </article>
+                        <article className="flex flex-col gap-y-2 w-1/2 px-4 py-8 rounded-lg bg-grey">
+                          <h3 className="font-archivo font-normal text-xl leading-120 tracking-0">
+                            {expense}
+                          </h3>
+                          <p className="font-satoshi font-regular text-tiny leading-100 tracking-normal">
+                            Expenses this month
+                          </p>
+                        </article>
+                      </div>
+                      <Button
+                        type="button"
+                        className="w-full px-6 py-3 font-bold text-small"
+                        kind="plain"
+                        disabled={true}
+                      >
+                        Export PDF Report
+                      </Button>
+                      <Button
+                        type="button"
+                        className="w-full px-6 py-3 font-bold text-small"
+                        onClick={toggleCreateTransactionModal}
+                      >
+                        Add New
+                      </Button>
+                    </section>
+                  </div>
+                );
+              }}
+            </Await>
+          </Suspense>
+
           <hr className="invisible h-8 lg:hidden" />
           <main className="flex-1 flex justify-center items-center lg:w-2/3 lg:bg-grey rounded-lg">
             <Suspense
@@ -151,9 +184,11 @@ const Transactions = () => {
                               <table className="w-full">
                                 <tbody>
                                   {transactions.map((transaction) => {
-                                    const prefix = getPrefix(
-                                      transaction.amount
-                                    );
+                                    const prefix =
+                                      transaction?.type === "income"
+                                        ? "+"
+                                        : "-";
+
                                     return (
                                       <tr
                                         key={transaction.$id}

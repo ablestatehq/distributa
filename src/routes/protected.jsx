@@ -3,6 +3,7 @@ import {
   AppwriteService as Appwrite,
   InvoiceService,
   TransactionService,
+  BalancesService,
 } from "../services";
 import { redirect, defer } from "react-router-dom";
 import { Invoices, NewInvoice, Transactions, Settings } from "../pages";
@@ -110,7 +111,14 @@ export const protectedRoutes = [
       {
         loader: async () => {
           const transactionsPromise = TransactionService.listTransactions();
-          return defer({ transactions: transactionsPromise });
+          const currentMonthSummaryPromise =
+            BalancesService.getCurrentMonthSummary();
+
+          return defer({
+            transactions: transactionsPromise,
+            currentMonthSummary: currentMonthSummaryPromise,
+          });
+          // get the current monthly summaries
         },
         path: "/transactions",
         element: <Transactions />,
