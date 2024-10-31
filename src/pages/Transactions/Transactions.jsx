@@ -123,7 +123,8 @@ const Transactions = () => {
                         type="button"
                         className="w-full px-6 py-3 font-bold text-small"
                         kind="plain"
-                        disabled={true}
+                        disabled={!(income || expense)}
+                        // Todo Implement the code that exports this into an income report for this month.
                       >
                         Export PDF Report
                       </Button>
