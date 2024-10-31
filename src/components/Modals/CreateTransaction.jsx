@@ -53,7 +53,7 @@ const CreateTransaction = ({ handleClose }) => {
         values.category,
         values.date
       );
-      navigate(`/transactions/`);
+      navigate(`/transactions`);
     } catch (error) {
       console.log("Error: ", error);
       throw error;
@@ -101,6 +101,7 @@ const CreateTransaction = ({ handleClose }) => {
                     }
                   )}`}
                   onClick={() => setFieldValue("type", "expense")}
+                  disabled={isSubmitting}
                 >
                   Expense
                 </button>
@@ -114,6 +115,7 @@ const CreateTransaction = ({ handleClose }) => {
                     }
                   )}`}
                   onClick={() => setFieldValue("type", "income")}
+                  disabled={isSubmitting}
                 >
                   Income
                 </button>
@@ -137,6 +139,7 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.date && errors?.date,
                       }
                     )}
+                    disabled={isSubmitting}
                   />
                   <ErrorMessage name="date">
                     {(msg) => (
@@ -165,6 +168,7 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.item && errors?.item,
                       }
                     )}
+                    disabled={isSubmitting}
                   />
                   <ErrorMessage name="item">
                     {(msg) => (
@@ -193,6 +197,7 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.amount && errors?.amount,
                       }
                     )}
+                    disabled={isSubmitting}
                   />
                   <ErrorMessage name="amount">
                     {(msg) => (
@@ -223,6 +228,7 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.description && errors?.description,
                       }
                     )}
+                    disabled={isSubmitting}
                   />
                   <ErrorMessage name="description">
                     {(msg) => (
@@ -251,6 +257,7 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.payer_payee && errors?.payer_payee,
                       }
                     )}
+                    disabled={isSubmitting}
                   />
                   <ErrorMessage name="payer_payee">
                     {(msg) => (
@@ -280,6 +287,7 @@ const CreateTransaction = ({ handleClose }) => {
                           errors?.invoice_receipt_no,
                       }
                     )}
+                    disabled={isSubmitting}
                   />
                   <ErrorMessage name="invoice_receipt_no">
                     {(msg) => (
@@ -308,6 +316,7 @@ const CreateTransaction = ({ handleClose }) => {
                         }
                       )}
                       as="select"
+                      disabled={isSubmitting}
                     >
                       <option value="">Select one</option>
                       <option value="cash">Cash</option>
@@ -355,6 +364,7 @@ const CreateTransaction = ({ handleClose }) => {
                         }
                       )}
                       as="select"
+                      disabled={isSubmitting}
                     >
                       <option value="">Select one</option>
                       {categories?.length > 0 &&
