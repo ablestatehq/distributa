@@ -54,7 +54,7 @@ const TransactionDetails = ({ handleClose, transaction }) => {
           </div>
           <div className="flex justify-between pb-2 pt-4 border-b border-b-greyborder">
             <span className="font-satoshi font-normal text-small leading-100 tracking-0">
-              Receipt #
+              Receipt/Invoice #
             </span>
             <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
               {transaction?.invoice_receipt_no || "N/A"}
@@ -70,7 +70,7 @@ const TransactionDetails = ({ handleClose, transaction }) => {
           </div>
           <div className="flex justify-between pb-2 pt-4 border-b border-b-greyborder">
             <span className="font-satoshi font-normal text-small leading-100 tracking-0">
-              Payee
+              {transaction.type === "income" ? "Payer" : "Payee"}
             </span>
             <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
               {transaction?.payer_payee || "N/A"}

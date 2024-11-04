@@ -67,14 +67,8 @@ const EditInvoiceStatus = ({
                     <option value="">Select one</option>
                     <option value="draft">Draft</option>
                     <option value="sent">Sent</option>
-                    <option value="viewed">Viewed</option>
-                    <option value="partial">Partial</option>
                     <option value="paid">Paid</option>
                     <option value="overdue">Overdue</option>
-                    <option value="void">Void</option>
-                    <option value="disputed">Disputed</option>
-                    <option value="refunded">Refunded</option>
-                    <option value="cancelled">Cancelled</option>
                   </Field>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg

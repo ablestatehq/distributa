@@ -84,9 +84,6 @@ export const protectedRoutes = [
           const invoicePromise = InvoiceService.getInvoice(params.id);
           return defer({ invoice: invoicePromise });
         },
-        // TODO: Add a loader to fetch the invoice whose value is specified by the param "id" in the route path.
-        // TODO: Handle the state and load it.
-        // TODO: Create a component for editing the information of a specific invoice. Setting the initial state of the form to the values of the invoice
         element: <InvoicePreview />,
       },
       {

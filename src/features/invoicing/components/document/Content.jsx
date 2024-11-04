@@ -8,11 +8,15 @@ const Content = ({ data }) => {
   return (
     <div className="w-[342px] min-h-[484px] border border-black lg:w-[595px] lg:min-h-[842px] lg:h-fit p-5 lg:m-5 lg:p-12 flex flex-col gap-y-7 lg:gap-y-12">
       <div className="flex justify-between">
-        <img
-          src={data?.logo}
-          alt="Biller Logo"
-          className="w-14 h-14 lg:w-24 lg:h-24 object-cover"
-        />
+        {data?.logo ? (
+          <img
+            src={data?.logo}
+            alt="Biller Logo"
+            className="w-14 h-14 lg:w-24 lg:h-24 object-cover"
+          />
+        ) : (
+          <div></div>
+        )}
         <div className="flex flex-col gap-y-0.5 lg:gap-y-1 items-end">
           <h1 className="font-satoshi font-bold text-[13.79px] leading-[13.8px] lg:text-large lg:leading-100 tracking-normal">
             {data.title}
@@ -123,7 +127,7 @@ const Content = ({ data }) => {
             <h2 className="font-satoshi font-bold text-[6.9px] lg:text-tiny leading-100 tracking-normal">
               Notes
             </h2>
-            <p className="font-satoshi font-normal text-[0.216rem] lg:text-[0.375rem] leading-140 tracking-normal">
+            <p className="font-satoshi font-normal text-[0.216rem] lg:text-[0.375rem] leading-140 tracking-normal whitespace-pre-line">
               {data.notes}
             </p>
           </article>
@@ -131,8 +135,8 @@ const Content = ({ data }) => {
             <h2 className="font-satoshi font-bold text-[6.9px] lg:text-tiny leading-100 tracking-normal">
               Terms & conditions
             </h2>
-            <p className="font-satoshi font-normal text-[0.216rem] lg:text-[0.375rem] leading-140 tracking-normal">
-              {data.notes}
+            <p className="font-satoshi font-normal text-[0.216rem] lg:text-[0.375rem] leading-140 tracking-normal whitespance-pre-line">
+              {data.terms}
             </p>
           </article>
         </section>

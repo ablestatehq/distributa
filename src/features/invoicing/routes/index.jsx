@@ -1,4 +1,7 @@
 import { Invoice } from "../components";
+import { InvoicePreview } from "../../../components/Modals";
+import { defer } from "react-router-dom";
+import { InvoiceService } from "../../../services";
 
 export const invoicingRoutes = [
   {
@@ -7,7 +10,10 @@ export const invoicingRoutes = [
   },
   {
     path: "invoice/shared/:id",
-    element: <div>Show the Invoice</div>,
-    //TODO: implement the loader to execute
+    loader: async ({ params }) => {
+      const invoicePromise = InvoiceService.getInvoice(params.id);
+      return defer({ invoice: invoicePromise });
+    },
+    element: <InvoicePreview />,
   },
 ];

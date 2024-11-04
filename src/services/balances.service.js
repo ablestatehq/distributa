@@ -1,6 +1,6 @@
 import { ID, Query, Permission, Role } from "appwrite";
 import { format } from "date-fns";
-import AppwriteService from "./appwrite";
+import AppwriteService from "./appwrite.service.js";
 
 class Balances extends AppwriteService {
   #databaseId;

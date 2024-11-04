@@ -21,16 +21,18 @@ Font.register({
   ],
 });
 
+const figmaToReactPdfPoints = (figmaPixels) => (figmaPixels * 0.75).toFixed(2);
+
 // Create styles
 const styles = StyleSheet.create({
   page: {
-    padding: 48,
+    padding: figmaToReactPdfPoints(48),
     flexDirection: "column",
-    rowGap: 48,
+    rowGap: figmaToReactPdfPoints(48),
   },
   logo: {
-    width: 96,
-    height: 96,
+    width: figmaToReactPdfPoints(96),
+    height: figmaToReactPdfPoints(96),
     objectFit: "cover",
   },
   fontBold: {
@@ -100,8 +102,14 @@ const PDFDoc = ({ data, includeBorder = false }) => {
       >
         <View style={[styles.header]}>
           <View>{logo ? <Image src={logo} style={styles.logo} /> : null}</View>
-          <View style={[{ flexDirection: "column", gap: 4 }]}>
-            <Text style={[styles.fontBold, { fontSize: 24 }]}>{title}</Text>
+          <View
+            style={[{ flexDirection: "column", gap: figmaToReactPdfPoints(4) }]}
+          >
+            <Text
+              style={[styles.fontBold, { fontSize: figmaToReactPdfPoints(24) }]}
+            >
+              {title}
+            </Text>
             <View
               style={[
                 {
@@ -112,26 +120,51 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               ]}
             >
               <View styles={{ width: "auto" }}>
-                <View style={{ flexDirection: "row", marginVertical: 1 }}>
-                  <Text style={[styles.fontBold, { fontSize: 8 }]}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginVertical: figmaToReactPdfPoints(1),
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.fontBold,
+                      { fontSize: figmaToReactPdfPoints(8) },
+                    ]}
+                  >
                     Invoice #:{" "}
                   </Text>
-                  <Text style={[styles.fontNormal, { fontSize: 8 }]}>
+                  <Text
+                    style={[
+                      styles.fontNormal,
+                      { fontSize: figmaToReactPdfPoints(8) },
+                    ]}
+                  >
                     {invoice_no}
                   </Text>
                 </View>
                 <View
                   style={{
                     flexDirection: "row",
-                    marginVertical: 1,
+                    marginVertical: figmaToReactPdfPoints(1),
                     width: "auto",
-                    rowGap: 1,
+                    rowGap: figmaToReactPdfPoints(1),
                   }}
                 >
-                  <Text style={[styles.fontBold, { fontSize: 8 }]}>
+                  <Text
+                    style={[
+                      styles.fontBold,
+                      { fontSize: figmaToReactPdfPoints(8) },
+                    ]}
+                  >
                     Date Issued:{" "}
                   </Text>
-                  <Text style={[styles.fontNormal, { fontSize: 8 }]}>
+                  <Text
+                    style={[
+                      styles.fontNormal,
+                      { fontSize: figmaToReactPdfPoints(8) },
+                    ]}
+                  >
                     {format(issue_date, "dd-MM-yyyy")}
                   </Text>
                 </View>
@@ -145,10 +178,20 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                     },
                   ]}
                 >
-                  <Text style={[styles.fontBold, { fontSize: 8 }]}>
+                  <Text
+                    style={[
+                      styles.fontBold,
+                      { fontSize: figmaToReactPdfPoints(8) },
+                    ]}
+                  >
                     Due Date:{" "}
                   </Text>
-                  <Text style={[styles.fontNormal, { fontSize: 8 }]}>
+                  <Text
+                    style={[
+                      styles.fontNormal,
+                      { fontSize: figmaToReactPdfPoints(8) },
+                    ]}
+                  >
                     {format(due_date, "dd-MM-yyyy")}
                   </Text>
                 </View>
@@ -156,12 +199,20 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             </View>
           </View>
         </View>
-        <View style={[{ flexDirection: "row", gap: 30 }]}>
-          <View style={[{ flexDirection: "column", gap: 4 }]}>
+        <View
+          style={[{ flexDirection: "row", gap: figmaToReactPdfPoints(30) }]}
+        >
+          <View
+            style={[{ flexDirection: "column", gap: figmaToReactPdfPoints(4) }]}
+          >
             <Text
               style={[
                 styles.fontBold,
-                { fontSize: 12, lineHeight: 1, letterSpacing: 0 },
+                {
+                  fontSize: figmaToReactPdfPoints(12),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                },
               ]}
             >
               Billed From
@@ -169,7 +220,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontNormal,
-                { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                {
+                  fontSize: figmaToReactPdfPoints(8),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                },
               ]}
             >
               {biller_name}
@@ -177,7 +232,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontNormal,
-                { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                {
+                  fontSize: figmaToReactPdfPoints(8),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                },
               ]}
             >
               {biller_address}
@@ -185,7 +244,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontNormal,
-                { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                {
+                  fontSize: figmaToReactPdfPoints(8),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                },
               ]}
             >
               {biller_email}
@@ -195,7 +258,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontBold,
-                { fontSize: 12, lineHeight: 1, letterSpacing: 0 },
+                {
+                  fontSize: figmaToReactPdfPoints(12),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                },
               ]}
             >
               Billed To
@@ -203,7 +270,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontNormal,
-                { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                {
+                  fontSize: figmaToReactPdfPoints(8),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                },
               ]}
             >
               {client_name}
@@ -211,7 +282,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontNormal,
-                { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                {
+                  fontSize: figmaToReactPdfPoints(8),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                },
               ]}
             >
               {client_address}
@@ -219,7 +294,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontNormal,
-                { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                {
+                  fontSize: figmaToReactPdfPoints(8),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                },
               ]}
             >
               {client_email}
@@ -231,7 +310,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             {
               flex: 1,
               flexDirection: "column",
-              gap: 11,
+              gap: figmaToReactPdfPoints(11),
             },
           ]}
         >
@@ -252,7 +331,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontBold,
-                { fontSize: 10, lineHeight: 1, letterSpacing: 0, flex: 2 },
+                {
+                  fontSize: figmaToReactPdfPoints(10),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                  flex: 2,
+                },
               ]}
             >
               Title
@@ -260,7 +344,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontBold,
-                { fontSize: 10, lineHeight: 1, letterSpacing: 0, flex: 1 },
+                {
+                  fontSize: figmaToReactPdfPoints(10),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                  flex: 1,
+                },
               ]}
             >
               Quantity
@@ -268,7 +357,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontBold,
-                { fontSize: 10, lineHeight: 1, letterSpacing: 0, flex: 1 },
+                {
+                  fontSize: figmaToReactPdfPoints(10),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                  flex: 1,
+                },
               ]}
             >
               Units
@@ -276,7 +370,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontBold,
-                { fontSize: 10, lineHeight: 1, letterSpacing: 0, flex: 1 },
+                {
+                  fontSize: figmaToReactPdfPoints(10),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                  flex: 1,
+                },
               ]}
             >
               Price
@@ -284,7 +383,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
             <Text
               style={[
                 styles.fontBold,
-                { fontSize: 10, lineHeight: 1, letterSpacing: 0, flex: 1 },
+                {
+                  fontSize: figmaToReactPdfPoints(10),
+                  lineHeight: 1,
+                  letterSpacing: 0,
+                  flex: 1,
+                },
               ]}
             >
               Amount
@@ -298,7 +402,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 style={[
                   {
                     flexDirection: "row",
-                    paddingVertical: 8,
+                    paddingVertical: figmaToReactPdfPoints(8),
                     borderBottomStyle: "solid",
                     borderBottomWidth: 0.75,
                     borderBottomColor: "#B8B8B8",
@@ -308,7 +412,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 <Text
                   style={[
                     styles.fontNormal,
-                    { fontSize: 8, lineHeight: 1, letterSpacing: 0, flex: 2 },
+                    {
+                      fontSize: figmaToReactPdfPoints(8),
+                      lineHeight: 1,
+                      letterSpacing: 0,
+                      flex: 2,
+                    },
                   ]}
                 >
                   {title}
@@ -316,7 +425,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 <Text
                   style={[
                     styles.fontNormal,
-                    { fontSize: 8, lineHeight: 1, letterSpacing: 0, flex: 1 },
+                    {
+                      fontSize: figmaToReactPdfPoints(8),
+                      lineHeight: 1,
+                      letterSpacing: 0,
+                      flex: 1,
+                    },
                   ]}
                 >
                   {quantity}
@@ -324,7 +438,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 <Text
                   style={[
                     styles.fontNormal,
-                    { fontSize: 8, lineHeight: 1, letterSpacing: 0, flex: 1 },
+                    {
+                      fontSize: figmaToReactPdfPoints(8),
+                      lineHeight: 1,
+                      letterSpacing: 0,
+                      flex: 1,
+                    },
                   ]}
                 >
                   {units || "N/A"}
@@ -332,7 +451,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 <Text
                   style={[
                     styles.fontNormal,
-                    { fontSize: 8, lineHeight: 1, letterSpacing: 0, flex: 1 },
+                    {
+                      fontSize: figmaToReactPdfPoints(8),
+                      lineHeight: 1,
+                      letterSpacing: 0,
+                      flex: 1,
+                    },
                   ]}
                 >
                   {currencyFormatter(price, currency)}
@@ -340,7 +464,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 <Text
                   style={[
                     styles.fontNormal,
-                    { fontSize: 8, lineHeight: 1, letterSpacing: 0, flex: 1 },
+                    {
+                      fontSize: figmaToReactPdfPoints(8),
+                      lineHeight: 1,
+                      letterSpacing: 0,
+                      flex: 1,
+                    },
                   ]}
                 >
                   {currencyFormatter(
@@ -363,14 +492,20 @@ const PDFDoc = ({ data, includeBorder = false }) => {
         >
           <View
             wrap={false}
-            style={[{ flexDirection: "column", gap: 24, width: 192 }]}
+            style={[
+              {
+                flexDirection: "column",
+                gap: figmaToReactPdfPoints(24),
+                width: 192,
+              },
+            ]}
           >
             <View style={[{ flexDirection: "column", gap: 4 }]}>
               <Text
                 style={[
                   styles.fontBold,
                   {
-                    fontSize: 12,
+                    fontSize: figmaToReactPdfPoints(12),
                     lineHeight: 1,
                     letterSpacing: 0,
                   },
@@ -381,7 +516,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontNormal,
-                  { fontSize: 9, lineHeight: 1.5, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(6),
+                    lineHeight: 1.5,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 {notes}
@@ -392,7 +531,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 style={[
                   styles.fontBold,
                   {
-                    fontSize: 12,
+                    fontSize: figmaToReactPdfPoints(12),
                     lineHeight: 1,
                     letterSpacing: 0,
                   },
@@ -403,20 +542,31 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontNormal,
-                  { fontSize: 9, lineHeight: 1.5, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(6),
+                    lineHeight: 1.5,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 {terms}
               </Text>
             </View>
           </View>
-          <View style={[{ flexDirection: "column", minWidth: 153.5 }]}>
+          <View
+            style={[
+              {
+                flexDirection: "column",
+                minWidth: figmaToReactPdfPoints(153.5),
+              },
+            ]}
+          >
             <View
               style={[
                 {
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  paddingVertical: 8,
+                  paddingVertical: figmaToReactPdfPoints(8),
                   borderBottomStyle: "solid",
                   borderBottomWidth: 0.75,
                   borderBottomColor: "#B8B8B8",
@@ -426,7 +576,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontBold,
-                  { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 Sub Total
@@ -434,7 +588,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontNormal,
-                  { fontSize: 8, lineHeight: 1.2, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1.2,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 {currencyFormatter(sub_total, currency)}
@@ -445,14 +603,18 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 {
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  paddingVertical: 8,
+                  paddingVertical: figmaToReactPdfPoints(8),
                 },
               ]}
             >
               <Text
                 style={[
                   styles.fontBold,
-                  { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 Discount
@@ -460,7 +622,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontNormal,
-                  { fontSize: 8, lineHeight: 1.2, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1.2,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 {currencyFormatter(discount ?? 0, currency)}
@@ -471,14 +637,18 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 {
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  paddingVertical: 8,
+                  paddingVertical: figmaToReactPdfPoints(8),
                 },
               ]}
             >
               <Text
                 style={[
                   styles.fontBold,
-                  { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 Tax
@@ -486,7 +656,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontNormal,
-                  { fontSize: 8, lineHeight: 1.2, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1.2,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 {currencyFormatter(tax ?? 0, currency)}
@@ -497,7 +671,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 {
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  paddingVertical: 8,
+                  paddingVertical: figmaToReactPdfPoints(8),
                   borderBottomStyle: "solid",
                   borderBottomWidth: 0.75,
                   borderBottomColor: "#B8B8B8",
@@ -507,7 +681,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontBold,
-                  { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 Shipping
@@ -515,7 +693,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontNormal,
-                  { fontSize: 8, lineHeight: 1.2, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1.2,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 {currencyFormatter(shipping ?? 0, currency)}
@@ -526,7 +708,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 {
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  paddingVertical: 8,
+                  paddingVertical: figmaToReactPdfPoints(8),
                   borderBottomStyle: "solid",
                   borderBottomWidth: 0.75,
                   borderBottomColor: "#B8B8B8",
@@ -536,7 +718,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontBold,
-                  { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 Amount Due
@@ -544,7 +730,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontNormal,
-                  { fontSize: 8, lineHeight: 1.2, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1.2,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 {currencyFormatter(amount_due ?? 0, currency)}
@@ -555,7 +745,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 {
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  paddingVertical: 8,
+                  paddingVertical: figmaToReactPdfPoints(8),
                   borderBottomStyle: "solid",
                   borderBottomWidth: 0.75,
                   borderBottomColor: "#B8B8B8",
@@ -565,7 +755,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontBold,
-                  { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 Amount Paid
@@ -573,7 +767,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontNormal,
-                  { fontSize: 8, lineHeight: 1.2, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1.2,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 {currencyFormatter(amount_paid ?? 0, currency)}
@@ -584,7 +782,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 {
                   flexDirection: "row",
                   justifyContent: "space-between",
-                  paddingVertical: 8,
+                  paddingVertical: figmaToReactPdfPoints(8),
                   borderBottomStyle: "solid",
                   borderBottomWidth: 0.75,
                   borderBottomColor: "#B8B8B8",
@@ -595,7 +793,11 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               <Text
                 style={[
                   styles.fontBold,
-                  { fontSize: 8, lineHeight: 1, letterSpacing: 0 },
+                  {
+                    fontSize: figmaToReactPdfPoints(8),
+                    lineHeight: 1,
+                    letterSpacing: 0,
+                  },
                 ]}
               >
                 Balance Due
@@ -604,7 +806,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 style={[
                   styles.fontBold,
                   {
-                    fontSize: 12,
+                    fontSize: figmaToReactPdfPoints(12),
                     lineHeight: 1.2,
                     letterSpacing: 0,
                     verticalAlign: "sub",

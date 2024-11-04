@@ -1,6 +1,6 @@
 import * as slugify from "slugify";
 import { Permission, Role, Query } from "appwrite";
-import AppwriteService from "./appwrite";
+import AppwriteService from "./appwrite.service.js";
 class Category extends AppwriteService {
   #databaseId;
   #categoriesCollectionId;
