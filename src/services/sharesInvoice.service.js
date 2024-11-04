@@ -1,9 +1,10 @@
-import AppwriteService from "./appwrite";
+import AppwriteService from "./appwrite.service.js";
 import { ID, Permission, Role, Query } from "appwrite";
 
 class ShareService extends AppwriteService {
   #databaseId;
   #shareInvoiceLinksCollectionId;
+  #invoicesCollectionId;
 
   constructor() {
     super();
@@ -11,6 +12,7 @@ class ShareService extends AppwriteService {
     this.#databaseId = this.getVariables().DATABASE_ID;
     this.#shareInvoiceLinksCollectionId =
       this.getVariables().SHARED_INVOICES_COLLECTION_ID;
+    this.#invoicesCollectionId = this.getVariables().INVOICES_COLLECTION_ID;
   }
 
   /**
@@ -19,20 +21,16 @@ class ShareService extends AppwriteService {
   async generateShareLink(invoiceId, options = {}) {
     const userId = (await this.account.get())?.$id ?? null;
     try {
-      const DocumentId = ID.unique();
-
-      const share_url = `${window.location.origin}/invoice/shared/${DocumentId}`;
+      const share_url = `${window.location.origin}/invoice/shared/${invoiceId}`;
 
       const shareDoc = await this.database.createDocument(
         this.#databaseId,
         this.#shareInvoiceLinksCollectionId,
-        DocumentId,
+        ID.unique(),
         {
-          share_id: DocumentId,
           invoice_id: invoiceId,
           owner_id: userId,
           is_active: true,
-          created_at: new Date().toISOString(),
           expires_at: options.expires_at || null,
           access_code: options.access_code || null,
           access_count: 0,
@@ -47,6 +45,19 @@ class ShareService extends AppwriteService {
           Permission.read(Role.user(userId)),
           Permission.update(Role.user(userId)),
           Permission.delete(Role.user(userId)),
+        ]
+      );
+
+      await this.database.updateDocument(
+        this.#databaseId,
+        this.#invoicesCollectionId,
+        invoiceId,
+        {},
+        [
+          Permission.read(Role.user(userId)),
+          Permission.update(Role.user(userId)),
+          Permission.delete(Role.user(userId)),
+          Permission.read(Role.any()),
         ]
       );
 
@@ -127,6 +138,7 @@ class ShareService extends AppwriteService {
    * Deactivate a share
    */
   async deactivateShare(shareId) {
+    const currentUser = await this.account.get();
     try {
       await this.database.updateDocument(
         this.#databaseId,
@@ -227,3 +239,6 @@ class ShareService extends AppwriteService {
     }
   }
 }
+
+const ShareInvoiceService = new ShareService();
+export default ShareInvoiceService;
