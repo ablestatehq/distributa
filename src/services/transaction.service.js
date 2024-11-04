@@ -1,4 +1,4 @@
-import AppwriteService from "./appwrite";
+import AppwriteService from "./appwrite.service.js";
 import { Query, ID, Permission, Role } from "appwrite";
 
 class Transaction extends AppwriteService {
@@ -65,7 +65,7 @@ class Transaction extends AppwriteService {
     return this.database.listDocuments(
       DATABASE_ID,
       TRANSACTIONS_COLLECTION_ID,
-      [Query.limit(limit), Query.offset(offset)]
+      [Query.limit(limit), Query.offset(offset), Query.orderDesc("date")]
     );
   }
 
