@@ -1,9 +1,14 @@
-import AppwriteService from "./appwrite";
+import AppwriteService from "./appwrite.service.js";
 import { Query, ID, Permission, Role } from "appwrite";
 
 class Invoice extends AppwriteService {
+  #databaseId;
+  #invoicesCollectionId;
+
   constructor() {
     super();
+    this.#databaseId = this.getVariables().DATABASE_ID;
+    this.#invoicesCollectionId = this.getVariables().INVOICES_COLLECTION_ID;
   }
 
   /**
@@ -13,8 +18,6 @@ class Invoice extends AppwriteService {
    * @returns {Promise} A promise that resolves to the created invoice document
    */
   async createInvoice(invoiceData) {
-    const { INVOICES_COLLECTION_ID, DATABASE_ID } = this.getVariables();
-
     const currentUser = await this.account.get();
 
     const permissions = [
@@ -25,10 +28,10 @@ class Invoice extends AppwriteService {
 
     try {
       return this.database.createDocument(
-        DATABASE_ID,
-        INVOICES_COLLECTION_ID,
+        this.#databaseId,
+        this.#invoicesCollectionId,
         ID.unique(),
-        invoiceData,
+        { ...invoiceData, created_by: currentUser?.$id },
         permissions
       );
     } catch (error) {
@@ -43,10 +46,9 @@ class Invoice extends AppwriteService {
    * @returns {Promise} A promise that resolves to the invoice document
    */
   async getInvoice(invoiceId) {
-    const { INVOICES_COLLECTION_ID, DATABASE_ID } = this.getVariables();
     return this.database.getDocument(
-      DATABASE_ID,
-      INVOICES_COLLECTION_ID,
+      this.#databaseId,
+      this.#invoicesCollectionId,
       invoiceId
     );
   }
@@ -58,13 +60,19 @@ class Invoice extends AppwriteService {
    * @returns {Promise} A promise that resolves to the list of invoice documents
    */
   async listInvoices(options = {}) {
-    const { DATABASE_ID, INVOICES_COLLECTION_ID } = this.getVariables();
     const { limit = 50, offset = 0 } = options;
+    const currentUser = await this.account.get();
 
-    return this.database.listDocuments(DATABASE_ID, INVOICES_COLLECTION_ID, [
-      Query.limit(limit),
-      Query.offset(offset),
-    ]);
+    return this.database.listDocuments(
+      this.#databaseId,
+      this.#invoicesCollectionId,
+      [
+        Query.limit(limit),
+        Query.offset(offset),
+        Query.equal("created_by", currentUser?.$id),
+        Query.orderDesc("$createdAt"),
+      ]
+    );
   }
 
   /**
@@ -75,9 +83,9 @@ class Invoice extends AppwriteService {
    * @returns {Promise} A promise that resolves to the updated invoice document
    */
   async updateInvoice(invoiceId, updateData) {
-    const { DATABASE_ID, INVOICES_COLLECTION_ID } = this.getVariables();
     return this.database.updateDocument(
-      INVOICES_COLLECTION_ID,
+      this.#databaseId,
+      this.#invoicesCollectionId,
       invoiceId,
       updateData
     );
@@ -93,12 +101,10 @@ class Invoice extends AppwriteService {
    */
 
   async updateInvoiceStatus(invoiceId, newStatus, permissions = []) {
-    const { DATABASE_ID, INVOICES_COLLECTION_ID } = this.getVariables();
-
     if (permissions.length > 0) {
       return this.database.updateDocument(
-        DATABASE_ID,
-        INVOICES_COLLECTION_ID,
+        this.#databaseId,
+        this.#invoicesCollectionId,
         invoiceId,
         { status: newStatus },
         permissions
@@ -106,8 +112,8 @@ class Invoice extends AppwriteService {
     }
 
     return this.database.updateDocument(
-      DATABASE_ID,
-      INVOICES_COLLECTION_ID,
+      this.#databaseId,
+      this.#invoicesCollectionId,
       invoiceId,
       { status: newStatus }
     );
@@ -120,8 +126,11 @@ class Invoice extends AppwriteService {
    * @returns {Promise} A promise that resolves when the invoice is deleted
    */
   async deleteInvoice(invoiceId) {
-    const { INVOICES_COLLECTION_ID } = this.getVariables();
-    return this.database.deleteDocument(INVOICES_COLLECTION_ID, invoiceId);
+    return this.database.deleteDocument(
+      this.#databaseId,
+      this.#invoicesCollectionId,
+      invoiceId
+    );
   }
 
   /**
@@ -131,12 +140,17 @@ class Invoice extends AppwriteService {
    * @returns {Promise} A promise that resolves to the list of matching invoice documents
    */
   async searchInvoices(searchCriteria) {
-    const { INVOICES_COLLECTION_ID } = this.getVariables();
+    const currentUser = await this.account.get();
+
     const queries = Object.entries(searchCriteria).map(([key, value]) =>
       Query.equal(key, value)
     );
 
-    return this.database.listDocuments(INVOICES_COLLECTION_ID, queries);
+    return this.database.listDocuments(
+      this.#databaseId,
+      this.#invoicesCollectionId,
+      [Query.equal("created_by", currentUser?.$id), ...queries]
+    );
   }
 }
 
