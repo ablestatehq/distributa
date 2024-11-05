@@ -4,7 +4,12 @@ import tailwindcss from "tailwindcss";
 
 export default defineConfig({
   // depending on your application, base can also be "/"
-  base: "",
+  base: "/",
+  build: {
+    outDir: "dist",
+    assetsDir: "assets",
+    sourcemap: true,
+  },
   plugins: [react()],
   css: {
     postcss: { plugins: [tailwindcss()] },

@@ -254,7 +254,9 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               {biller_email}
             </Text>
           </View>
-          <View style={[{ flexDirection: "column", gap: 4 }]}>
+          <View
+            style={[{ flexDirection: "column", gap: figmaToReactPdfPoints(4) }]}
+          >
             <Text
               style={[
                 styles.fontBold,
