@@ -185,6 +185,14 @@ class Invoice extends AppwriteService {
    */
 
   async updateInvoiceStatus(invoiceId, newStatus, permissions = []) {
+
+    // first get the invoice
+    const invoice = await this.getInvoice(invoiceId);
+
+    if ( invoice.status === newStatus ) {
+      return invoice;
+    }
+
     if (permissions.length > 0) {
       return this.database.updateDocument(
         this.#databaseId,
