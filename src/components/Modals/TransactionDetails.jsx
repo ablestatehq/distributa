@@ -5,7 +5,7 @@ import { format } from "date-fns";
 
 const TransactionDetails = ({ handleClose, transaction }) => {
   const getPrefix = (transaction) =>
-    transaction?.type === "income" < 0 ? "+" : "-";
+    transaction?.type === "income" ? "+" : "-";
 
   const prefix = getPrefix(transaction);
 
