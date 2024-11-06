@@ -16,32 +16,42 @@ const CreateTransaction = ({ handleClose }) => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
-  const initialValues = {
-    type: "expense",
-    date: "",
-    item: "",
-    amount: "",
-    description: "",
-    payer_payee: "",
-    invoice_receipt_no: "",
-    payment_method: "",
-    category: "",
-  };
-
   // const initialValues = {
   //   type: "expense",
-  //   date: "2024-10-10",
-  //   item: "Software Subscription",
-  //   amount: "175.25",
-  //   description: "Renewal of the adobe premium license",
-  //   payer_payee: "Adobe",
-  //   invoice_receipt_no: "SUB-003",
-  //   payment_method: "debit_card",
-  //   category: "67223612001b5cbd59c9",
+  //   date: "",
+  //   item: {
+  //     title: "",
+  //     price: null,
+  //     quantity: 1,
+  //   },
+  //   amount: "",
+  //   description: "",
+  //   payer_payee: "",
+  //   invoice_receipt_no: "",
+  //   payment_method: "",
+  //   category: "",
   // };
+
+  const initialValues = {
+    type: "expense",
+    date: "2024-11-06",
+    item: {
+      title: "Office supplies",
+      price: "125.5",
+      quantity: 1,
+    },
+    amount: "125.5",
+    description:
+      "Monthly office supplies including paper, pens, and printer ink.",
+    payer_payee: "Office Depot",
+    invoice_receipt_no: "INV-2024-0315",
+    payment_method: "credit_card",
+    category: "672238bc0024bf1cc549",
+  };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     values.amount = parseFloat(values.amount);
+    values.item.price = parseFloat(values.item.price);
 
     console.log("Values: ", values);
 
@@ -157,20 +167,20 @@ const CreateTransaction = ({ handleClose }) => {
                     Item
                   </label>
                   <Field
-                    id="item"
-                    name="item"
+                    id="item.title"
+                    name="item.title"
                     type="text"
                     placeholder="Item"
                     className={cn(
                       "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
                       {
                         "border-error focus:border-error":
-                          touched?.item && errors?.item,
+                          touched?.item?.title && errors?.item?.title,
                       }
                     )}
                     disabled={isSubmitting}
                   />
-                  <ErrorMessage name="item">
+                  <ErrorMessage name="item.title">
                     {(msg) => (
                       <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                         {msg}
@@ -197,6 +207,10 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.amount && errors?.amount,
                       }
                     )}
+                    onChange={({ target: { value } }) => {
+                      setFieldValue("amount", value);
+                      setFieldValue("item.price", parseFloat(value) ?? null);
+                    }}
                     disabled={isSubmitting}
                   />
                   <ErrorMessage name="amount">

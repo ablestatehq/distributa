@@ -26,7 +26,7 @@ const TransactionDetails = ({ handleClose, transaction }) => {
           </h6>
           <div className="grid grid-cols-2 items-start">
             <h4 className="font-archivo font-normal text-medium leading-140 tracking-normal text-start">
-              {transaction.item}
+              {transaction.item?.title}
             </h4>
             <span className="font-satoshi font-medium leading-120 tracking-normal text-end">
               {prefix}

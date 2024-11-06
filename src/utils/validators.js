@@ -93,7 +93,17 @@ export const newInvoiceSchema = Yup.object({
 
 export const createTransactionSchema = Yup.object({
   type: Yup.string().required("Type is required"),
-  item: Yup.string().required("Title is required"),
+  item: Yup.object({
+    title: Yup.string().required("Title is required"),
+    quantity: Yup.number()
+      .typeError("Quantity must be a valid number")
+      .positive("Quantity must be a positive number")
+      .required("Quantity is required"),
+    price: Yup.number()
+      .typeError("Price must be a valid number")
+      .min(0, "Price must be greater than or equal to 0")
+      .required("Price is required"),
+  }),
   date: Yup.date().required("Date is required").nullable(),
   amount: Yup.number()
     .typeError("Amount must be a valid number")

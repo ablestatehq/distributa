@@ -196,7 +196,7 @@ const Transactions = () => {
                                         className="border-b border-b-greyborder"
                                       >
                                         <td className="w-full pr-6 pt-4 pb-2 font-satoshi font-normal text-tiny leading-120 tracking-normal">
-                                          {transaction.item}
+                                          {transaction.item.title}
                                         </td>
                                         <td className="pr-6 pt-4 pb-2 font-satoshi font-normal text-tiny leading-120 tracking-normal">
                                           {prefix}
