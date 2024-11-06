@@ -2,8 +2,14 @@ import AppwriteService from "./appwrite.service.js";
 import { Query, ID, Permission, Role } from "appwrite";
 
 class Transaction extends AppwriteService {
+  #databaseId;
+  #transactionsCollectionId;
+
   constructor() {
     super();
+    this.#databaseId = this.getVariables().DATABASE_ID;
+    this.#transactionsCollectionId =
+      this.getVariables().TRANSACTIONS_COLLECTION_ID;
   }
 
   /**
@@ -13,8 +19,6 @@ class Transaction extends AppwriteService {
    * @returns {Promise} A promise that resolves to the created transaction document
    */
   async createTransaction(transactionData) {
-    const { TRANSACTIONS_COLLECTION_ID, DATABASE_ID } = this.getVariables();
-
     const currentUser = await this.account.get();
 
     const permissions = [
@@ -25,8 +29,8 @@ class Transaction extends AppwriteService {
 
     try {
       return this.database.createDocument(
-        DATABASE_ID,
-        TRANSACTIONS_COLLECTION_ID,
+        this.#databaseId,
+        this.#transactionsCollectionId,
         ID.unique(),
         transactionData,
         permissions
@@ -44,10 +48,9 @@ class Transaction extends AppwriteService {
    * @returns {Promise} A promise that resolves to the transaction document
    */
   async getTransaction(transactionId) {
-    const { TRANSACTIONS_COLLECTION_ID, DATABASE_ID } = this.getVariables();
     return this.database.getDocument(
-      DATABASE_ID,
-      TRANSACTIONS_COLLECTION_ID,
+      this.#databaseId,
+      this.#transactionsCollectionId,
       transactionId
     );
   }
@@ -59,12 +62,11 @@ class Transaction extends AppwriteService {
    * @returns {Promise} A promise that resolves to the list of transaction documents
    */
   async listTransactions(options = {}) {
-    const { DATABASE_ID, TRANSACTIONS_COLLECTION_ID } = this.getVariables();
     const { limit = 50, offset = 0 } = options;
 
     return this.database.listDocuments(
-      DATABASE_ID,
-      TRANSACTIONS_COLLECTION_ID,
+      this.#databaseId,
+      this.#transactionsCollectionId,
       [Query.limit(limit), Query.offset(offset), Query.orderDesc("date")]
     );
   }
@@ -77,10 +79,9 @@ class Transaction extends AppwriteService {
    * @returns {Promise} A promise that resolves to the updated transaction document
    */
   async updateTransaction(transactionId, updateData) {
-    const { DATABASE_ID, TRANSACTIONS_COLLECTION_ID } = this.getVariables();
     return this.database.updateDocument(
-      DATABASE_ID,
-      TRANSACTIONS_COLLECTION_ID,
+      this.#databaseId,
+      this.#transactionsCollectionId,
       transactionId,
       updateData
     );
@@ -95,12 +96,17 @@ class Transaction extends AppwriteService {
    * @returns {Promise} A promise that resolves to the updated transaction document
    */
   async updateTransactionStatus(transactionId, newStatus, permissions = []) {
-    const { DATABASE_ID, TRANSACTIONS_COLLECTION_ID } = this.getVariables();
+    // get the current transaction
+    const transaction = await this.getTransaction(transactionId);
+
+    if (newStatus === transaction.status) {
+      return transaction;
+    }
 
     if (permissions.length > 0) {
       return this.database.updateDocument(
-        DATABASE_ID,
-        TRANSACTIONS_COLLECTION_ID,
+        this.#databaseId,
+        this.#transactionsCollectionId,
         transactionId,
         { status: newStatus },
         permissions
@@ -108,8 +114,8 @@ class Transaction extends AppwriteService {
     }
 
     return this.database.updateDocument(
-      DATABASE_ID,
-      TRANSACTIONS_COLLECTION_ID,
+      this.#databaseId,
+      this.#transactionsCollectionId,
       transactionId,
       { status: newStatus }
     );
@@ -122,10 +128,9 @@ class Transaction extends AppwriteService {
    * @returns {Promise} A promise that resolves when the transaction is deleted
    */
   async deleteTransaction(transactionId) {
-    const { DATABASE_ID, TRANSACTIONS_COLLECTION_ID } = this.getVariables();
     return this.database.deleteDocument(
-      DATABASE_ID,
-      TRANSACTIONS_COLLECTION_ID,
+      this.#databaseId,
+      this.#transactionsCollectionId,
       transactionId
     );
   }
@@ -137,14 +142,13 @@ class Transaction extends AppwriteService {
    * @returns {Promise} A promise that resolves to the list of matching transaction documents
    */
   async searchTransactions(searchCriteria) {
-    const { DATABASE_ID, TRANSACTIONS_COLLECTION_ID } = this.getVariables();
     const queries = Object.entries(searchCriteria).map(([key, value]) =>
       Query.equal(key, value)
     );
 
     return this.database.listDocuments(
-      DATABASE_ID,
-      TRANSACTIONS_COLLECTION_ID,
+      this.#databaseId,
+      this.#transactionsCollectionId,
       queries
     );
   }
@@ -157,12 +161,11 @@ class Transaction extends AppwriteService {
    * @returns {Promise} A promise that resolves to the filtered list of transactions
    */
   async getTransactionsByType(type, options = {}) {
-    const { DATABASE_ID, TRANSACTIONS_COLLECTION_ID } = this.getVariables();
     const { limit = 50, offset = 0 } = options;
 
     return this.database.listDocuments(
-      DATABASE_ID,
-      TRANSACTIONS_COLLECTION_ID,
+      this.#databaseId,
+      this.#transactionsCollectionId,
       [
         Query.equal("type", type),
         Query.limit(limit),
@@ -181,12 +184,11 @@ class Transaction extends AppwriteService {
    * @returns {Promise} A promise that resolves to the filtered list of transactions
    */
   async getTransactionsByDateRange(startDate, endDate, options = {}) {
-    const { DATABASE_ID, TRANSACTIONS_COLLECTION_ID } = this.getVariables();
     const { limit = 50, offset = 0 } = options;
 
     return this.database.listDocuments(
-      DATABASE_ID,
-      TRANSACTIONS_COLLECTION_ID,
+      this.#databaseId,
+      this.#transactionsCollectionId,
       [
         Query.greaterThanEqual("date", startDate),
         Query.lessThanEqual("date", endDate),
@@ -205,12 +207,11 @@ class Transaction extends AppwriteService {
    * @returns {Promise} A promise that resolves to the filtered list of transactions
    */
   async getTransactionsByCategory(category, options = {}) {
-    const { DATABASE_ID, TRANSACTIONS_COLLECTION_ID } = this.getVariables();
     const { limit = 50, offset = 0 } = options;
 
     return this.database.listDocuments(
-      DATABASE_ID,
-      TRANSACTIONS_COLLECTION_ID,
+      this.#databaseId,
+      this.#transactionsCollectionId,
       [
         Query.equal("category", category),
         Query.limit(limit),
