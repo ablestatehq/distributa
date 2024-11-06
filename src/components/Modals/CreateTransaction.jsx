@@ -16,38 +16,38 @@ const CreateTransaction = ({ handleClose }) => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
-  // const initialValues = {
-  //   type: "expense",
-  //   date: "",
-  //   item: {
-  //     title: "",
-  //     price: null,
-  //     quantity: 1,
-  //   },
-  //   amount: "",
-  //   description: "",
-  //   payer_payee: "",
-  //   invoice_receipt_no: "",
-  //   payment_method: "",
-  //   category: "",
-  // };
-
   const initialValues = {
     type: "expense",
-    date: "2024-11-06",
+    date: "",
     item: {
-      title: "Office supplies",
-      price: "125.5",
+      title: "",
+      price: null,
       quantity: 1,
     },
-    amount: "125.5",
-    description:
-      "Monthly office supplies including paper, pens, and printer ink.",
-    payer_payee: "Office Depot",
-    invoice_receipt_no: "INV-2024-0315",
-    payment_method: "credit_card",
-    category: "672238bc0024bf1cc549",
+    amount: "",
+    description: "",
+    payer_payee: "",
+    invoice_receipt_no: "",
+    payment_method: "",
+    category: "",
   };
+
+  // const initialValues = {
+  //   type: "expense",
+  //   date: "2024-11-06",
+  //   item: {
+  //     title: "Office supplies",
+  //     price: "125.5",
+  //     quantity: 1,
+  //   },
+  //   amount: "125.5",
+  //   description:
+  //     "Monthly office supplies including paper, pens, and printer ink.",
+  //   payer_payee: "Office Depot",
+  //   invoice_receipt_no: "INV-2024-0315",
+  //   payment_method: "credit_card",
+  //   category: "672238bc0024bf1cc549",
+  // };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     values.amount = parseFloat(values.amount);
