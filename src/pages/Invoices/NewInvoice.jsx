@@ -143,7 +143,6 @@ const NewInvoice = () => {
 
   const handleSubmit = (values) => {
     // Type cast.
-    values.invoice_no = parseInt(values.invoice_no);
     values.discount = parseFloat(values.discount)
       ? parseFloat(values.discount)
       : null;
@@ -349,7 +348,7 @@ const NewInvoice = () => {
 
                 <section className="grid grid-cols-1 lg:grid-cols-5 gap-x-2">
                   <section className="lg:col-span-4 flex flex-col gap-y-4">
-                    {/* Billing */}
+                    {/* Billing From*/}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 bg-grey rounded p-4">
                       <section className="grid grid-cols-2 gap-2">
                         <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
@@ -502,6 +501,8 @@ const NewInvoice = () => {
                         </div>
                       </section>
                     </div>
+
+                    {/* Billed To */}
                     <div className="bg-grey rounded p-4 flex flex-col gap-y-4 w-full lg:hidden">
                       <div className="w-full flex flex-col gap-y-2">
                         <label
@@ -615,6 +616,7 @@ const NewInvoice = () => {
                       </div>
                     </div>
 
+                    {/* Items */}
                     <FieldArray
                       name="items"
                       render={(arrayHelpers) => {
@@ -984,32 +986,44 @@ const NewInvoice = () => {
                                             type="button"
                                             className="font-satoshi font-normal underline text-error leading-100 tracking-normal capitalize text-tiny outline-none"
                                             onClick={async () => {
+                                              const items = values.items.filter(
+                                                (_, currentIndex) =>
+                                                  index !== currentIndex
+                                              );
+
                                               const sub_total =
-                                                calculateSubTotal(values.items);
+                                                calculateSubTotal(items);
+
                                               const amount_due =
                                                 calculateAmountDue({
                                                   ...values,
+                                                  items,
                                                   sub_total,
                                                 });
+
                                               const balance_due =
                                                 calculateBalanceDue({
                                                   ...values,
+                                                  items,
                                                   sub_total,
                                                   amount_due,
                                                 });
 
-                                              setFieldValue(
-                                                "sub_total",
-                                                sub_total
-                                              );
-                                              setFieldValue(
-                                                "amount_due",
-                                                amount_due
-                                              );
-                                              setFieldValue(
-                                                "balance_due",
-                                                balance_due
-                                              );
+                                              if (sub_total >= 0) {
+                                                arrayHelpers.remove(index);
+                                                setFieldValue(
+                                                  "sub_total",
+                                                  sub_total
+                                                );
+                                                setFieldValue(
+                                                  "amount_due",
+                                                  amount_due
+                                                );
+                                                setFieldValue(
+                                                  "balance_due",
+                                                  balance_due
+                                                );
+                                              }
                                             }}
                                             disabled={values.items?.length <= 1}
                                           >
@@ -1056,6 +1070,7 @@ const NewInvoice = () => {
                       }}
                     />
 
+                    {/* Small devices: Sub Total, Discount, Tax, Shipping, Amount Due, Amount Paid */}
                     <div className="bg-grey rounded p-4 flex flex-col gap-y-4 w-full lg:hidden">
                       <div className="flex justify-between py-2">
                         <span className="font-satoshi font-normal text-tiny leading-100 tracking-normal">
@@ -1239,6 +1254,8 @@ const NewInvoice = () => {
                       </section>
                     </div>
                   </section>
+
+                  {/* Large Devices: Title, SubTotal, Discount, Tax, Shipping, Amount Paid, Amount Due*/}
                   <section className="hidden lg:col-span-1 lg:flex lg:flex-col lg:gap-y-4">
                     <div className="bg-grey rounded p-4 flex flex-col gap-y-4 w-full">
                       <div className="w-full flex flex-col gap-y-2">
