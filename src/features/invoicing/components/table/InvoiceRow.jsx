@@ -37,8 +37,11 @@ const InvoiceRow = React.memo(({ invoiceData, index }) => {
         <td className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
           {invoice?.billed_to?.name}
         </td>
-        <td className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
+        <td className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start capitalize">
           {invoice?.status}
+        </td>
+        <td className="w-auto min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
+          {invoice?.amount_due}
         </td>
         <td className="w-auto font-satoshi font-medium text-tiny leading-100 tracking-normal lg:px-4 py-3 text-start">
           <button
@@ -46,14 +49,12 @@ const InvoiceRow = React.memo(({ invoiceData, index }) => {
             className="outline-none"
             onClick={(event) => {
               event.stopPropagation();
-              handleEditStatus(index);
+              // handleEditStatus(index);
+              navigate(`/invoices/${invoice?.$id}/edit`);
             }}
           >
             <Edit />
           </button>
-        </td>
-        <td className="w-auto min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
-          {invoice?.amount_due}
         </td>
       </tr>
       {editInvoice === index && (
