@@ -19,11 +19,7 @@ const CreateTransaction = ({ handleClose }) => {
   const initialValues = {
     type: "expense",
     date: "",
-    item: {
-      title: "",
-      price: null,
-      quantity: 1,
-    },
+    item: "",
     amount: "",
     description: "",
     payer_payee: "",
@@ -51,9 +47,6 @@ const CreateTransaction = ({ handleClose }) => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     values.amount = parseFloat(values.amount);
-    values.item.price = parseFloat(values.item.price);
-
-    console.log("Values: ", values);
 
     try {
       await TransactionService.createTransaction(values);
@@ -167,15 +160,15 @@ const CreateTransaction = ({ handleClose }) => {
                     Item
                   </label>
                   <Field
-                    id="item.title"
-                    name="item.title"
+                    id="item"
+                    name="item"
                     type="text"
                     placeholder="Item"
                     className={cn(
                       "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
                       {
                         "border-error focus:border-error":
-                          touched?.item?.title && errors?.item?.title,
+                          touched?.item && errors?.item,
                       }
                     )}
                     disabled={isSubmitting}
@@ -207,10 +200,6 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.amount && errors?.amount,
                       }
                     )}
-                    onChange={({ target: { value } }) => {
-                      setFieldValue("amount", value);
-                      setFieldValue("item.price", parseFloat(value) ?? null);
-                    }}
                     disabled={isSubmitting}
                   />
                   <ErrorMessage name="amount">

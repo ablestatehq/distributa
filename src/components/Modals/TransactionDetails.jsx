@@ -26,7 +26,7 @@ const TransactionDetails = ({ handleClose, transaction }) => {
           </h6>
           <div className="grid grid-cols-2 items-start">
             <h4 className="font-archivo font-normal text-medium leading-140 tracking-normal text-start">
-              {transaction.item?.title}
+              {transaction.item}
             </h4>
             <span className="font-satoshi font-medium leading-120 tracking-normal text-end">
               {prefix}
@@ -44,14 +44,16 @@ const TransactionDetails = ({ handleClose, transaction }) => {
               {transaction.type}
             </span>
           </div>
-          <div className="flex justify-between pb-2 pt-4 border-b border-b-greyborder">
-            <span className="font-satoshi font-normal text-small leading-100 tracking-0">
-              Category
-            </span>
-            <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
-              {transaction.category?.name}
-            </span>
-          </div>
+          {transaction?.category?.name && (
+            <div className="flex justify-between pb-2 pt-4 border-b border-b-greyborder">
+              <span className="font-satoshi font-normal text-small leading-100 tracking-0">
+                Category
+              </span>
+              <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
+                {transaction.category?.name}
+              </span>
+            </div>
+          )}
           <div className="flex justify-between pb-2 pt-4 border-b border-b-greyborder">
             <span className="font-satoshi font-normal text-small leading-100 tracking-0">
               Receipt/Invoice #
