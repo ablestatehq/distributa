@@ -4,11 +4,13 @@ import { Query, ID, Permission, Role } from "appwrite";
 class Invoice extends AppwriteService {
   #databaseId;
   #invoicesCollectionId;
+  #itemsCollectionId;
 
   constructor() {
     super();
     this.#databaseId = this.getVariables().DATABASE_ID;
     this.#invoicesCollectionId = this.getVariables().INVOICES_COLLECTION_ID;
+    this.#itemsCollectionId = this.getVariables().ITEMS_COLLECTION_ID;
   }
 
   /**
@@ -83,11 +85,93 @@ class Invoice extends AppwriteService {
    * @returns {Promise} A promise that resolves to the updated invoice document
    */
   async updateInvoice(invoiceId, updateData) {
+    const billed_from = {
+      address: updateData.billed_from.address,
+      email: updateData.billed_from.email,
+      name: updateData.billed_from.name,
+    };
+
+    const billed_to = {
+      address: updateData.billed_to.address,
+      email: updateData.billed_to.email,
+      name: updateData.billed_to.name,
+    };
+
+    const invoiceData = {
+      amount_due: updateData.amount_due,
+      amount_paid: updateData.amount_paid,
+      balance_due: updateData.balance_due,
+      created_by: updateData.created_by,
+      currency: updateData.currency,
+      discount: updateData.discount,
+      due_date: updateData.due_date,
+      invoice_no: updateData.invoice_no,
+      issue_date: updateData.issue_date,
+      logo: updateData.logo,
+      notes: updateData.notes,
+      orientation: updateData.orientation,
+      paper_size: updateData.paper_size,
+      remote_id: updateData.remote_id ?? null,
+      status: updateData.status,
+      sub_total: updateData.sub_total,
+      tax: updateData.tax,
+      terms: updateData.terms,
+      title: updateData.title,
+    };
+
+    const invoice = await this.getInvoice(invoiceId);
+
+    const itemsToDelete = invoice.items.filter(
+      (item) => !updateData.items.find((i) => i.$id === item.$id)
+    );
+
+    const itemsToAdd = updateData.items.filter((item) => !item.$id);
+
+    const itemsToUpdate = updateData.items
+      .filter(
+        (item) => item.$id && !itemsToDelete.find((i) => i.$id === item.$id)
+      )
+      .map(({ price, quantity, title, units }) => ({
+        price,
+        quantity,
+        title,
+        units,
+      }));
+
+    const newItems = (
+      await Promise.all(
+        itemsToAdd.map((item) =>
+          this.database.createDocument(
+            this.#databaseId,
+            this.#itemsCollectionId,
+            ID.unique(),
+            item
+          )
+        )
+      )
+    ).map((item) => item.$id);
+
+    await Promise.all(
+      itemsToDelete.map(
+        async (item) =>
+          await this.database.deleteDocument(
+            this.#databaseId,
+            item.$collectionId,
+            item.$id
+          )
+      )
+    );
+
     return this.database.updateDocument(
       this.#databaseId,
       this.#invoicesCollectionId,
       invoiceId,
-      updateData
+      {
+        ...invoiceData,
+        billed_from,
+        billed_to,
+        items: [...itemsToUpdate, ...newItems],
+      }
     );
   }
 
