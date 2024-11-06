@@ -19,8 +19,6 @@ import { toast } from "react-toastify";
 
 const InvoicePreview = () => {
   const data = useLoaderData();
-  console.log("Data: ", data);
-
   const [searchParams] = useSearchParams();
   const params = useParams();
   const navigate = useNavigate();
