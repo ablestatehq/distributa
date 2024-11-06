@@ -6,7 +6,13 @@ import {
   BalancesService,
 } from "../services";
 import { redirect, defer } from "react-router-dom";
-import { Invoices, NewInvoice, Transactions, Settings } from "../pages";
+import {
+  Invoices,
+  NewInvoice,
+  EditInvoice,
+  Transactions,
+  Settings,
+} from "../pages";
 import InvoicePreview from "../components/Modals/InvoicePreview";
 
 const appwrite = new Appwrite();
@@ -46,28 +52,26 @@ export const protectedRoutes = [
       },
       {
         path: "/invoices/:id/edit",
-        // TODO: Add a loader to fetch the invoice whose value is specified by the param "id" in the route path.
-        // TODO: Handle the state and load it.
-        // TODO: Create a component for editing the information of a specific invoice. Setting the initial state of the form to the values of the invoice
-        // TODO: Create an action to save the information to the database.
+        loader: async ({ params }) => {
+          const invoicePromise = InvoiceService.getInvoice(params.id);
+          return defer({ invoice: invoicePromise });
+        },
         action: async ({ request, params }) => {
           try {
             const data = await request.json();
             const invoice = await InvoiceService.updateInvoice(params.id, data);
-
-            return redirect(`/invoices/${invoice.$id}/preview`);
+            return { success: true, data: invoice };
           } catch (error) {
             throw error;
           }
         },
-        element: <div>Edit invoice</div>,
+        element: <EditInvoice />,
       },
       {
         path: "/invoices/:id/edit-status",
         action: async ({ request, params }) => {
           try {
             const { status: newStatus } = await request.json();
-            console.log("newStatus", newStatus);
             const updatedInvoice = await InvoiceService.updateInvoiceStatus(
               params.id,
               newStatus
@@ -115,7 +119,6 @@ export const protectedRoutes = [
             transactions: transactionsPromise,
             currentMonthSummary: currentMonthSummaryPromise,
           });
-          // get the current monthly summaries
         },
         path: "/transactions",
         element: <Transactions />,
