@@ -42,7 +42,7 @@ const EditInvoiceStatus = ({
           </button>
         </header>
         <Formik initialValues={{ status }} onSubmit={handleSubmit}>
-          {({ touched, errors, isSubmitting }) => (
+          {({ values, touched, errors, isSubmitting }) => (
             <Form className="flex flex-col gap-4 py-8 px-16">
               <div className="w-full flex flex-col gap-y-2">
                 <label
@@ -89,7 +89,7 @@ const EditInvoiceStatus = ({
               <Button
                 type="submit"
                 className="font-bold text-small"
-                disabled={isSubmitting}
+                disabled={isSubmitting || values.status === status}
               >
                 Update
               </Button>
