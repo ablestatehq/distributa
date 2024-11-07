@@ -31,11 +31,7 @@ const CreateTransaction = ({ handleClose }) => {
   // const initialValues = {
   //   type: "expense",
   //   date: "2024-11-06",
-  //   item: {
-  //     title: "Office supplies",
-  //     price: "125.5",
-  //     quantity: 1,
-  //   },
+  //   item: "Office Supplies",
   //   amount: "125.5",
   //   description:
   //     "Monthly office supplies including paper, pens, and printer ink.",
@@ -53,8 +49,8 @@ const CreateTransaction = ({ handleClose }) => {
       await BalancesService.updateBalances(
         parseFloat(values.amount),
         values.type,
-        values.category,
-        values.date
+        values.date,
+        values.category
       );
       navigate(`/transactions`);
     } catch (error) {

@@ -3,6 +3,7 @@ import { CircleX } from "../common/icons";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import cn from "../../utils/cn";
 import { Button } from "../common/forms";
+import { format } from "date-fns";
 
 const EditInvoiceStatus = ({
   invoice: { invoice_no, $id, status },
@@ -30,6 +31,11 @@ const EditInvoiceStatus = ({
     }
   };
 
+  const initialValues = {
+    status,
+    payment_date: format(new Date(), "yyyy-MM-dd"),
+  };
+
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
       <section className="w-96 h-fit flex flex-col bg-white">
@@ -41,7 +47,7 @@ const EditInvoiceStatus = ({
             <CircleX variation="black" className="w-4 h-4" />
           </button>
         </header>
-        <Formik initialValues={{ status }} onSubmit={handleSubmit}>
+        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
           {({ values, touched, errors, isSubmitting }) => (
             <Form className="flex flex-col gap-4 py-8 px-16">
               <div className="w-full flex flex-col gap-y-2">
@@ -86,6 +92,37 @@ const EditInvoiceStatus = ({
                   )}
                 </ErrorMessage>
               </div>
+              {values.status === "paid" && (
+                <div className="w-full flex flex-col gap-y-2">
+                  <label
+                    htmlFor="Payment Date"
+                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
+                  >
+                    Payment Date
+                  </label>
+                  <div className="w-full">
+                    <Field
+                      id="payment_date"
+                      name="payment_date"
+                      type="date"
+                      className={cn(
+                        "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
+                        {
+                          "border-error focus:border-error":
+                            touched?.payment_date && errors?.payment_date,
+                        }
+                      )}
+                    />
+                  </div>
+                  <ErrorMessage name="payment_date">
+                    {(msg) => (
+                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                        {msg}
+                      </div>
+                    )}
+                  </ErrorMessage>
+                </div>
+              )}
               <Button
                 type="submit"
                 className="font-bold text-small"
