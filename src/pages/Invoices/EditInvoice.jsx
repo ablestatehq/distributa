@@ -354,7 +354,7 @@ const EditInvoice = () => {
                             <Button
                               type="submit"
                               className="hidden lg:block w-fit h-fit px-6 py-4 font-bold text-small"
-                              // disabled
+                              disabled={isSubmitting}
                             >
                               {isSubmitting
                                 ? "Saving Invoice ..."
