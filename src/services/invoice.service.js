@@ -1,16 +1,27 @@
 import AppwriteService from "./appwrite.service.js";
+import BalancesService from "./balances.service.js";
 import { Query, ID, Permission, Role } from "appwrite";
 
 class Invoice extends AppwriteService {
   #databaseId;
   #invoicesCollectionId;
   #itemsCollectionId;
+  #transactionsCollectionId;
+  #accountSummariesCollectionId;
+  #monthlyStatementsCollectionId;
 
   constructor() {
     super();
+    this.balance = BalancesService;
     this.#databaseId = this.getVariables().DATABASE_ID;
     this.#invoicesCollectionId = this.getVariables().INVOICES_COLLECTION_ID;
     this.#itemsCollectionId = this.getVariables().ITEMS_COLLECTION_ID;
+    this.#transactionsCollectionId =
+      this.getVariables().TRANSACTIONS_COLLECTION_ID;
+    this.#accountSummariesCollectionId =
+      this.getVariables().ACCOUNT_SUMMARIES_COLLECTION_ID;
+    this.#monthlyStatementsCollectionId =
+      this.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID;
   }
 
   /**
@@ -184,31 +195,140 @@ class Invoice extends AppwriteService {
    * @returns
    */
 
-  async updateInvoiceStatus(invoiceId, newStatus, permissions = []) {
-
+  async updateInvoiceStatus(invoiceId, newStatus, payment_date = null) {
     // first get the invoice
     const invoice = await this.getInvoice(invoiceId);
 
-    if ( invoice.status === newStatus ) {
-      return invoice;
-    }
+    if (invoice.status === newStatus) return invoice;
 
-    if (permissions.length > 0) {
+    if (newStatus === "paid" && payment_date) {
+      // create a transaction
+      const transaction = await this.database.createDocument(
+        this.#databaseId,
+        this.#transactionsCollectionId,
+        ID.unique(),
+        {
+          type: "income",
+          date: payment_date,
+          item: invoice.title,
+          amount: invoice.balance_due,
+          payer_payee: invoice.billed_to.name,
+          invoice_receipt_no: invoice.invoice_no,
+          source_ref: invoice.$id,
+        }
+      );
+
+      await this.balance.updateBalances(
+        transaction.amount,
+        transaction.type,
+        transaction.date
+      );
+
       return this.database.updateDocument(
         this.#databaseId,
         this.#invoicesCollectionId,
         invoiceId,
-        { status: newStatus },
-        permissions
+        {
+          payment_date,
+          balance_due: invoice.balance_due - transaction.amount,
+          amount_paid: invoice.amount_paid + transaction.amount,
+          status: newStatus,
+        }
       );
     }
 
-    return this.database.updateDocument(
-      this.#databaseId,
-      this.#invoicesCollectionId,
-      invoiceId,
-      { status: newStatus }
-    );
+    if (newStatus === "unpaid") {
+      // create the transaction
+      const { documents: transactions } = await this.database.listDocuments(
+        this.#databaseId,
+        this.#transactionsCollectionId,
+        [Query.equal("source_ref", invoice.$id)]
+      );
+
+      const [userBalance, monthlyBalance] = await Promise.all([
+        this.balance.initializeUserBalance(),
+        this.balance.getOrCreateMonthlyBalance(payment_date),
+      ]);
+
+      const transaction_amount = transactions.reduce(
+        (acc, transaction) => acc + transaction.amount,
+        0
+      );
+
+      await Promise.all(
+        transactions.map((transaction) =>
+          Promise.all([
+            this.database.deleteDocument(
+              this.#databaseId,
+              this.#transactionsCollectionId,
+              transaction.$id
+            ),
+            this.database.updateDocument(
+              this.#databaseId,
+              this.#accountSummariesCollectionId,
+              userBalance.$id,
+              {
+                total_income:
+                  transaction.type === "income"
+                    ? userBalance.total_income - transaction.amount
+                    : userBalance.total_income,
+                total_expenses:
+                  transaction.type === "expense"
+                    ? userBalance.total_expenses + transaction.amount
+                    : userBalance.total_expenses,
+                current_balance:
+                  transaction.type === "income"
+                    ? userBalance.current_balance - transaction.amount
+                    : userBalance.current_balance + transaction.amount,
+              }
+            ),
+            this.database.updateDocument(
+              this.#databaseId,
+              this.#monthlyStatementsCollectionId,
+              monthlyBalance.$id,
+              {
+                income:
+                  transaction.type === "income"
+                    ? monthlyBalance.income - transaction.amount
+                    : monthlyBalance.income,
+                expense:
+                  transaction.type === "expense"
+                    ? monthlyBalance.expense + transaction.amount
+                    : monthlyBalance.expense,
+                number_of_transactions:
+                  monthlyBalance.number_of_transactions - 1,
+                average_transaction_amount:
+                  (monthlyBalance.average_transaction_amount *
+                    monthlyBalance.number_of_transactions -
+                    transaction.amount) /
+                  (monthlyBalance.number_of_transactions - 1),
+                largest_transaction_amount: Math.max(
+                  monthlyBalance.largest_transaction_amount -
+                    transaction.amount,
+                  0
+                ),
+                budget_utilised:
+                  transaction.type === "expense"
+                    ? monthlyBalance.budget_utilised - transaction.amount
+                    : monthlyBalance.budget_utilised,
+              }
+            ),
+          ])
+        )
+      );
+
+      return this.database.updateDocument(
+        this.#databaseId,
+        this.#invoicesCollectionId,
+        invoiceId,
+        {
+          payment_date: null,
+          balance_due: invoice.balance_due + transaction_amount,
+          amount_paid: invoice.amount_paid - transaction_amount,
+          status: newStatus,
+        }
+      );
+    }
   }
 
   /**
