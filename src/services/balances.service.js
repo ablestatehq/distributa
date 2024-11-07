@@ -161,21 +161,26 @@ class Balances extends AppwriteService {
   /**
    * Update balances after a new transaction
    */
-  async updateBalances(amount, type, categoryId, date) {
+  async updateBalances(amount, type, date, categoryId = null) {
     try {
-      const [userBalance, monthlyBalance] = await Promise.all([
+      const balancesPromises = [
         this.initializeUserBalance(),
         this.getOrCreateMonthlyBalance(date),
-        this.database.getDocument(
-          this.#databaseId,
-          this.#categoriesCollectionId,
-          categoryId
-        ),
-      ]);
+      ];
 
-      // Execute updates in parallel since they don't depend on each other
-      const [updatedUserBalance, updatedMonthlyBalance] = await Promise.all([
-        // Update user balance
+      if (categoryId) {
+        balancesPromises.push(
+          this.database.getDocument(
+            this.#databaseId,
+            this.#categoriesCollectionId,
+            categoryId
+          )
+        );
+      }
+
+      const [userBalance, monthlyBalance] = await Promise.all(balancesPromises);
+
+      const updatePromises = [
         this.database.updateDocument(
           this.#databaseId,
           this.#accountSummariesCollectionId,
@@ -197,7 +202,6 @@ class Balances extends AppwriteService {
           }
         ),
 
-        // Update monthly balance
         this.database.updateDocument(
           this.#databaseId,
           this.#monthlyStatementsCollectionId,
@@ -227,10 +231,21 @@ class Balances extends AppwriteService {
                 : monthlyBalance.budget_utilised,
           }
         ),
+      ];
 
-        // Update category total
-        this.updateMonthlyCategoryTotal(monthlyBalance.$id, categoryId, amount),
-      ]);
+      if (categoryId) {
+        updatePromises.push(
+          this.updateMonthlyCategoryTotal(
+            monthlyBalance.$id,
+            categoryId,
+            amount
+          )
+        );
+      }
+
+      const [updatedUserBalance, updatedMonthlyBalance] = await Promise.all(
+        updatePromises
+      );
 
       return {
         userBalance: updatedUserBalance,
