@@ -71,10 +71,11 @@ export const protectedRoutes = [
         path: "/invoices/:id/edit-status",
         action: async ({ request, params }) => {
           try {
-            const { status: newStatus } = await request.json();
+            const { status: newStatus, payment_date } = await request.json();
             const updatedInvoice = await InvoiceService.updateInvoiceStatus(
               params.id,
-              newStatus
+              newStatus,
+              payment_date ?? null
             );
             return { success: true, data: updatedInvoice };
           } catch (error) {
