@@ -6,6 +6,7 @@ import { FileText, PlusSquare, Book } from "../../../components/common/icons";
 import NavigationLink from "../NavigationLink";
 import { useState } from "react";
 import cn from "../../../utils/cn";
+import useMediaQuery from "../../../hooks/useMediaQuery";
 
 function SideBar() {
   const { logout } = useAuth();
@@ -14,16 +15,21 @@ function SideBar() {
   const toggleCollapse = () =>
     setCollapseMenu((prevCollapseState) => !prevCollapseState);
 
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  console.log("isDesktop: ", isDesktop);
+
   return (
     <aside
-      className={`h-full hidden md:flex flex-col justify-between py-16 border-r border-r-gray-100 flex-shrink-0 ${cn({
-        "px-8": !collapseMenu,
-        "px-4": collapseMenu,
-      })}`}
+      className={`h-full hidden md:flex flex-col justify-between py-16 border-r border-r-gray-100 flex-shrink-0 ${cn(
+        {
+          "px-8": isDesktop || !collapseMenu,
+          "px-4": !isDesktop || collapseMenu,
+        }
+      )}`}
     >
       <section className="flex flex-col gap-y-8">
-        <button onClick={toggleCollapse}>
-          {collapseMenu ? (
+        <button onClick={toggleCollapse} disabled={!isDesktop}>
+          {collapseMenu || !isDesktop ? (
             // <LogoCondensed className="fill-none w-[2.813rem] h-[2.063rem]" />
             <LogoCondensed className="fill-none w-[2.813rem] h-6" />
           ) : (
@@ -37,19 +43,19 @@ function SideBar() {
           <NavigationLink
             to="/invoices"
             Icon={FileText}
-            children={collapseMenu ? null : "My invoices"}
+            children={collapseMenu || !isDesktop ? null : "My invoices"}
             exact={true}
           />
           <NavigationLink
             to="/invoices/new"
             Icon={PlusSquare}
-            children={collapseMenu ? null : "New Invoice"}
+            children={collapseMenu || !isDesktop ? null : "New Invoice"}
             exact={true}
           />
           <NavigationLink
             to="/transactions"
             Icon={Book}
-            children={collapseMenu ? null : "My Transactions"}
+            children={collapseMenu || !isDesktop ? null : "My Transactions"}
             exact={true}
           />
         </nav>
