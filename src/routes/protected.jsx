@@ -11,8 +11,11 @@ import {
   NewInvoice,
   EditInvoice,
   Transactions,
-  Settings,
+  CategorySettings,
+  BillingSettings,
+  ProfileSettings,
 } from "../pages";
+import { SettingsLayout } from "../Layouts/components";
 import InvoicePreview from "../components/Modals/InvoicePreview";
 
 const appwrite = new Appwrite();
@@ -126,7 +129,22 @@ export const protectedRoutes = [
       },
       {
         path: "/settings",
-        element: <Settings />,
+        element: <SettingsLayout />,
+        children: [
+          {
+            index: true,
+            path: "profile",
+            element: <ProfileSettings />,
+          },
+          {
+            path: "billing",
+            element: <BillingSettings />,
+          },
+          {
+            path: "categories",
+            element: <CategorySettings />,
+          },
+        ],
       },
     ],
   },
