@@ -36,6 +36,9 @@ const CategorySettings = () => {
                         Name
                       </th>
                       <th className="w-auto lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+                        Flow Type
+                      </th>
+                      <th className="w-auto lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
                         Actions
                       </th>
                     </tr>
