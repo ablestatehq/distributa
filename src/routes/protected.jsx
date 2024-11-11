@@ -150,6 +150,15 @@ export const protectedRoutes = [
             children: [
               {
                 path: "new",
+                action: async ({ request }) => {
+                  try {
+                    const data = await request.json();
+                    await CategoryService.createCategory(data);
+                    return redirect("/settings/categories");
+                  } catch (error) {
+                    throw error;
+                  }
+                },
               },
               {
                 path: ":id/edit",
@@ -157,6 +166,17 @@ export const protectedRoutes = [
                   try {
                     const data = await request.json();
                     await CategoryService.updateCategory(params.id, data);
+                    return redirect("/settings/categories");
+                  } catch (error) {
+                    throw error;
+                  }
+                },
+              },
+              {
+                path: ":id/delete",
+                action: async ({ params }) => {
+                  try {
+                    await CategoryService.deleteCategory(params.id);
                     return redirect("/settings/categories");
                   } catch (error) {
                     throw error;

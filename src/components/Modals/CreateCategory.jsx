@@ -3,13 +3,14 @@ import { Button } from "../common/forms";
 import cn from "../../utils/cn";
 import { createPortal } from "react-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import { CategoryService } from "../../services";
-import { useNavigate } from "react-router-dom";
 import { createCategorySchema } from "../../utils/validators";
 import { toast } from "react-toastify";
-
+import { useSubmit } from "react-router-dom";
+import { useNavigation } from "react-router-dom";
+import { useEffect } from "react";
 const CreateCategory = ({ handleClose }) => {
-  const navigate = useNavigate();
+  const submit = useSubmit();
+  const navigation = useNavigation();
 
   const initialValues = {
     type: "expense",
@@ -17,22 +18,25 @@ const CreateCategory = ({ handleClose }) => {
     description: "",
   };
 
-  const handleSubmit = async (values, { setSubmitting }) => {
-    values.description = values.description || null;
+  useEffect(() => {
+    if (
+      navigation.state === "loading" &&
+      navigation.json != null &&
+      navigation.formAction !== navigation.location.pathname
+    ) {
+      handleClose();
+    }
+  }, [navigation.state, navigation.formData, handleClose]);
 
+  const handleSubmit = async (values) => {
     try {
-      const category = await CategoryService.createCategory(values);
-      if (category) {
-        setSubmitting(false);
-        toast.success("Category created successfully");
-        navigate(`/settings/categories`);
-      }
+      submit(values, {
+        action: "/settings/categories/new",
+        method: "POST",
+        encType: "application/json",
+      });
     } catch (error) {
       toast.error("Failed creating category");
-      setSubmitting(false);
-      throw error;
-    } finally {
-      handleClose();
     }
   };
 
@@ -52,7 +56,7 @@ const CreateCategory = ({ handleClose }) => {
           validationSchema={createCategorySchema}
           onSubmit={handleSubmit}
         >
-          {({ values, touched, errors, isSubmitting, setFieldValue }) => (
+          {({ values, touched, errors, setFieldValue }) => (
             <Form>
               <div className="w-full flex p-4 lg:px-16 gap-x-4">
                 <button
@@ -65,7 +69,7 @@ const CreateCategory = ({ handleClose }) => {
                     }
                   )}`}
                   onClick={() => setFieldValue("type", "expense")}
-                  disabled={isSubmitting}
+                  disabled={navigation.state === "submitting"}
                 >
                   Expense
                 </button>
@@ -79,7 +83,7 @@ const CreateCategory = ({ handleClose }) => {
                     }
                   )}`}
                   onClick={() => setFieldValue("type", "income")}
-                  disabled={isSubmitting}
+                  disabled={navigation.state === "submitting"}
                 >
                   Income
                 </button>
@@ -103,7 +107,7 @@ const CreateCategory = ({ handleClose }) => {
                           touched?.name && errors?.name,
                       }
                     )}
-                    disabled={isSubmitting}
+                    disabled={navigation.state === "submitting"}
                   />
                   <ErrorMessage name="name">
                     {(msg) => (
@@ -134,7 +138,7 @@ const CreateCategory = ({ handleClose }) => {
                           touched?.description && errors?.description,
                       }
                     )}
-                    disabled={isSubmitting}
+                    disabled={navigation.state === "submitting"}
                   />
                   <ErrorMessage name="description">
                     {(msg) => (
@@ -147,9 +151,11 @@ const CreateCategory = ({ handleClose }) => {
                 <Button
                   type="submit"
                   className="font-bold text-small col-span-2"
-                  disabled={isSubmitting}
+                  disabled={navigation.state === "submitting"}
                 >
-                  {isSubmitting ? "Adding Category ..." : "Add"}
+                  {navigation.state === "submitting"
+                    ? "Adding Category ..."
+                    : "Add"}
                 </Button>
               </div>
             </Form>

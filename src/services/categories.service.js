@@ -26,8 +26,6 @@ class Category extends AppwriteService {
       let ancestors = [];
       let level = 0;
 
-      console.log("Here in the create category method.");
-
       // If parent exists, get its data
       if (parentId) {
         const parent = await this.getCategory(parentId);

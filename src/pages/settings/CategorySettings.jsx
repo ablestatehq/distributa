@@ -1,7 +1,7 @@
 import { Suspense, useState } from "react";
 import { useLoaderData, Await } from "react-router-dom";
 import { Button } from "../../components/common/forms";
-import { EditCategory, CreateCategory } from "../../components/Modals";
+import { CreateCategory } from "../../components/Modals";
 import { CategoryRow } from "../../features/settings/components";
 
 const CategorySettings = () => {

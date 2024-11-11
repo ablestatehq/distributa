@@ -1,14 +1,20 @@
 import { useState, Fragment, useEffect } from "react";
-import { EditCategory } from "../../../../components/Modals";
+import {
+  EditCategory,
+  DeleteCategoryModal,
+} from "../../../../components/Modals";
 import { useFetcher } from "react-router-dom";
 
 const CategoryRow = ({ categoryData, index }) => {
   const [category, setCategory] = useState(categoryData);
   const [editCategory, setEditCategory] = useState(null);
+  const [deleteCategory, setDeleteCategory] = useState(null);
 
-  if (editCategory) console.log(editCategory);
-  const toggleCategoryModal = (categoryId = null) =>
-    setEditCategory(categoryId);
+  const toggleCategoryEditModal = (categoryIndex = null) =>
+    setEditCategory(categoryIndex);
+
+  const toggleCategoryDeleteModal = (categoryIndex = null) =>
+    setDeleteCategory(categoryIndex);
 
   const handleUpdateCategory = (updatedCategory) => {
     setCategory((category) => ({ ...category, ...updatedCategory }));
@@ -42,7 +48,7 @@ const CategoryRow = ({ categoryData, index }) => {
             className="font-satoshi font-normal underline text-error leading-100 tracking-normal capitalize text-tiny outline-none"
             onClick={async (event) => {
               event.stopPropagation();
-              console.log("Let's invoke the deleting action here");
+              toggleCategoryDeleteModal(index);
             }}
           >
             Delete
@@ -51,8 +57,7 @@ const CategoryRow = ({ categoryData, index }) => {
             type="button"
             className="font-satoshi font-normal underline text-black leading-100 tracking-normal capitalize text-tiny"
             onClick={() => {
-              console.log("Let's invoke the editing action here");
-              toggleCategoryModal(index);
+              toggleCategoryEditModal(index);
             }}
           >
             Edit
@@ -61,10 +66,16 @@ const CategoryRow = ({ categoryData, index }) => {
       </tr>
       {editCategory === index && (
         <EditCategory
-          handleClose={toggleCategoryModal}
+          handleClose={toggleCategoryEditModal}
           category={category}
           updateCategory={handleUpdateCategory}
           fetcher={fetcher}
+        />
+      )}
+      {deleteCategory === index && (
+        <DeleteCategoryModal
+          handleClose={toggleCategoryDeleteModal}
+          category={category}
         />
       )}
     </Fragment>
