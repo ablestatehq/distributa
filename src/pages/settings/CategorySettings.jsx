@@ -31,13 +31,13 @@ const CategorySettings = () => {
               <thead>
                 <tr className="border-b border-b-grey">
                   <th className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
-                    Name
+                    <div className="h-4 bg-grey rounded w-20"></div>
                   </th>
                   <th className="w-auto lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
-                    Flow Type
+                    <div className="h-4 bg-grey rounded w-20"></div>
                   </th>
                   <th className="w-auto lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
-                    Actions
+                    <div className="h-4 bg-grey rounded w-20"></div>
                   </th>
                 </tr>
               </thead>
