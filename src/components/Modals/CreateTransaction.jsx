@@ -17,7 +17,7 @@ const CreateTransaction = ({ handleClose }) => {
   const [categories, setCategories] = useState([]);
 
   const initialValues = {
-    type: "expense",
+    flow_type: "expense",
     date: "",
     item: "",
     amount: "",
@@ -48,7 +48,7 @@ const CreateTransaction = ({ handleClose }) => {
       await TransactionService.createTransaction(values);
       await BalancesService.updateBalances(
         parseFloat(values.amount),
-        values.type,
+        values.flow_type,
         values.date,
         values.category
       );
@@ -95,11 +95,11 @@ const CreateTransaction = ({ handleClose }) => {
                   kind="secondary"
                   className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold w-1/2 transition-all duration-75 ${cn(
                     {
-                      "border-transparent": values.type === "income",
-                      "border-black": values.type === "expense",
+                      "border-transparent": values.flow_type === "income",
+                      "border-black": values.flow_type === "expense",
                     }
                   )}`}
-                  onClick={() => setFieldValue("type", "expense")}
+                  onClick={() => setFieldValue("flow_type", "expense")}
                   disabled={isSubmitting}
                 >
                   Expense
@@ -109,11 +109,11 @@ const CreateTransaction = ({ handleClose }) => {
                   kind="secondary"
                   className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold w-1/2 transition-all duration-75 ${cn(
                     {
-                      "border-transparent": values.type === "expense",
-                      "border-black": values.type === "income",
+                      "border-transparent": values.flow_type === "expense",
+                      "border-black": values.flow_type === "income",
                     }
                   )}`}
-                  onClick={() => setFieldValue("type", "income")}
+                  onClick={() => setFieldValue("flow_type", "income")}
                   disabled={isSubmitting}
                 >
                   Income
@@ -169,7 +169,7 @@ const CreateTransaction = ({ handleClose }) => {
                     )}
                     disabled={isSubmitting}
                   />
-                  <ErrorMessage name="item.title">
+                  <ErrorMessage name="item">
                     {(msg) => (
                       <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                         {msg}
