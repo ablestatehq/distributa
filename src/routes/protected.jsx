@@ -4,8 +4,9 @@ import {
   InvoiceService,
   TransactionService,
   BalancesService,
+  CategoryService,
 } from "../services";
-import { redirect, defer } from "react-router-dom";
+import { redirect, defer, Navigate } from "react-router-dom";
 import {
   Invoices,
   NewInvoice,
@@ -132,7 +133,6 @@ export const protectedRoutes = [
         element: <SettingsLayout />,
         children: [
           {
-            index: true,
             path: "profile",
             element: <ProfileSettings />,
           },
@@ -141,8 +141,29 @@ export const protectedRoutes = [
             element: <BillingSettings />,
           },
           {
+            loader: async () => {
+              const categoriesPromise = CategoryService.getCategoryTree();
+              return defer({ categories: categoriesPromise });
+            },
             path: "categories",
             element: <CategorySettings />,
+            children: [
+              {
+                path: "new",
+              },
+              {
+                path: ":id/edit",
+                action: async ({ request, params }) => {
+                  try {
+                    const data = await request.json();
+                    await CategoryService.updateCategory(params.id, data);
+                    return redirect("/settings/categories");
+                  } catch (error) {
+                    throw error;
+                  }
+                },
+              },
+            ],
           },
         ],
       },
