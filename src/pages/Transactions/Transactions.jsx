@@ -52,7 +52,7 @@ const Transactions = () => {
    * @returns { number } The difference between the income and expenditure
    */
   const getNetBalance = (transactions) => {
-    const groupedByType = groupBy(transactions, "type");
+    const groupedByType = groupBy(transactions, "flow_type");
     const totalIncome = sumBy(groupedByType["income"] || [], "amount") || 0;
     const totalExpenditure =
       sumBy(groupedByType["expense"] || [], "amount") || 0;

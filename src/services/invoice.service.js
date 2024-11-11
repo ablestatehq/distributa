@@ -208,7 +208,7 @@ class Invoice extends AppwriteService {
         this.#transactionsCollectionId,
         ID.unique(),
         {
-          type: "income",
+          flow_type: "income",
           date: payment_date,
           item: invoice.title,
           amount: invoice.balance_due,
@@ -220,7 +220,7 @@ class Invoice extends AppwriteService {
 
       await this.balance.updateBalances(
         transaction.amount,
-        transaction.type,
+        transaction.flow_type,
         transaction.date
       );
 
@@ -269,15 +269,15 @@ class Invoice extends AppwriteService {
               userBalance.$id,
               {
                 total_income:
-                  transaction.type === "income"
+                  transaction.flow_type === "income"
                     ? userBalance.total_income - transaction.amount
                     : userBalance.total_income,
                 total_expenses:
-                  transaction.type === "expense"
+                  transaction.flow_type === "expense"
                     ? userBalance.total_expenses + transaction.amount
                     : userBalance.total_expenses,
                 current_balance:
-                  transaction.type === "income"
+                  transaction.flow_type === "income"
                     ? userBalance.current_balance - transaction.amount
                     : userBalance.current_balance + transaction.amount,
               }
@@ -288,11 +288,11 @@ class Invoice extends AppwriteService {
               monthlyBalance.$id,
               {
                 income:
-                  transaction.type === "income"
+                  transaction.flow_type === "income"
                     ? monthlyBalance.income - transaction.amount
                     : monthlyBalance.income,
                 expense:
-                  transaction.type === "expense"
+                  transaction.flow_type === "expense"
                     ? monthlyBalance.expense + transaction.amount
                     : monthlyBalance.expense,
                 number_of_transactions:
@@ -308,7 +308,7 @@ class Invoice extends AppwriteService {
                   0
                 ),
                 budget_utilised:
-                  transaction.type === "expense"
+                  transaction.flow_type === "expense"
                     ? monthlyBalance.budget_utilised - transaction.amount
                     : monthlyBalance.budget_utilised,
               }

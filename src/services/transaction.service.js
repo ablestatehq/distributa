@@ -155,19 +155,19 @@ class Transaction extends AppwriteService {
 
   /**
    * @function getTransactionsByType
-   * @description Gets transactions filtered by type (income/expense)
-   * @param {String} type The type of transactions to retrieve
+   * @description Gets transactions filtered by flow_type (income/expense)
+   * @param {String} flow_type The type of transactions to retrieve
    * @param {Object} options Optional parameters for querying
    * @returns {Promise} A promise that resolves to the filtered list of transactions
    */
-  async getTransactionsByType(type, options = {}) {
+  async getTransactionsByType(flow_type, options = {}) {
     const { limit = 50, offset = 0 } = options;
 
     return this.database.listDocuments(
       this.#databaseId,
       this.#transactionsCollectionId,
       [
-        Query.equal("type", type),
+        Query.equal("flow_type", flow_type),
         Query.limit(limit),
         Query.offset(offset),
         Query.orderDesc("$createdAt"),

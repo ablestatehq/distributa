@@ -41,7 +41,7 @@ const TransactionDetails = ({ handleClose, transaction }) => {
               Income/Expense
             </span>
             <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
-              {transaction.type}
+              {transaction.flow_type}
             </span>
           </div>
           {transaction?.category?.name && (

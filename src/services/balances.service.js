@@ -161,7 +161,7 @@ class Balances extends AppwriteService {
   /**
    * Update balances after a new transaction
    */
-  async updateBalances(amount, type, date, categoryId = null) {
+  async updateBalances(amount, flow_type, date, categoryId = null) {
     try {
       const balancesPromises = [
         this.initializeUserBalance(),
@@ -187,15 +187,15 @@ class Balances extends AppwriteService {
           userBalance.$id,
           {
             total_income:
-              type === "income"
+              flow_type === "income"
                 ? userBalance.total_income + amount
                 : userBalance.total_income,
             total_expenses:
-              type === "expense"
+              flow_type === "expense"
                 ? userBalance.total_expenses + amount
                 : userBalance.total_expenses,
             current_balance:
-              type === "income"
+              flow_type === "income"
                 ? userBalance.current_balance + amount
                 : userBalance.current_balance - amount,
             last_transaction_date: new Date().toISOString(),
@@ -208,11 +208,11 @@ class Balances extends AppwriteService {
           monthlyBalance.$id,
           {
             income:
-              type === "income"
+              flow_type === "income"
                 ? monthlyBalance.income + amount
                 : monthlyBalance.income,
             expense:
-              type === "expense"
+              flow_type === "expense"
                 ? monthlyBalance.expense + amount
                 : monthlyBalance.expense,
             number_of_transactions: monthlyBalance.number_of_transactions + 1,
@@ -226,7 +226,7 @@ class Balances extends AppwriteService {
               amount
             ),
             budget_utilised:
-              type === "expense"
+              flow_type === "expense"
                 ? monthlyBalance.budget_utilised + amount
                 : monthlyBalance.budget_utilised,
           }
@@ -302,11 +302,11 @@ class Balances extends AppwriteService {
           id: category.$id,
           name: category.name,
           icon: category.icon,
-          type: category.type,
+          flow_type: category.flow_type,
           total: categoryTotal?.amount || 0,
           percentage:
             ((categoryTotal?.amount || 0) /
-              (category.type === "expense"
+              (category.flow_type === "expense"
                 ? balance.expenses
                 : balance.income)) *
             100,
