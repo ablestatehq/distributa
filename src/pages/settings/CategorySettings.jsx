@@ -24,7 +24,45 @@ const CategorySettings = () => {
         </Button>
         <hr className="invisible h-4" />
       </header>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="h-full w-full overflow-x-auto animate-pulse">
+            <table className="min-w-full table-fixed">
+              <thead>
+                <tr className="border-b border-b-grey">
+                  <th className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+                    Name
+                  </th>
+                  <th className="w-auto lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+                    Flow Type
+                  </th>
+                  <th className="w-auto lg:min-w-[8.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...Array(10)].map((_, index) => (
+                  <tr key={index} className="">
+                    <td className="px-2 lg:px-4 py-4">
+                      <div className="h-4 bg-grey rounded w-3/4"></div>
+                    </td>
+                    <td className="px-2 lg:px-4 py-4">
+                      <div className="h-4 bg-grey rounded w-20"></div>
+                    </td>
+                    <td className="px-2 lg:px-4 py-4">
+                      <div className="flex gap-2">
+                        <div className="h-6 w-8 bg-grey rounded"></div>
+                        <div className="h-6 w-8 bg-grey rounded"></div>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        }
+      >
         <Await resolve={data?.categories}>
           {(data) => {
             return (
