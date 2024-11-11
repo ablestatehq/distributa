@@ -1,5 +1,4 @@
-import * as slugify from "slugify";
-import { Permission, Role, Query } from "appwrite";
+import { Permission, Role, Query, ID } from "appwrite";
 import AppwriteService from "./appwrite.service.js";
 class Category extends AppwriteService {
   #databaseId;
@@ -20,11 +19,14 @@ class Category extends AppwriteService {
     type = "expense",
     icon = null,
     sortOrder = 100,
+    description = null,
   }) {
     try {
       const slug = this.#generateSlug(name);
       let ancestors = [];
       let level = 0;
+
+      console.log("Here in the create category method.");
 
       // If parent exists, get its data
       if (parentId) {
@@ -50,6 +52,7 @@ class Category extends AppwriteService {
           is_active: true,
           sort_order: sortOrder,
           icon,
+          description,
         },
         [
           Permission.read(Role.any()),
@@ -79,6 +82,21 @@ class Category extends AppwriteService {
     }
   }
 
+  async listCategories() {
+    try {
+      return await this.database.listDocuments(
+        this.#databaseId,
+        this.#categoriesCollectionId,
+        [
+          Query.equal("is_active", true),
+          Query.orderAsc("level"),
+          Query.orderDesc("$createdAt"),
+        ]
+      );
+    } catch (error) {
+      throw new Error(`Failed to list categories: ${error.message}`);
+    }
+  }
   /**
    * Get category tree
    */
@@ -142,7 +160,13 @@ class Category extends AppwriteService {
    */
   async updateCategory(categoryId, updates) {
     try {
-      const allowedUpdates = ["name", "icon", "is_active", "sort_order"];
+      const allowedUpdates = [
+        "name",
+        "icon",
+        "is_active",
+        "sort_order",
+        "description",
+      ];
 
       const updateData = Object.keys(updates)
         .filter((key) => allowedUpdates.includes(key))

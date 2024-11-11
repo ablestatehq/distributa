@@ -3,6 +3,7 @@ import CreateTransaction from "./CreateTransaction";
 import InvoicePreview from "./InvoicePreview";
 import TransactionDetails from "./TransactionDetails";
 import EditCategory from "./EditCategory";
+import CreateCategory from "./CreateCategory";
 
 export {
   EditInvoiceStatus,
@@ -10,4 +11,5 @@ export {
   InvoicePreview,
   TransactionDetails,
   EditCategory,
+  CreateCategory,
 };

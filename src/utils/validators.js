@@ -108,3 +108,9 @@ export const createTransactionSchema = Yup.object({
   payment_method: Yup.string().required("Payment method is required"),
   category: Yup.string().required("Category is required"),
 });
+
+export const createCategorySchema = Yup.object({
+  name: Yup.string().required("Name is required"),
+  description: Yup.string().nullable(),
+  type: Yup.string().required("Type is required"),
+});

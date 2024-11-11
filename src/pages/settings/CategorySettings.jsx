@@ -1,7 +1,7 @@
-import { Suspense, useState, Fragment } from "react";
-import { useLoaderData, Await, useFetcher } from "react-router-dom";
+import { Suspense, useState } from "react";
+import { useLoaderData, Await } from "react-router-dom";
 import { Button } from "../../components/common/forms";
-import { EditCategory } from "../../components/Modals";
+import { EditCategory, CreateCategory } from "../../components/Modals";
 import { CategoryRow } from "../../features/settings/components";
 
 const CategorySettings = () => {
@@ -58,6 +58,7 @@ const CategorySettings = () => {
           }}
         </Await>
       </Suspense>
+      {createCategory && <CreateCategory handleClose={toggleCreateCategory} />}
     </section>
   );
 };
