@@ -322,8 +322,12 @@ const CreateTransaction = ({ handleClose }) => {
                       <option value="bank_transfer">Bank Transfer</option>
                       <option value="credit_card">Credit Card</option>
                       <option value="debit_card">Debit Card</option>
-                      <option value="check">Check</option>
-                      <option value="mobile_money">Mobile Money</option>
+                      <option value="cheque">Check</option>
+                      <option value="momo">Momo</option>
+                      <option value="airtel_money">Airtel Money</option>
+                      <option value="visa">Visa</option>
+                      <option value="paypal">Paypal</option>
+                      <option value="pesapal">Pesapal</option>
                       <option value="other">Other</option>
                     </Field>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
