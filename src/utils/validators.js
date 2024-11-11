@@ -101,9 +101,10 @@ export const createTransactionSchema = Yup.object({
     .required("Amount is required"),
   description: Yup.string(),
   payer_payee: Yup.string().required("Payer/Payee is required"),
-  invoice_receipt_no: Yup.string().required(
-    "Invoice/Receipt number is required"
-  ),
+  invoice_receipt_no: Yup.string(),
+  // .required(
+  //   "Invoice/Receipt number is required"
+  // )
   payment_method: Yup.string().required("Payment method is required"),
   category: Yup.string().required("Category is required"),
 });
