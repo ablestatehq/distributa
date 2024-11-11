@@ -56,7 +56,7 @@ const MobileNav = ({ toggleMenu, handleMenuToggle }) => {
           className="text-black w-fit px-8"
           onClick={() => {
             handleMenuToggle();
-            navigate("/settings");
+            navigate("/settings/profile");
           }}
         >
           Settings

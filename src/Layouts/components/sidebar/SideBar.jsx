@@ -16,7 +16,6 @@ function SideBar() {
     setCollapseMenu((prevCollapseState) => !prevCollapseState);
 
   const isDesktop = useMediaQuery("(min-width: 1024px)");
-  console.log("isDesktop: ", isDesktop);
 
   return (
     <aside
@@ -76,7 +75,7 @@ function SideBar() {
           className={cn("text-black w-fit px-8", {
             "px-4": collapseMenu,
           })}
-          onClick={() => navigate("/settings")}
+          onClick={() => navigate("/settings/profile")}
         >
           Settings
         </button>
