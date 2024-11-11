@@ -152,7 +152,7 @@ class Category extends AppwriteService {
         }, {});
 
       if (updates.name) {
-        updateData.slug = this.generateSlug(updates.name);
+        updateData.slug = this.#generateSlug(updates.name);
       }
 
       return await this.database.updateDocument(
