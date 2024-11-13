@@ -197,6 +197,104 @@ const PersonalDetails = () => {
   );
 };
 
+const OrganisationDetails = () => {
+  const initialValues = {
+    name: "",
+    description: "",
+  };
+
+  const handleSubmit = (values) => {
+    console.log("Values: ", values);
+  };
+
+  return (
+    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      {({ touched, errors }) => {
+        return (
+          <div className="pt-4 flex gap-y-2 flex-col">
+            <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
+              Organisation Details
+            </h4>
+            <Form className="flex flex-col gap-y-4 p-4 bg-grey rounded">
+              <section className="flex flex-col gap-2">
+                <div className="flex flex-col gap-4 ">
+                  <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                    <label
+                      htmlFor="name"
+                      className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                    >
+                      Name
+                    </label>
+                    <Field
+                      id="name"
+                      name="name"
+                      type="text"
+                      className={cn(
+                        "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                        {
+                          "border-error focus:border-error":
+                            touched?.name && errors?.name,
+                        }
+                      )}
+                      placeholder="Name"
+                    />
+                    <ErrorMessage name="name">
+                      {(msg) => (
+                        <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                          {msg}
+                        </div>
+                      )}
+                    </ErrorMessage>
+                  </div>
+                  <div className="w-full flex flex-col gap-y-2">
+                    <label
+                      htmlFor="description"
+                      className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                    >
+                      Description
+                    </label>
+                    <Field
+                      id="description"
+                      name="description"
+                      type="text"
+                      as="textarea"
+                      rows={3}
+                      className={cn(
+                        "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black resize-none",
+                        {
+                          "border-error focus:border-error":
+                            touched?.description && errors?.description,
+                        }
+                      )}
+                      placeholder="Description"
+                    />
+                    <ErrorMessage name="description">
+                      {(msg) => (
+                        <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                          {msg}
+                        </div>
+                      )}
+                    </ErrorMessage>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      className=" w-fit h-fit px-6 py-4 font-bold text-small"
+                    >
+                      Update
+                    </Button>
+                  </div>
+                </div>
+              </section>
+            </Form>
+          </div>
+        );
+      }}
+    </Formik>
+  );
+};
+
 const Password = () => {
   const initialValues = {
     password: "",
@@ -294,6 +392,7 @@ const Password = () => {
     </Formik>
   );
 };
+
 const ProfileSettings = () => {
   return (
     <main className="flex w-full flex-col h-fit pt-2">
@@ -304,6 +403,7 @@ const ProfileSettings = () => {
         <Avatar />
         <PersonalDetails />
         <Password />
+        <OrganisationDetails />
       </div>
     </main>
   );
