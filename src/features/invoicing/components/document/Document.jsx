@@ -165,7 +165,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                       { fontSize: figmaToReactPdfPoints(8) },
                     ]}
                   >
-                    {format(issue_date, "dd-MM-yyyy")}
+                    {issue_date ? format(issue_date, "dd-MM-yyyy") : "N/A"}
                   </Text>
                 </View>
                 <View
@@ -192,7 +192,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                       { fontSize: figmaToReactPdfPoints(8) },
                     ]}
                   >
-                    {format(due_date, "dd-MM-yyyy")}
+                    {due_date ? format(due_date, "dd-MM-yyyy") : "N/A"}
                   </Text>
                 </View>
               </View>
@@ -461,7 +461,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                     },
                   ]}
                 >
-                  {currencyFormatter(price, currency)}
+                  {currency ? currencyFormatter(price, currency) : "N/A"}
                 </Text>
                 <Text
                   style={[
@@ -474,10 +474,12 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                     },
                   ]}
                 >
-                  {currencyFormatter(
-                    Number(price) * Number(quantity),
-                    currency
-                  )}
+                  {currency
+                    ? currencyFormatter(
+                        Number(price) * Number(quantity),
+                        currency
+                      )
+                    : "N/A"}
                 </Text>
               </View>
             );
@@ -597,7 +599,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                   },
                 ]}
               >
-                {currencyFormatter(sub_total, currency)}
+                {currency ? currencyFormatter(sub_total, currency) : "N/A"}
               </Text>
             </View>
             <View
@@ -631,7 +633,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                   },
                 ]}
               >
-                {currencyFormatter(discount ?? 0, currency)}
+                {currency ? currencyFormatter(discount ?? 0, currency) : "N/A"}
               </Text>
             </View>
             <View
@@ -665,7 +667,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                   },
                 ]}
               >
-                {currencyFormatter(tax ?? 0, currency)}
+                {currency ? currencyFormatter(tax ?? 0, currency) : "N/A"}
               </Text>
             </View>
             <View
@@ -702,7 +704,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                   },
                 ]}
               >
-                {currencyFormatter(shipping ?? 0, currency)}
+                {currency ? currencyFormatter(shipping ?? 0, currency) : "N/A"}
               </Text>
             </View>
             <View
@@ -739,7 +741,9 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                   },
                 ]}
               >
-                {currencyFormatter(amount_due ?? 0, currency)}
+                {currency
+                  ? currencyFormatter(amount_due ?? 0, currency)
+                  : "N/A"}
               </Text>
             </View>
             <View
@@ -776,7 +780,9 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                   },
                 ]}
               >
-                {currencyFormatter(amount_paid ?? 0, currency)}
+                {currency
+                  ? currencyFormatter(amount_paid ?? 0, currency)
+                  : "N/A"}
               </Text>
             </View>
             <View
@@ -815,7 +821,9 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                   },
                 ]}
               >
-                {currencyFormatter(balance_due ?? 0, currency)}
+                {currency
+                  ? currencyFormatter(balance_due ?? 0, currency)
+                  : "N/A"}
               </Text>
             </View>
           </View>

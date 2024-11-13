@@ -2,6 +2,7 @@ import { Invoice } from "../components";
 import { InvoicePreview } from "../../../components/Modals";
 import { defer } from "react-router-dom";
 import { InvoiceService } from "../../../services";
+import { NewInvoice } from "../../../pages";
 
 export const invoicingRoutes = [
   {
