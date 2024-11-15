@@ -6,7 +6,7 @@ import {
   BalancesService,
   CategoryService,
 } from "../services";
-import { redirect, defer, Navigate } from "react-router-dom";
+import { redirect, defer } from "react-router-dom";
 import {
   Invoices,
   NewInvoice,
@@ -18,6 +18,7 @@ import {
 } from "../pages";
 import { SettingsLayout } from "../Layouts/components";
 import InvoicePreview from "../components/Modals/InvoicePreview";
+import { Permission, Role, ID, Query } from "appwrite";
 
 const appwrite = new Appwrite();
 
@@ -135,6 +136,107 @@ export const protectedRoutes = [
           {
             path: "profile",
             element: <ProfileSettings />,
+            loader: async () => {
+              const currentUser = await appwrite.account.get();
+              const profilePromise = appwrite.database.getDocument(
+                appwrite.getVariables().DATABASE_ID,
+                appwrite.getVariables().PROFILES_COLLECTION_ID,
+                currentUser.$id
+              );
+
+              return defer({
+                profile: profilePromise,
+              });
+            },
+            children: [
+              {
+                path: "profile-picture/upload",
+                action: async ({ request }) => {
+                  const formData = await request.formData();
+                  const currentUser = await appwrite.account.get();
+
+                  const permissions = [
+                    Permission.read(Role.user(currentUser?.$id)),
+                    Permission.update(Role.user(currentUser?.$id)),
+                    Permission.delete(Role.user(currentUser?.$id)),
+                  ];
+
+                  try {
+                    const profile = await appwrite.database.getDocument(
+                      appwrite.getVariables().DATABASE_ID,
+                      appwrite.getVariables().PROFILES_COLLECTION_ID,
+                      currentUser.$id
+                    );
+
+                    if (profile?.avatar_url) {
+                      await appwrite.storage.deleteFile(
+                        appwrite.getVariables().AVATARS_BUCKET_ID,
+                        profile.avatar_ref
+                      );
+                    }
+
+                    const file = await appwrite.storage.createFile(
+                      appwrite.getVariables().AVATARS_BUCKET_ID,
+                      ID.unique(),
+                      formData.get("avatar"),
+                      permissions
+                    );
+
+                    const url = appwrite.storage.getFileView(
+                      appwrite.getVariables().AVATARS_BUCKET_ID,
+                      file.$id
+                    );
+
+                    await appwrite.database.updateDocument(
+                      appwrite.getVariables().DATABASE_ID,
+                      appwrite.getVariables().PROFILES_COLLECTION_ID,
+                      currentUser.$id,
+                      { avatar_url: url, avatar_ref: file.$id }
+                    );
+
+                    return redirect("/settings/profile");
+                  } catch (error) {
+                    console.log("Error: ", error);
+                    throw error;
+                  }
+                },
+              },
+              {
+                path: "profile-picture/delete",
+                action: async () => {
+                  const currentUser = await appwrite.account.get();
+
+                  try {
+                    const profiles = await appwrite.database.listDocuments(
+                      appwrite.getVariables().DATABASE_ID,
+                      appwrite.getVariables().PROFILES_COLLECTION_ID,
+                      [Query.equal("owner", currentUser.$id)]
+                    );
+
+                    if (
+                      profiles.total > 0 &&
+                      profiles.documents[0]?.avatar_ref
+                    ) {
+                      await appwrite.storage.deleteFile(
+                        appwrite.getVariables().AVATARS_BUCKET_ID,
+                        profiles.documents[0].avatar_ref
+                      );
+
+                      await appwrite.database.updateDocument(
+                        appwrite.getVariables().DATABASE_ID,
+                        appwrite.getVariables().PROFILES_COLLECTION_ID,
+                        currentUser.$id,
+                        { avatar_url: null }
+                      );
+                    }
+
+                    return redirect("/settings/profile");
+                  } catch (error) {
+                    throw error;
+                  }
+                },
+              },
+            ],
           },
           {
             path: "billing",

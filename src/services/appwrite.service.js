@@ -22,8 +22,10 @@ import {
   CATEGORIES_COLLECTION_ID,
   MONTHLY_CATEGORY_TOTALS_COLLECTION_ID,
   SHARED_INVOICES_COLLECTION_ID,
-
-  // LOGOS_BUCKET_ID,
+  ORGANISTIONS_COLLECTION_ID,
+  PROFILES_COLLECTION_ID,
+  LOGOS_BUCKET_ID,
+  AVATARS_BUCKET_ID,
 } from "../data/constants";
 
 const appwriteClient = new Appwrite();
@@ -79,6 +81,10 @@ class AppwriteService {
       CATEGORIES_COLLECTION_ID,
       MONTHLY_CATEGORY_TOTALS_COLLECTION_ID,
       SHARED_INVOICES_COLLECTION_ID,
+      ORGANISTIONS_COLLECTION_ID,
+      PROFILES_COLLECTION_ID,
+      LOGOS_BUCKET_ID,
+      AVATARS_BUCKET_ID,
     };
 
     return variables;
@@ -173,8 +179,8 @@ class AppwriteService {
    * @param {String} email
    * @returns <Promise> A promise that resolves to the user object.
    */
-  updateEmail(email) {
-    return this.account.updateEmail(email);
+  updateEmail(email, password) {
+    return this.account.updateEmail(email, password);
   }
 
   /**
