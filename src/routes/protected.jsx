@@ -156,7 +156,7 @@ export const protectedRoutes = [
                   const currentUser = await appwrite.account.get();
 
                   const permissions = [
-                    Permission.read(Role.user(currentUser?.$id)),
+                    Permission.read(Role.any()),
                     Permission.update(Role.user(currentUser?.$id)),
                     Permission.delete(Role.user(currentUser?.$id)),
                   ];
@@ -172,6 +172,13 @@ export const protectedRoutes = [
                       await appwrite.storage.deleteFile(
                         appwrite.getVariables().AVATARS_BUCKET_ID,
                         profile.avatar_ref
+                      );
+
+                      await appwrite.database.updateDocument(
+                        appwrite.getVariables().DATABASE_ID,
+                        appwrite.getVariables().PROFILES_COLLECTION_ID,
+                        currentUser.$id,
+                        { avatar_url: null, avatar_ref: null }
                       );
                     }
 
@@ -226,7 +233,7 @@ export const protectedRoutes = [
                         appwrite.getVariables().DATABASE_ID,
                         appwrite.getVariables().PROFILES_COLLECTION_ID,
                         currentUser.$id,
-                        { avatar_url: null }
+                        { avatar_url: null, avatar_ref: null }
                       );
                     }
 
