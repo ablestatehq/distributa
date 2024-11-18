@@ -6,7 +6,7 @@ import {
   BalancesService,
   CategoryService,
 } from "../services";
-import { redirect, defer } from "react-router-dom";
+import { redirect, defer, json } from "react-router-dom";
 import {
   Invoices,
   NewInvoice,
@@ -18,7 +18,7 @@ import {
 } from "../pages";
 import { SettingsLayout } from "../Layouts/components";
 import InvoicePreview from "../components/Modals/InvoicePreview";
-import { Permission, Role, ID, Query } from "appwrite";
+import { Permission, Role, ID } from "appwrite";
 
 const appwrite = new Appwrite();
 
@@ -269,6 +269,25 @@ export const protectedRoutes = [
                     return redirect("/settings/profile");
                   } catch (error) {
                     throw error;
+                  }
+                },
+              },
+              {
+                path: "change-password",
+                action: async ({ request }) => {
+                  const formData = await request.formData();
+                  try {
+                    await appwrite.account.updatePassword(
+                      formData.get("new_password"),
+                      formData.get("current_password")
+                    );
+
+                    return json({
+                      success: true,
+                      message: "Password updated successfully",
+                    });
+                  } catch (error) {
+                    return json({ error: error.message }, { status: 400 });
                   }
                 },
               },

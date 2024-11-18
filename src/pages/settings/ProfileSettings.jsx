@@ -1,11 +1,13 @@
-import { Suspense, useEffect } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Button } from "../../components/common/forms";
 import cn from "../../utils/cn";
 import getBase64 from "../../utils/getBase64";
 import { AiOutlineClose } from "react-icons/ai";
 import { useSubmit, useLoaderData, Await } from "react-router-dom";
-import { useNavigation } from "react-router-dom";
+import { useNavigation, useFetcher } from "react-router-dom";
+import { passwordSchema, personalDetailsSchema } from "../../utils/validators";
+import { toast } from "react-toastify";
 
 const Avatar = () => {
   const submit = useSubmit();
@@ -186,10 +188,6 @@ const PersonalDetails = () => {
       encType: "multipart/form-data",
       action: "/settings/profile/personal-details/update",
     });
-
-    resetForm({
-      values: { email: values.email, name: values.name, password: "" },
-    });
   };
 
   const isSubmitting =
@@ -243,8 +241,9 @@ const PersonalDetails = () => {
             <Formik
               initialValues={{ password: "", ...data }}
               onSubmit={handleSubmit}
+              validationSchema={personalDetailsSchema}
             >
-              {({ values, touched, errors, resetForm }) => {
+              {({ values, touched, errors, resetForm, isValid, dirty }) => {
                 useEffect(() => {
                   if (
                     navigation.state === "loading" &&
@@ -343,7 +342,7 @@ const PersonalDetails = () => {
                                   "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
                                   {
                                     "border-error focus:border-error":
-                                      touched?.email && errors?.email,
+                                      touched?.password && errors?.password,
                                   }
                                 )}
                                 placeholder="Password"
@@ -362,7 +361,7 @@ const PersonalDetails = () => {
                             <Button
                               type="submit"
                               className=" w-fit h-fit px-6 py-4 font-bold text-small"
-                              disabled={!values.password || isSubmitting}
+                              disabled={!(dirty && isValid) || isSubmitting}
                             >
                               {isSubmitting ? "Updating ..." : "Update"}
                             </Button>
@@ -545,14 +544,60 @@ const Password = () => {
     confirm_password: "",
     current_password: "",
   };
+  const formikRef = useRef(null);
+  const fetcher = useFetcher();
 
   const handleSubmit = (values) => {
-    console.log("Values: ", values);
+    const formData = new FormData();
+    console.log("These are my values", values);
+
+    formData.append("new_password", values.new_password);
+    formData.append("current_password", values.current_password);
+
+    fetcher.submit(formData, {
+      method: "POST",
+      action: "/settings/profile/change-password",
+      replace: true,
+    });
   };
 
+  useEffect(() => {
+    let mounted = true;
+
+    if (mounted && fetcher.state === "idle" && fetcher.data?.success) {
+      toast.success(fetcher.data?.message);
+      formikRef.current?.resetForm({
+        values: initialValues,
+        touched: {},
+        errors: {},
+      });
+    }
+
+    if (mounted && fetcher.state === "idle" && fetcher.data?.error) {
+      toast.error(fetcher.data?.error);
+    }
+
+    return () => {
+      mounted = false;
+
+      if (formikRef.current) {
+        formikRef.current.resetForm({
+          values: initialValues,
+          touched: {},
+          errors: {},
+        });
+      }
+    };
+  }, [fetcher.state, fetcher.data]);
+
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-      {({ touched, errors }) => {
+    <Formik
+      initialValues={initialValues}
+      innerRef={formikRef}
+      onSubmit={handleSubmit}
+      validationSchema={passwordSchema}
+    >
+      {({ touched, errors, dirty, isValid }) => {
         return (
           <div className="pt-4 flex gap-y-2 flex-col">
             <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
@@ -611,7 +656,7 @@ const Password = () => {
                         )}
                         placeholder="Password"
                       />
-                      <ErrorMessage name="email">
+                      <ErrorMessage name="confirm_password">
                         {(msg) => (
                           <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                             {msg}
@@ -634,7 +679,8 @@ const Password = () => {
                           "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
                           {
                             "border-error focus:border-error":
-                              touched?.email && errors?.email,
+                              touched?.current_password &&
+                              errors?.current_password,
                           }
                         )}
                         placeholder="Current Password"
@@ -652,8 +698,16 @@ const Password = () => {
                     <Button
                       type="submit"
                       className="w-fit h-fit px-6 py-4 font-bold text-small"
+                      disabled={
+                        !(dirty && isValid) || fetcher.state === "submitting"
+                      }
+                      onClick={() => {
+                        console.log("error: ", errors);
+                      }}
                     >
-                      Update
+                      {fetcher.state === "submitting"
+                        ? "Updating ..."
+                        : "Update"}
                     </Button>
                   </div>
                 </div>
