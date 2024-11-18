@@ -5,20 +5,41 @@ import cn from "../../utils/cn";
 import getBase64 from "../../utils/getBase64";
 import { AiOutlineClose } from "react-icons/ai";
 import { useSubmit, useLoaderData, Await } from "react-router-dom";
+import { useNavigation } from "react-router-dom";
 
 const Avatar = () => {
   const submit = useSubmit();
   const data = useLoaderData();
+  const navigation = useNavigation();
+
+  // if navigation form action is /settings/profile/profile-picture/delete or /settings/profile/profile-picture/delete and is redirecting
+
+  // then reload the page
+  const isSubmitting =
+    [
+      "/settings/profile/profile-picture/delete",
+      "/settings/profile/profile-picture/upload",
+    ].includes(navigation.formAction) && navigation.state === "submitting";
 
   const handleSubmit = (values) => {
     const formData = new FormData();
-    formData.append("avatar", values.avatar);
 
+    if (!values?.avatar && !values.avatar_url) {
+      submit(formData, {
+        method: "post",
+        encType: "multipart/form-data",
+        action: "/settings/profile/profile-picture/delete",
+      });
+      return;
+    }
+
+    formData.append("avatar", values.avatar);
     submit(formData, {
       method: "post",
       encType: "multipart/form-data",
       action: "/settings/profile/profile-picture/upload",
     });
+    return;
   };
 
   return (
@@ -50,7 +71,6 @@ const Avatar = () => {
     >
       <Await resolve={data?.profile}>
         {(data) => {
-          console.log("Data: ", data)
           return (
             <Formik
               initialValues={{ avatar: null, ...data }}
@@ -131,9 +151,12 @@ const Avatar = () => {
                           <Button
                             type="submit"
                             className=" w-fit h-fit px-6 py-4 font-bold text-small"
-                            disabled={!values.avatar}
+                            disabled={
+                              values.avatar_url === data.avatar_url ||
+                              isSubmitting
+                            }
                           >
-                            Update
+                            {isSubmitting ? "Updating ..." : "Update"}
                           </Button>
                         </div>
                       </div>
@@ -159,7 +182,6 @@ const PersonalDetails = () => {
   const handleSubmit = (values) => {
     console.log("Values: ", values);
   };
-
 
   return (
     <Formik initialValues={initialValues} onSubmit={handleSubmit}>
@@ -436,8 +458,9 @@ const OrganisationDetails = () => {
 
 const Password = () => {
   const initialValues = {
-    password: "",
+    new_password: "",
     confirm_password: "",
+    current_password: "",
   };
 
   const handleSubmit = (values) => {
@@ -458,25 +481,25 @@ const Password = () => {
                   <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
                     <div className="md:w-[17.375rem] flex flex-col gap-y-2">
                       <label
-                        htmlFor="password"
+                        htmlFor="new_password"
                         className="font-satoshi font-medium text-small leading-100 tracking-normal"
                       >
                         New Password
                       </label>
                       <Field
-                        id="password"
-                        name="password"
+                        id="new_password"
+                        name="new_password"
                         type="password"
                         className={cn(
                           "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
                           {
                             "border-error focus:border-error":
-                              touched?.password && errors?.password,
+                              touched?.new_password && errors?.new_password,
                           }
                         )}
                         placeholder="Password"
                       />
-                      <ErrorMessage name="password">
+                      <ErrorMessage name="new_password">
                         {(msg) => (
                           <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                             {msg}
