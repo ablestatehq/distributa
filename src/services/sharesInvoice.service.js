@@ -48,17 +48,39 @@ class ShareService extends AppwriteService {
         ]
       );
 
+      const invoice = await this.database.getDocument(
+        this.#databaseId,
+        this.#invoicesCollectionId,
+        invoiceId
+      );
+
+      const viewPermissions = [Permission.read(Role.any())];
+
       await this.database.updateDocument(
         this.#databaseId,
         this.#invoicesCollectionId,
         invoiceId,
-        {},
-        [
-          Permission.read(Role.user(userId)),
-          Permission.update(Role.user(userId)),
-          Permission.delete(Role.user(userId)),
-          Permission.read(Role.any()),
-        ]
+        {
+          billed_from: {
+            $id: invoice.billed_from.$id,
+            $permissions: [
+              ...invoice.billed_from.$permissions,
+              ...viewPermissions,
+            ],
+          },
+          billed_to: {
+            $id: invoice.billed_to.$id,
+            $permissions: [
+              ...invoice.billed_to.$permissions,
+              ...viewPermissions,
+            ],
+          },
+          items: invoice.items.map((item) => ({
+            $id: item.$id,
+            $permissions: [...item.$permissions, ...viewPermissions],
+          })),
+          $permissions: [...invoice.$permissions, ...viewPermissions],
+        }
       );
 
       return shareDoc;
