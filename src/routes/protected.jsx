@@ -214,19 +214,16 @@ export const protectedRoutes = [
                   const currentUser = await appwrite.account.get();
 
                   try {
-                    const profiles = await appwrite.database.listDocuments(
+                    const profile = await appwrite.database.getDocument(
                       appwrite.getVariables().DATABASE_ID,
                       appwrite.getVariables().PROFILES_COLLECTION_ID,
-                      [Query.equal("owner", currentUser.$id)]
+                      currentUser.$id
                     );
 
-                    if (
-                      profiles.total > 0 &&
-                      profiles.documents[0]?.avatar_ref
-                    ) {
+                    if (profile?.avatar_ref && profile?.avatar_url) {
                       await appwrite.storage.deleteFile(
                         appwrite.getVariables().AVATARS_BUCKET_ID,
-                        profiles.documents[0].avatar_ref
+                        profile.avatar_ref
                       );
 
                       await appwrite.database.updateDocument(
@@ -236,6 +233,38 @@ export const protectedRoutes = [
                         { avatar_url: null, avatar_ref: null }
                       );
                     }
+
+                    return redirect("/settings/profile");
+                  } catch (error) {
+                    throw error;
+                  }
+                },
+              },
+              {
+                path: "personal-details/update",
+                action: async ({ request }) => {
+                  const formData = await request.formData();
+                  const currentUser = await appwrite.account.get();
+
+                  try {
+                    if (currentUser.email !== formData.get("email")) {
+                      await appwrite.account.updateEmail(
+                        formData.get("email"),
+                        formData.get("password")
+                      );
+                    }
+
+                    await appwrite.account.updateName(formData.get("name"));
+
+                    await appwrite.database.updateDocument(
+                      appwrite.getVariables().DATABASE_ID,
+                      appwrite.getVariables().PROFILES_COLLECTION_ID,
+                      currentUser.$id,
+                      {
+                        name: formData.get("name"),
+                        email: formData.get("email"),
+                      }
+                    );
 
                     return redirect("/settings/profile");
                   } catch (error) {

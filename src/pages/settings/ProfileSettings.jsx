@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Button } from "../../components/common/forms";
 import cn from "../../utils/cn";
@@ -12,9 +12,6 @@ const Avatar = () => {
   const data = useLoaderData();
   const navigation = useNavigation();
 
-  // if navigation form action is /settings/profile/profile-picture/delete or /settings/profile/profile-picture/delete and is redirecting
-
-  // then reload the page
   const isSubmitting =
     [
       "/settings/profile/profile-picture/delete",
@@ -51,8 +48,8 @@ const Avatar = () => {
             <div className="flex justify-between h-fit w-full p-4 bg-grey rounded lg:h-24 lg:min-h-fit flex-wrap gap-y-2 items-end lg:items-start">
               <section className="flex flex-1 lg:flex-none w-fit gap-x-4 h-fit">
                 <div className="relative w-24 group">
-                  <div className="p-1 absolute -top-3 lg:-top-9 right-0 bg-grey w-6 h-6 rounded-full hidden lg:hidden lg:group-hover:flex justify-center items-center z-10 border border-greyborder animate-pulse" />
-                  <div className="static bg-gray-200 lg:absolute -top-8 w-24 h-24 rounded-full animate-pulse border border-greyborder" />
+                  <div className="p-1 absolute -top-3 lg:-top-9 right-0 bg-gray-200 w-6 h-6 rounded-full hidden lg:hidden lg:group-hover:flex justify-center items-center z-10 border border-greyborder animate-pulse" />
+                  <div className="static bg-grey lg:absolute -top-8 w-24 h-24 rounded-full animate-pulse border border-greyborder" />
                 </div>
               </section>
               <div className="flex lg:h-full items-end">
@@ -122,7 +119,7 @@ const Avatar = () => {
                                 id="avatar_url"
                                 name="logo"
                                 className="hidden group"
-                                accept="image/*"
+                                accept="image/jpg, image/png, image/jpeg"
                                 onChange={(event) => {
                                   if (event.currentTarget.files?.length > 0) {
                                     getBase64(
@@ -173,128 +170,214 @@ const Avatar = () => {
 };
 
 const PersonalDetails = () => {
-  const initialValues = {
-    name: "",
-    email: "",
-    password: "",
+  const submit = useSubmit();
+  const data = useLoaderData();
+  const navigation = useNavigation();
+
+  const handleSubmit = (values, { resetForm }) => {
+    const formData = new FormData();
+
+    formData.append("email", values.email);
+    formData.append("name", values.name);
+    formData.append("password", values.password);
+
+    submit(formData, {
+      method: "post",
+      encType: "multipart/form-data",
+      action: "/settings/profile/personal-details/update",
+    });
+
+    resetForm({
+      values: { email: values.email, name: values.name, password: "" },
+    });
   };
 
-  const handleSubmit = (values) => {
-    console.log("Values: ", values);
-  };
+  const isSubmitting =
+    navigation.formAction === "/settings/profile/personal-details/update" &&
+    navigation.state === "submitting";
 
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-      {({ touched, errors }) => {
-        return (
-          <div className="pt-4 flex gap-y-2 flex-col">
-            <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
-              Personal Details
-            </h4>
-            <Form className="flex flex-col gap-y-4 p-4 bg-grey rounded">
-              <section className="flex flex-col gap-2">
-                <div className="flex flex-col md:flex-row md:flex-wrap justify-between gap-4 md:items-end">
-                  <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
-                    <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                      <label
-                        htmlFor="name"
-                        className="font-satoshi font-medium text-small leading-100 tracking-normal"
-                      >
-                        Name
-                      </label>
-                      <Field
-                        id="name"
-                        name="name"
-                        type="text"
-                        className={cn(
-                          "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
-                          {
-                            "border-error focus:border-error":
-                              touched?.name && errors?.name,
-                          }
-                        )}
-                        placeholder="Name"
-                      />
-                      <ErrorMessage name="name">
-                        {(msg) => (
-                          <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                            {msg}
-                          </div>
-                        )}
-                      </ErrorMessage>
-                    </div>
-                    <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                      <label
-                        htmlFor="email"
-                        className="font-satoshi font-medium text-small leading-100 tracking-normal"
-                      >
-                        Email
-                      </label>
-                      <Field
-                        id="email"
-                        name="email"
-                        type="text"
-                        className={cn(
-                          "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
-                          {
-                            "border-error focus:border-error":
-                              touched?.email && errors?.email,
-                          }
-                        )}
-                        placeholder="Email"
-                      />
-                      <ErrorMessage name="email">
-                        {(msg) => (
-                          <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                            {msg}
-                          </div>
-                        )}
-                      </ErrorMessage>
-                    </div>
-                    <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                      <label
-                        htmlFor="password"
-                        className="font-satoshi font-medium text-small leading-100 tracking-normal"
-                      >
-                        Current Password
-                      </label>
-                      <Field
-                        id="password"
-                        name="password"
-                        type="password"
-                        className={cn(
-                          "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
-                          {
-                            "border-error focus:border-error":
-                              touched?.email && errors?.email,
-                          }
-                        )}
-                        placeholder="Password"
-                      />
-                      <ErrorMessage name="password">
-                        {(msg) => (
-                          <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                            {msg}
-                          </div>
-                        )}
-                      </ErrorMessage>
-                    </div>
+    <Suspense
+      fallback={
+        <div className="pt-4 flex gap-y-2 flex-col animate-pulse">
+          <div className="h-6 w-32 bg-gray-200 rounded"></div>
+
+          <div className="flex flex-col gap-y-4 p-4 bg-grey rounded">
+            <section className="flex flex-col gap-2">
+              <div className="flex flex-col md:flex-row md:flex-wrap justify-between gap-4 md:items-end">
+                <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
+                  <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                    <div className="h-5 w-16 bg-gray-200 rounded"></div>
+                    <div className="h-12 w-full bg-gray-200 rounded"></div>
                   </div>
-                  <div className="flex flex-grow justify-end">
-                    <Button
-                      type="submit"
-                      className=" w-fit h-fit px-6 py-4 font-bold text-small"
-                    >
-                      Update
-                    </Button>
+
+                  <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                    <div className="h-5 w-16 bg-gray-200 rounded"></div>
+                    <div className="h-12 w-full bg-gray-200 rounded"></div>
+                  </div>
+
+                  <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                    <div className="h-5 w-32 bg-gray-200 rounded"></div>
+                    <div className="h-12 w-full bg-gray-200 rounded"></div>
                   </div>
                 </div>
-              </section>
-            </Form>
+
+                <div className="flex flex-grow justify-end">
+                  <Button
+                    type="submit"
+                    className="w-fit h-fit px-6 py-4 font-bold text-small"
+                    disabled={true}
+                  >
+                    Update
+                  </Button>
+                </div>
+              </div>
+            </section>
           </div>
-        );
-      }}
-    </Formik>
+        </div>
+      }
+    >
+      <Await resolve={data?.profile}>
+        {(data) => {
+          return (
+            <Formik
+              initialValues={{ password: "", ...data }}
+              onSubmit={handleSubmit}
+            >
+              {({ values, touched, errors, resetForm }) => {
+                useEffect(() => {
+                  if (
+                    navigation.state === "loading" &&
+                    navigation.json != null &&
+                    navigation.formAction !== navigation.location.pathname
+                  ) {
+                    resetForm({
+                      values: {
+                        email: values.email,
+                        name: values.name,
+                        password: "",
+                      },
+                    });
+                  }
+                }, [navigation.state, navigation.formData]);
+
+                return (
+                  <div className="pt-4 flex gap-y-2 flex-col">
+                    <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
+                      Personal Details
+                    </h4>
+                    <Form className="flex flex-col gap-y-4 p-4 bg-grey rounded">
+                      <section className="flex flex-col gap-2">
+                        <div className="flex flex-col md:flex-row md:flex-wrap justify-between gap-4 md:items-end">
+                          <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
+                            <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                              <label
+                                htmlFor="name"
+                                className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                              >
+                                Name
+                              </label>
+                              <Field
+                                id="name"
+                                name="name"
+                                type="text"
+                                className={cn(
+                                  "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                                  {
+                                    "border-error focus:border-error":
+                                      touched?.name && errors?.name,
+                                  }
+                                )}
+                                placeholder="Name"
+                                disabled={isSubmitting}
+                              />
+                              <ErrorMessage name="name">
+                                {(msg) => (
+                                  <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                    {msg}
+                                  </div>
+                                )}
+                              </ErrorMessage>
+                            </div>
+                            <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                              <label
+                                htmlFor="email"
+                                className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                              >
+                                Email
+                              </label>
+                              <Field
+                                id="email"
+                                name="email"
+                                type="text"
+                                className={cn(
+                                  "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                                  {
+                                    "border-error focus:border-error":
+                                      touched?.email && errors?.email,
+                                  }
+                                )}
+                                placeholder="Email"
+                                disabled={isSubmitting}
+                              />
+                              <ErrorMessage name="email">
+                                {(msg) => (
+                                  <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                    {msg}
+                                  </div>
+                                )}
+                              </ErrorMessage>
+                            </div>
+                            <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                              <label
+                                htmlFor="password"
+                                className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                              >
+                                Current Password
+                              </label>
+                              <Field
+                                id="password"
+                                name="password"
+                                type="password"
+                                className={cn(
+                                  "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                                  {
+                                    "border-error focus:border-error":
+                                      touched?.email && errors?.email,
+                                  }
+                                )}
+                                placeholder="Password"
+                                disabled={isSubmitting}
+                              />
+                              <ErrorMessage name="password">
+                                {(msg) => (
+                                  <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                    {msg}
+                                  </div>
+                                )}
+                              </ErrorMessage>
+                            </div>
+                          </div>
+                          <div className="flex flex-grow justify-end">
+                            <Button
+                              type="submit"
+                              className=" w-fit h-fit px-6 py-4 font-bold text-small"
+                              disabled={!values.password || isSubmitting}
+                            >
+                              {isSubmitting ? "Updating ..." : "Update"}
+                            </Button>
+                          </div>
+                        </div>
+                      </section>
+                    </Form>
+                  </div>
+                );
+              }}
+            </Formik>
+          );
+        }}
+      </Await>
+    </Suspense>
   );
 };
 
