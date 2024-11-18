@@ -92,7 +92,7 @@ export const newInvoiceSchema = Yup.object({
 });
 
 export const createTransactionSchema = Yup.object({
-  type: Yup.string().required("Type is required"),
+  flow_type: Yup.string().required("Flow type is required"),
   item: Yup.string().required("Title is required"),
   date: Yup.date().required("Date is required").nullable(),
   amount: Yup.number()
@@ -113,4 +113,22 @@ export const createCategorySchema = Yup.object({
   name: Yup.string().required("Name is required"),
   description: Yup.string().nullable(),
   type: Yup.string().required("Type is required"),
+});
+
+export const passwordSchema = Yup.object().shape({
+  current_password: Yup.string().required("Current password is required"),
+  new_password: Yup.string()
+    .required("New password is required")
+    .min(8, "Password must be at least 8 characters"),
+  confirm_password: Yup.string()
+    .required("Confirm password is required")
+    .oneOf([Yup.ref("new_password"), null], "Passwords must match"),
+});
+
+export const personalDetailsSchema = Yup.object().shape({
+  name: Yup.string().nullable(),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string()
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters"),
 });
