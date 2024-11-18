@@ -73,7 +73,7 @@ const CreateTransaction = ({ handleClose }) => {
 
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
-      <section className="w-96 lg:w-[36rem] h-fit flex flex-col bg-white">
+      <section className="w-96 lg:w-[36rem] h-fit max-h-full overflow-y-auto flex flex-col bg-white">
         <header className="flex justify-between w-full bg-grey p-4">
           <h5 className="font-archivo font-normal text-small leading-150 tracking-normal">
             Add New Transaction
@@ -177,9 +177,98 @@ const CreateTransaction = ({ handleClose }) => {
                     )}
                   </ErrorMessage>
                 </div>
+                <div className="w-full flex flex-col gap-y-2">
+                  <label
+                    htmlFor="payment_terms"
+                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
+                  >
+                    Payment Terms
+                  </label>
+                  <div className="relative w-full">
+                    <Field
+                      id="payment_terms"
+                      name="payment_terms"
+                      className={cn(
+                        "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
+                        {
+                          "border-error focus:border-error":
+                            touched?.payment_terms && errors?.payment_terms,
+                        }
+                      )}
+                      as="select"
+                      disabled={isSubmitting}
+                    >
+                      <option value="">Select one</option>
+                      <option value="immediate">Immediate</option>
+                      <option value="deferred">Deferred</option>
+                    </Field>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg
+                        className="fill-greyborder h-4 w-4 "
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <ErrorMessage name="payment_method">
+                    {(msg) => (
+                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                        {msg}
+                      </div>
+                    )}
+                  </ErrorMessage>
+                </div>
+                <div className="w-full flex flex-col gap-y-2">
+                  <label
+                    htmlFor="transaction_status"
+                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
+                  >
+                    Transaction Status
+                  </label>
+                  <div className="relative w-full">
+                    <Field
+                      id="transaction_status"
+                      name="status"
+                      className={cn(
+                        "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
+                        {
+                          "border-error focus:border-error":
+                            touched?.transaction_status &&
+                            errors?.transaction_status,
+                        }
+                      )}
+                      as="select"
+                      disabled={isSubmitting}
+                    >
+                      <option value="">Select one</option>
+                      <option value="pending">Pending</option>
+                      <option value="cleared">Cleared</option>
+                      <option value="bounced">Bounced</option>
+                      <option value="void">Void</option>
+                    </Field>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg
+                        className="fill-greyborder h-4 w-4 "
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <ErrorMessage name="payment_method">
+                    {(msg) => (
+                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                        {msg}
+                      </div>
+                    )}
+                  </ErrorMessage>
+                </div>
                 <div className="col-span-2 flex flex-col gap-y-2">
                   <label
-                    htmlFor="status"
+                    htmlFor="amount"
                     className="font-satoshi font-normal text-small leading-100 tracking-normal"
                   >
                     Amount
