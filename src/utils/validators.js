@@ -92,6 +92,7 @@ export const newInvoiceSchema = Yup.object({
 });
 
 export const createTransactionSchema = Yup.object({
+  $id: Yup.string().nullable(),
   flow_type: Yup.string().required("Flow type is required"),
   item: Yup.string().required("Title is required"),
   date: Yup.date().required("Date is required").nullable(),
@@ -149,7 +150,7 @@ export const createTransactionSchema = Yup.object({
         const validTransitions =
           statusTransitions[payment_terms][transaction_status];
         const isValidTransition = validTransitions.includes(newStatus);
-        if (!isValidTransition) {
+        if (!isValidTransition && this.parent.$id) {
           return this.createError({
             path: "transaction_status",
             message: `Cannot transition from ${transaction_status} to ${newStatus}.`,

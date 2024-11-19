@@ -11,12 +11,14 @@ import {
 import { useNavigate } from "react-router-dom";
 import { createTransactionSchema } from "../../utils/validators";
 import { useEffect, useState } from "react";
+import { groupBy, map } from "lodash";
 
 const CreateTransaction = ({ handleClose }) => {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState({ income: [], expense: [] });
 
   const initialValues = {
+    $id: null,
     flow_type: "expense",
     date: "",
     item: "",
@@ -26,6 +28,21 @@ const CreateTransaction = ({ handleClose }) => {
     invoice_receipt_no: "",
     payment_method: "",
     category: "",
+    payment_terms: "immediate",
+    transaction_status: "",
+  };
+
+  const groupCategoryByType = (categories) => {
+    const groupedCategories = groupBy(
+      categories,
+      (category) => category.type === "income"
+    );
+    const income = groupedCategories["true"] || [];
+    const expense = groupedCategories["false"] || [];
+    return {
+      income,
+      expense,
+    };
   };
 
   // const initialValues = {
@@ -64,7 +81,8 @@ const CreateTransaction = ({ handleClose }) => {
 
   const fetchCategories = async () => {
     const categories = await CategoryService.getCategoryTree();
-    setCategories(() => categories);
+    const groupCategories = groupCategoryByType(categories);
+    setCategories(() => groupCategories);
   };
 
   useEffect(() => {
@@ -179,7 +197,7 @@ const CreateTransaction = ({ handleClose }) => {
                 </div>
                 <div className="w-full flex flex-col gap-y-2">
                   <label
-                    htmlFor="payment_terms"
+                    htmlFor="payment_timing"
                     className="font-satoshi font-normal text-small leading-100 tracking-normal"
                   >
                     Payment Terms
@@ -212,7 +230,7 @@ const CreateTransaction = ({ handleClose }) => {
                       </svg>
                     </div>
                   </div>
-                  <ErrorMessage name="payment_method">
+                  <ErrorMessage name="payment_terms">
                     {(msg) => (
                       <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                         {msg}
@@ -230,7 +248,7 @@ const CreateTransaction = ({ handleClose }) => {
                   <div className="relative w-full">
                     <Field
                       id="transaction_status"
-                      name="status"
+                      name="transaction_status"
                       className={cn(
                         "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
                         {
@@ -243,10 +261,24 @@ const CreateTransaction = ({ handleClose }) => {
                       disabled={isSubmitting}
                     >
                       <option value="">Select one</option>
-                      <option value="pending">Pending</option>
-                      <option value="cleared">Cleared</option>
-                      <option value="bounced">Bounced</option>
-                      <option value="void">Void</option>
+                      {values.payment_terms === "immediate" ? (
+                        <>
+                          <option value="pending">Pending</option>
+                          <option value="cleared">Cleared</option>
+                          <option value="bounced">Bounced</option>
+                          <option value="failed">Failed</option>
+                          <option value="void">Void</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="scheduled">Scheduled</option>
+                          <option value="pending">Pending</option>
+                          <option value="cleared">Cleared</option>
+                          <option value="bounced">Bounced</option>
+                          <option value="failed">Failed</option>
+                          <option value="void">Void</option>
+                        </>
+                      )}
                     </Field>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                       <svg
@@ -258,7 +290,7 @@ const CreateTransaction = ({ handleClose }) => {
                       </svg>
                     </div>
                   </div>
-                  <ErrorMessage name="payment_method">
+                  <ErrorMessage name="transaction_status">
                     {(msg) => (
                       <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                         {msg}
@@ -459,12 +491,19 @@ const CreateTransaction = ({ handleClose }) => {
                       disabled={isSubmitting}
                     >
                       <option value="">Select one</option>
-                      {categories?.length > 0 &&
-                        categories.map((category) => (
-                          <option key={category.$id} value={category.$id}>
-                            {category.name}
-                          </option>
-                        ))}
+                      {values.flow_type === "income"
+                        ? categories.income.map((category) => (
+                            <option key={category.$id} value={category.$id}>
+                              {category.name}
+                            </option>
+                          ))
+                        : values.flow_type === "expense"
+                        ? categories.expense.map((category) => (
+                            <option key={category.$id} value={category.$id}>
+                              {category.name}
+                            </option>
+                          ))
+                        : null}
                     </Field>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                       <svg
