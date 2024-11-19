@@ -11,7 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { createTransactionSchema } from "../../utils/validators";
 import { useEffect, useState } from "react";
-import { groupBy, map } from "lodash";
+import { groupBy } from "lodash";
 
 const CreateTransaction = ({ handleClose }) => {
   const navigate = useNavigate();
@@ -44,19 +44,6 @@ const CreateTransaction = ({ handleClose }) => {
       expense,
     };
   };
-
-  // const initialValues = {
-  //   type: "expense",
-  //   date: "2024-11-06",
-  //   item: "Office Supplies",
-  //   amount: "125.5",
-  //   description:
-  //     "Monthly office supplies including paper, pens, and printer ink.",
-  //   payer_payee: "Office Depot",
-  //   invoice_receipt_no: "INV-2024-0315",
-  //   payment_method: "credit_card",
-  //   category: "672238bc0024bf1cc549",
-  // };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     values.amount = parseFloat(values.amount);

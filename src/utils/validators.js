@@ -110,17 +110,6 @@ export const createTransactionSchema = Yup.object({
     .oneOf(["immediate", "deferred"]),
   transaction_status: Yup.string()
     .required("Status is required")
-    .test("valid-initial-status", "Invalid initial status", function (value) {
-      const { payment_terms } = this.parent;
-
-      if (!this.parent.$id) {
-        return payment_terms === "immediate"
-          ? value === "pending"
-          : value === "scheduled";
-      }
-
-      return true;
-    })
     .test(
       "valid-status-transition",
       "Invalid status transition",
