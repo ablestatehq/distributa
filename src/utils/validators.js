@@ -102,11 +102,63 @@ export const createTransactionSchema = Yup.object({
   description: Yup.string(),
   payer_payee: Yup.string().required("Payer/Payee is required"),
   invoice_receipt_no: Yup.string(),
-  // .required(
-  //   "Invoice/Receipt number is required"
-  // )
   payment_method: Yup.string().required("Payment method is required"),
   category: Yup.string().required("Category is required"),
+  payment_terms: Yup.string()
+    .required("Payment terms is required")
+    .oneOf(["immediate", "deferred"]),
+  transaction_status: Yup.string()
+    .required("Status is required")
+    .test("valid-initial-status", "Invalid initial status", function (value) {
+      const { payment_terms } = this.parent;
+
+      if (!this.parent.$id) {
+        return payment_terms === "immediate"
+          ? value === "pending"
+          : value === "scheduled";
+      }
+
+      return true;
+    })
+    .test(
+      "valid-status-transition",
+      "Invalid status transition",
+      function (newStatus) {
+        const { payment_terms, transaction_status } = this.parent;
+
+        if (!transaction_status) return true;
+
+        const statusTransitions = {
+          immediate: {
+            pending: ["cleared", "bounced", "failed", "void"],
+            cleared: ["void"],
+            bounced: ["pending", "void"],
+            failed: ["pending", "void"],
+            void: [],
+          },
+          deferred: {
+            scheduled: ["pending", "void"],
+            pending: ["cleared", "bounced", "failed", "void"],
+            cleared: ["void"],
+            bounced: ["pending", "void"],
+            failed: ["pending", "void"],
+            void: [],
+          },
+        };
+
+        const validTransitions =
+          statusTransitions[payment_terms][transaction_status];
+        const isValidTransition = validTransitions.includes(newStatus);
+        if (!isValidTransition) {
+          return this.createError({
+            path: "transaction_status",
+            message: `Cannot transition from ${transaction_status} to ${newStatus}.`,
+          });
+        }
+
+        return true;
+      }
+    ),
 });
 
 export const createCategorySchema = Yup.object({
