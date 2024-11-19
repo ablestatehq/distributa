@@ -1,6 +1,6 @@
 import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
-import { Book } from "../../components/common/icons";
+import { Book, Edit, Delete } from "../../components/common/icons";
 import { useLoaderData, Await } from "react-router-dom";
 import { CreateTransaction, TransactionDetails } from "../../components/Modals";
 import { useState, Suspense } from "react";
@@ -195,25 +195,52 @@ const Transactions = () => {
                                         key={transaction.$id}
                                         className="border-b border-b-greyborder"
                                       >
-                                        <td className="w-full pr-6 pt-4 pb-2 font-satoshi font-normal text-tiny leading-120 tracking-normal">
+                                        <td className="w-full pr-6 pt-4 pb-2 font-satoshi font-normal text-tiny leading-120 tracking-normal align-bottom">
                                           {transaction.item}
                                         </td>
-                                        <td className="pr-6 pt-4 pb-2 font-satoshi font-normal text-tiny leading-120 tracking-normal">
+                                        <td className="pr-6 pt-4 pb-2 font-satoshi font-normal text-tiny leading-120 tracking-normal align-bottom">
                                           {prefix}
                                           {transaction.amount}
                                         </td>
                                         <td className="pt-4 pb-2 font-satoshi font-normal text-tiny leading-100 tracking-normal">
-                                          <button
-                                            className="underline min-w-[58px]"
-                                            onClick={() => {
-                                              setTransactionDetails(
-                                                transaction
-                                              );
-                                              toggleTransactionDetailsModal();
-                                            }}
-                                          >
-                                            See Details
-                                          </button>
+                                          <div className="flex gap-2">
+                                            <button
+                                              className="underline outline-none"
+                                              onClick={() => {
+                                                setTransactionDetails(
+                                                  transaction
+                                                );
+                                                toggleTransactionDetailsModal();
+                                              }}
+                                              disabled
+                                            >
+                                              <Edit />
+                                            </button>
+                                            <button
+                                              className="outline-none group"
+                                              onClick={() => {
+                                                setTransactionDetails(
+                                                  transaction
+                                                );
+                                                toggleTransactionDetailsModal();
+                                              }}
+                                              disabled
+                                            >
+                                              <Delete />
+                                            </button>
+
+                                            <button
+                                              className="underline min-w-[58px] outline-none"
+                                              onClick={() => {
+                                                setTransactionDetails(
+                                                  transaction
+                                                );
+                                                toggleTransactionDetailsModal();
+                                              }}
+                                            >
+                                              See Details
+                                            </button>
+                                          </div>
                                         </td>
                                       </tr>
                                     );
