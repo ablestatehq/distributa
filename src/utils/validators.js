@@ -139,7 +139,11 @@ export const createTransactionSchema = Yup.object({
         const validTransitions =
           statusTransitions[payment_terms][transaction_status];
         const isValidTransition = validTransitions.includes(newStatus);
-        if (!isValidTransition && this.parent.$id) {
+        if (
+          !isValidTransition &&
+          this.parent.$id &&
+          newStatus !== transaction_status
+        ) {
           return this.createError({
             path: "transaction_status",
             message: `Cannot transition from ${transaction_status} to ${newStatus}.`,
