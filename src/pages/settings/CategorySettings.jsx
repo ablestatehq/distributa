@@ -3,6 +3,7 @@ import { useLoaderData, Await } from "react-router-dom";
 import { Button } from "../../components/common/forms";
 import { CreateCategory } from "../../components/Modals";
 import { CategoryRow } from "../../features/settings/components";
+import { Category } from "../../components/common/icons";
 
 const CategorySettings = () => {
   const data = useLoaderData();
@@ -12,7 +13,7 @@ const CategorySettings = () => {
   const toggleCreateCategory = () => setCreateCategory((prev) => !prev);
 
   return (
-    <section className="flex flex-col gap-y-2">
+    <section className="flex h-full w-full flex-col gap-y-2">
       <header className="flex flex-col items-end gap-y-2 w-full">
         <hr className=" h-4 text-red-300" />
         <Button
@@ -24,6 +25,7 @@ const CategorySettings = () => {
         </Button>
         <hr className="invisible h-4" />
       </header>
+
       <Suspense
         fallback={
           <div className="h-full w-full overflow-x-auto animate-pulse">
@@ -65,7 +67,7 @@ const CategorySettings = () => {
       >
         <Await resolve={data?.categories}>
           {(data) => {
-            return (
+            return data?.length > 0 ? (
               <div className="h-full w-full overflow-x-auto">
                 <table className="min-w-full table-fixed">
                   <thead>
@@ -92,6 +94,28 @@ const CategorySettings = () => {
                   </tbody>
                 </table>
               </div>
+            ) : (
+              <section className="w-full h-full flex items-center justify-center">
+                <article className="flex flex-col items-center gap-y-4 w-full max-w-md">
+                  <div className="flex justify-center items-center rounded-full bg-grey w-24 h-24">
+                    <Category />
+                  </div>
+                  <div className="flex flex-col gap-y-2">
+                    <h3 className="font-archivo font-normal text-xl leading-120 tracking-normal text-center">
+                      No Categories
+                    </h3>
+                    <p className="font-satoshi font-normal text-medium leading-150 tracking-normal text-center">
+                      You haven't created any category yet.
+                    </p>
+                  </div>
+                  <Button
+                    className="w-fit px-12 py-3 font-bold text-medium"
+                    onClick={toggleCreateCategory}
+                  >
+                    Create New Category
+                  </Button>
+                </article>
+              </section>
             );
           }}
         </Await>
