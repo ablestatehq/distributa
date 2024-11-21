@@ -5,13 +5,13 @@ import { format } from "date-fns";
 
 const TransactionDetails = ({ handleClose, transaction }) => {
   const getPrefix = (transaction) =>
-    transaction?.type === "income" ? "+" : "-";
+    transaction?.flow_type === "income" ? "+" : "-";
 
   const prefix = getPrefix(transaction);
 
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
-      <section className="w-full lg:w-96 h-fit flex flex-col bg-white">
+      <section className="w-full lg:w-96 h-fit max-h-full overflow-y-auto flex flex-col bg-white">
         <header className="flex justify-between w-full bg-grey p-4">
           <h5 className="font-archivo font-normal text-small leading-150 tracking-normal">
             Transaction Details
@@ -42,6 +42,22 @@ const TransactionDetails = ({ handleClose, transaction }) => {
             </span>
             <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
               {transaction.flow_type}
+            </span>
+          </div>
+          <div className="flex justify-between pb-2 pt-4 border-b border-b-greyborder">
+            <span className="font-satoshi font-normal text-small leading-100 tracking-0">
+              Payment Terms
+            </span>
+            <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
+              {transaction?.payment_terms || "N/A"}
+            </span>
+          </div>
+          <div className="flex justify-between pb-2 pt-4 border-b border-b-greyborder">
+            <span className="font-satoshi font-normal text-small leading-100 tracking-0">
+              Status
+            </span>
+            <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
+              {transaction?.transaction_status || "N/A"}
             </span>
           </div>
           {transaction?.category?.name && (
