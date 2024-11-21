@@ -14,9 +14,10 @@ import { useEffect, useState } from "react";
 
 const CreateTransaction = ({ handleClose }) => {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState({ income: [], expense: [] });
 
   const initialValues = {
+    $id: null,
     flow_type: "expense",
     date: "",
     item: "",
@@ -26,20 +27,22 @@ const CreateTransaction = ({ handleClose }) => {
     invoice_receipt_no: "",
     payment_method: "",
     category: "",
+    payment_terms: "immediate",
+    transaction_status: "",
   };
 
-  // const initialValues = {
-  //   type: "expense",
-  //   date: "2024-11-06",
-  //   item: "Office Supplies",
-  //   amount: "125.5",
-  //   description:
-  //     "Monthly office supplies including paper, pens, and printer ink.",
-  //   payer_payee: "Office Depot",
-  //   invoice_receipt_no: "INV-2024-0315",
-  //   payment_method: "credit_card",
-  //   category: "672238bc0024bf1cc549",
-  // };
+  const groupCategoryByType = (categories) => {
+    const groupedCategories = categories.reduce((acc, category) => {
+      const type = category.type || "other";
+      if (!acc[type]) {
+        acc[type] = [];
+      }
+      acc[type].push(category);
+      return acc;
+    }, {});
+
+    return groupedCategories;
+  };
 
   const handleSubmit = async (values, { setSubmitting }) => {
     values.amount = parseFloat(values.amount);
@@ -64,7 +67,8 @@ const CreateTransaction = ({ handleClose }) => {
 
   const fetchCategories = async () => {
     const categories = await CategoryService.getCategoryTree();
-    setCategories(() => categories);
+    const groupCategories = groupCategoryByType(categories);
+    setCategories(() => groupCategories);
   };
 
   useEffect(() => {
@@ -73,7 +77,7 @@ const CreateTransaction = ({ handleClose }) => {
 
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
-      <section className="w-96 lg:w-[36rem] h-fit flex flex-col bg-white">
+      <section className="w-96 lg:w-[36rem] h-fit max-h-full overflow-y-auto flex flex-col bg-white">
         <header className="flex justify-between w-full bg-grey p-4">
           <h5 className="font-archivo font-normal text-small leading-150 tracking-normal">
             Add New Transaction
@@ -177,9 +181,112 @@ const CreateTransaction = ({ handleClose }) => {
                     )}
                   </ErrorMessage>
                 </div>
+                <div className="w-full flex flex-col gap-y-2">
+                  <label
+                    htmlFor="payment_timing"
+                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
+                  >
+                    Payment Terms
+                  </label>
+                  <div className="relative w-full">
+                    <Field
+                      id="payment_terms"
+                      name="payment_terms"
+                      className={cn(
+                        "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
+                        {
+                          "border-error focus:border-error":
+                            touched?.payment_terms && errors?.payment_terms,
+                        }
+                      )}
+                      as="select"
+                      disabled={isSubmitting}
+                    >
+                      <option value="">Select one</option>
+                      <option value="immediate">Immediate</option>
+                      <option value="deferred">Deferred</option>
+                    </Field>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg
+                        className="fill-greyborder h-4 w-4 "
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <ErrorMessage name="payment_terms">
+                    {(msg) => (
+                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                        {msg}
+                      </div>
+                    )}
+                  </ErrorMessage>
+                </div>
+                <div className="w-full flex flex-col gap-y-2">
+                  <label
+                    htmlFor="transaction_status"
+                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
+                  >
+                    Transaction Status
+                  </label>
+                  <div className="relative w-full">
+                    <Field
+                      id="transaction_status"
+                      name="transaction_status"
+                      className={cn(
+                        "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
+                        {
+                          "border-error focus:border-error":
+                            touched?.transaction_status &&
+                            errors?.transaction_status,
+                        }
+                      )}
+                      as="select"
+                      disabled={isSubmitting}
+                    >
+                      <option value="">Select one</option>
+                      {values.payment_terms === "immediate" ? (
+                        <>
+                          <option value="pending">Pending</option>
+                          <option value="cleared">Cleared</option>
+                          <option value="bounced">Bounced</option>
+                          <option value="failed">Failed</option>
+                          <option value="void">Void</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="scheduled">Scheduled</option>
+                          <option value="pending">Pending</option>
+                          <option value="cleared">Cleared</option>
+                          <option value="bounced">Bounced</option>
+                          <option value="failed">Failed</option>
+                          <option value="void">Void</option>
+                        </>
+                      )}
+                    </Field>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg
+                        className="fill-greyborder h-4 w-4 "
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <ErrorMessage name="transaction_status">
+                    {(msg) => (
+                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                        {msg}
+                      </div>
+                    )}
+                  </ErrorMessage>
+                </div>
                 <div className="col-span-2 flex flex-col gap-y-2">
                   <label
-                    htmlFor="status"
+                    htmlFor="amount"
                     className="font-satoshi font-normal text-small leading-100 tracking-normal"
                   >
                     Amount
@@ -370,8 +477,21 @@ const CreateTransaction = ({ handleClose }) => {
                       disabled={isSubmitting}
                     >
                       <option value="">Select one</option>
-                      {categories?.length > 0 &&
-                        categories.map((category) => (
+                      {values.flow_type === "income" && categories?.income
+                        ? categories.income.map((category) => (
+                            <option key={category.$id} value={category.$id}>
+                              {category.name}
+                            </option>
+                          ))
+                        : values.flow_type === "expense" && categories?.expense
+                        ? categories.expense.map((category) => (
+                            <option key={category.$id} value={category.$id}>
+                              {category.name}
+                            </option>
+                          ))
+                        : null}
+                      {categories?.both &&
+                        categories.both.map((category) => (
                           <option key={category.$id} value={category.$id}>
                             {category.name}
                           </option>
