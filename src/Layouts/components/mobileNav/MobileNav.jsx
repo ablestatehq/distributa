@@ -10,7 +10,7 @@ const MobileNav = ({ toggleMenu, handleMenuToggle }) => {
 
   return (
     <aside
-      className={`top-0 right-0 absolute h-full md:hidden flex-col justify-between bg-white items-end py-16 px-8 ${cn(
+      className={`top-0 right-0 absolute h-full md:hidden flex-col justify-between bg-white items-end py-16 px-8 z-20 ${cn(
         {
           flex: toggleMenu,
           hidden: !toggleMenu,
