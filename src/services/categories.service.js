@@ -1,5 +1,6 @@
 import { Permission, Role, Query, ID } from "appwrite";
 import AppwriteService from "./appwrite.service.js";
+import { format } from "date-fns";
 class Category extends AppwriteService {
   #databaseId;
   #categoriesCollectionId;
@@ -25,6 +26,8 @@ class Category extends AppwriteService {
       const slug = this.#generateSlug(name);
       let ancestors = [];
       let level = 0;
+
+      const currentUser = await this.account.get();
 
       // If parent exists, get its data
       if (parentId) {
@@ -53,9 +56,9 @@ class Category extends AppwriteService {
           description,
         },
         [
-          Permission.read(Role.any()),
-          Permission.update(Role.any()),
-          Permission.delete(Role.any()),
+          Permission.read(Role.user(currentUser.$id)),
+          Permission.update(Role.user(currentUser.$id)),
+          Permission.delete(Role.user(currentUser.$id)),
         ]
       );
 
@@ -107,6 +110,7 @@ class Category extends AppwriteService {
           Query.equal("is_active", true),
           Query.orderAsc("level"),
           Query.orderAsc("sort_order"),
+          Query.orderDesc("$createdAt"),
         ]
       );
 
@@ -164,7 +168,10 @@ class Category extends AppwriteService {
         "is_active",
         "sort_order",
         "description",
+        "type",
       ];
+
+      const { $id: userId } = await this.account.get();
 
       const updateData = Object.keys(updates)
         .filter((key) => allowedUpdates.includes(key))
@@ -177,6 +184,210 @@ class Category extends AppwriteService {
         updateData.slug = this.#generateSlug(updates.name);
       }
 
+      if (updates.type) {
+        const children = await this.getChildCategories(categoryId);
+        const prevCategory = await this.getCategory(categoryId);
+
+        let updatedCategories = [categoryId];
+        if (children.total > 0) {
+          const updatedChildren = await Promise.all(
+            children.map(async (child) => {
+              const { $id: childId } = await this.database.updateDocument(
+                this.#databaseId,
+                this.#categoriesCollectionId,
+                child.$id,
+                { type: updates.type }
+              );
+
+              return childId;
+            })
+          );
+          updatedCategories = [...updatedCategories, ...updatedChildren];
+        }
+
+        let offset = 0;
+        const limit = 100;
+
+        while (true) {
+          const { documents: transactions, total: totalTransactions } =
+            await this.database.listDocuments(
+              this.#databaseId,
+              this.getVariables().TRANSACTIONS_COLLECTION_ID,
+              [
+                Query.limit(limit),
+                Query.offset(offset),
+                Query.orderDesc("$createdAt"),
+              ]
+            );
+
+          if (totalTransactions > 0) {
+            await Promise.all(
+              transactions
+                .filter((transaction) => {
+                  return updatedCategories.includes(transaction.category.$id);
+                })
+                .map(async (transaction) => {
+                  if (
+                    prevCategory?.type === "income" &&
+                    updates?.type === "expense"
+                  ) {
+                    // get the monthly statemet
+                    const {
+                      documents: [statement = null],
+                    } = await this.database.listDocuments(
+                      this.#databaseId,
+                      this.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+                      [
+                        Query.equal("user_id", userId),
+                        Query.equal(
+                          "year_month",
+                          format(new Date(transaction.date), "yyyy-MM")
+                        ),
+                      ]
+                    );
+
+                    const statementUpdate = this.database.updateDocument(
+                      this.#databaseId,
+                      this.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+                      statement.$id,
+                      {
+                        expense: statement.expense + transaction.amount,
+                        income: statement.income - transaction.amount,
+                      }
+                    );
+
+                    const transactionUpdate = this.database.updateDocument(
+                      this.#databaseId,
+                      this.getVariables().TRANSACTIONS_COLLECTION_ID,
+                      transaction.$id,
+                      { category: updates.type }
+                    );
+
+                    return Promise.all([statementUpdate, transactionUpdate]);
+                  } else if (
+                    prevCategory.type === "expense" &&
+                    updates?.type === "income"
+                  ) {
+                    const {
+                      documents: [statement = null],
+                    } = await this.database.listDocuments(
+                      this.#databaseId,
+                      this.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+                      [
+                        Query.equal("user_id", userId),
+                        Query.equal(
+                          "year_month",
+                          format(new Date(transaction.date), "yyyy-MM")
+                        ),
+                      ]
+                    );
+
+                    const statementUpdate = this.database.updateDocument(
+                      this.#databaseId,
+                      this.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+                      statement.$id,
+                      {
+                        expense: statement.expense - transaction.amount,
+                        income: statement.income + transaction.amount,
+                      }
+                    );
+
+                    const transactionUpdate = this.database.updateDocument(
+                      this.#databaseId,
+                      this.getVariables().TRANSACTIONS_COLLECTION_ID,
+                      transaction.$id,
+                      { flow_type: updates.type }
+                    );
+
+                    return Promise.all([statementUpdate, transactionUpdate]);
+                  } else if (
+                    prevCategory.type === "both" &&
+                    updates.type === "income" &&
+                    transaction.flow_type === "expense"
+                  ) {
+                    const {
+                      documents: [statement = null],
+                    } = await this.database.listDocuments(
+                      this.#databaseId,
+                      this.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+                      [
+                        Query.equal("user_id", userId),
+                        Query.equal(
+                          "year_month",
+                          format(new Date(transaction.date), "yyyy-MM")
+                        ),
+                      ]
+                    );
+
+                    const statementUpdate = this.database.updateDocument(
+                      this.#databaseId,
+                      this.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+                      statement.$id,
+                      {
+                        expense: statement.expense - transaction.amount,
+                        income: statement.income + transaction.amount,
+                      }
+                    );
+
+                    const transactionUpdate = this.database.updateDocument(
+                      this.#databaseId,
+                      this.getVariables().TRANSACTIONS_COLLECTION_ID,
+                      transaction.$id,
+                      { flow_type: updates.type }
+                    );
+
+                    return Promise.all([statementUpdate, transactionUpdate]);
+                  } else if (
+                    prevCategory.type === "both" &&
+                    updates.type === "expense" &&
+                    transaction.flow_type === "income"
+                  ) {
+                    console.log(
+                      `Pass 2: \nPrev Type: ${prevCategory.type}. \nUpdate Type: ${updates.type}. \nTransaction Flow Type: ${transaction.flow_type} `
+                    );
+
+                    const {
+                      documents: [statement = null],
+                    } = await this.database.listDocuments(
+                      this.#databaseId,
+                      this.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+                      [
+                        Query.equal("user_id", userId),
+                        Query.equal(
+                          "year_month",
+                          format(new Date(transaction.date), "yyyy-MM")
+                        ),
+                      ]
+                    );
+
+                    const statementUpdate = this.database.updateDocument(
+                      this.#databaseId,
+                      this.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+                      statement.$id,
+                      {
+                        expense: statement.expense + transaction.amount,
+                        income: statement.income - transaction.amount,
+                      }
+                    );
+
+                    const transactionUpdate = this.database.updateDocument(
+                      this.#databaseId,
+                      this.getVariables().TRANSACTIONS_COLLECTION_ID,
+                      transaction.$id,
+                      { flow_type: updates.type }
+                    );
+
+                    return Promise.all([statementUpdate, transactionUpdate]);
+                  }
+                })
+            );
+          }
+
+          if (transactions.length < limit) break;
+          offset += limit;
+        }
+      }
+
       return await this.database.updateDocument(
         this.#databaseId,
         this.#categoriesCollectionId,
@@ -184,7 +395,9 @@ class Category extends AppwriteService {
         updateData
       );
     } catch (error) {
-      throw new Error(`Failed to update category: ${error.message}`);
+      // throw new Error(`Failed to update category: ${error.message}`)
+      // console.log(JSON.stringify(error, null, 2));
+      throw error;
     }
   }
 
