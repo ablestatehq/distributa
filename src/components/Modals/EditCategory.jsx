@@ -36,7 +36,7 @@ const EditCategory = ({
       <section className="w-96 lg:w-[36rem] h-fit flex flex-col bg-white">
         <header className="flex justify-between w-full bg-grey p-4">
           <h5 className="font-archivo font-normal text-small leading-150 tracking-normal">
-            Add New Category
+            Edit Category
           </h5>
           <button type="button" onClick={handleClose}>
             <CircleX variation="black" className="w-4 h-4" />
@@ -49,34 +49,48 @@ const EditCategory = ({
         >
           {({ values, touched, errors, isSubmitting, setFieldValue }) => (
             <Form>
-              <div className="w-full flex p-4 lg:px-16 gap-x-4">
+              <div className="grid grid-cols-3 p-4 lg:px-16 gap-x-4">
                 <button
                   type="button"
                   kind="secondary"
-                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold w-1/2 transition-all duration-75 ${cn(
+                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold transition-all duration-75 ${cn(
                     {
-                      "border-transparent": values.type === "income",
+                      "border-transparent": values.type !== "expense",
                       "border-black": values.type === "expense",
                     }
                   )}`}
                   onClick={() => setFieldValue("type", "expense")}
-                  disabled={isSubmitting}
+                  disabled={navigation.state === "submitting"}
                 >
                   Expense
                 </button>
                 <button
                   type="button"
                   kind="secondary"
-                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold w-1/2 transition-all duration-75 ${cn(
+                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold transition-all duration-75 ${cn(
                     {
-                      "border-transparent": values.type === "expense",
+                      "border-transparent": values.type !== "income",
                       "border-black": values.type === "income",
                     }
                   )}`}
                   onClick={() => setFieldValue("type", "income")}
-                  disabled={isSubmitting}
+                  disabled={navigation.state === "submitting"}
                 >
                   Income
+                </button>
+                <button
+                  type="button"
+                  kind="secondary"
+                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold transition-all duration-75 ${cn(
+                    {
+                      "border-transparent": values.type !== "both",
+                      "border-black": values.type === "both",
+                    }
+                  )}`}
+                  onClick={() => setFieldValue("type", "both")}
+                  disabled={navigation.state === "submitting"}
+                >
+                  Both
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-4 py-8 px-4 lg:px-16">
@@ -144,7 +158,7 @@ const EditCategory = ({
                   className="font-bold text-small col-span-2"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Adding Category ..." : "Add"}
+                  {isSubmitting ? "Updating Category ..." : "Update"}
                 </Button>
               </div>
             </Form>
