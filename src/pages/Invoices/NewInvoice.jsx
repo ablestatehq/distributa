@@ -8,7 +8,6 @@ import getValidNumber from "../../utils/getValidNumber";
 import { newInvoiceSchema } from "../../utils/validators";
 import cn from "../../utils/cn";
 import { useSubmit } from "react-router-dom";
-import { currencyFormatter } from "../../utils/currency.formatter";
 
 const calculateSubTotal = (items) =>
   items.reduce((acc, { quantity, price }) => {
@@ -44,7 +43,7 @@ const NewInvoice = () => {
     logo: null,
     paper_size: "",
     orientation: "",
-    currency: "UGX",
+    currency: "",
     billed_from: {
       name: "",
       email: "",
@@ -320,6 +319,7 @@ const NewInvoice = () => {
                           )}
                           as="select"
                         >
+                          <option value="">Select one</option>
                           <option value="UGX">Uganda Shillings</option>
                           <option value="KSH">Kenyan Shillings</option>
                           <option value="USD">United States Dollar</option>
@@ -1077,8 +1077,7 @@ const NewInvoice = () => {
                           Sub Total
                         </span>
                         <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                          {/* ${values.sub_total} */}
-                          {currencyFormatter(values.sub_total, values.currency)}
+                          ${values.sub_total}
                         </span>
                       </div>
                       <hr className="border-b border-t-0 border-greyborder" />
@@ -1179,11 +1178,7 @@ const NewInvoice = () => {
                           Amount Due
                         </span>
                         <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                          {/* ${values.amount_due ?? 0} */}
-                          {currencyFormatter(
-                            values.amount_due ?? 0,
-                            values.currency
-                          )}
+                          ${values.amount_due ?? 0}
                         </span>
                       </div>
                       <hr className="border-b border-t-0 border-greyborder" />
@@ -1218,11 +1213,7 @@ const NewInvoice = () => {
                           Balance Due
                         </span>
                         <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                          {/* ${values.balance_due ?? 0} */}
-                          {currencyFormatter(
-                            values.balance_due ?? 0,
-                            values.currency
-                          )}
+                          ${values.balance_due ?? 0}
                         </span>
                       </div>
                     </div>
@@ -1384,8 +1375,7 @@ const NewInvoice = () => {
                           Sub Total
                         </span>
                         <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                          {/* ${values.sub_total} */}
-                          {currencyFormatter(values.sub_total, values.currency)}
+                          ${values.sub_total}
                         </span>
                       </div>
 
@@ -1526,11 +1516,7 @@ const NewInvoice = () => {
                           Amount Due
                         </span>
                         <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                          {/* ${values.amount_due ?? 0} */}
-                          {currencyFormatter(
-                            values.amount_due ?? 0,
-                            values.currency
-                          )}
+                          ${values.amount_due ?? 0}
                         </span>
                       </div>
                       <hr className="border-b border-t-0 border-greyborder" />
@@ -1578,11 +1564,7 @@ const NewInvoice = () => {
                           Balance Due
                         </span>
                         <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                          {/* ${values.balance_due ?? 0} */}
-                          {currencyFormatter(
-                            values.balance_due ?? 0,
-                            values.currency
-                          )}
+                          ${values.balance_due ?? 0}
                         </span>
                       </div>
                     </div>

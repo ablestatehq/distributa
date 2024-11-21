@@ -1,44 +1,24 @@
-import { Suspense, useCallback, useEffect, useMemo, useRef } from "react";
+import { Suspense } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Button } from "../../components/common/forms";
 import cn from "../../utils/cn";
 import getBase64 from "../../utils/getBase64";
 import { AiOutlineClose } from "react-icons/ai";
 import { useSubmit, useLoaderData, Await } from "react-router-dom";
-import { useNavigation, useFetcher } from "react-router-dom";
-import { passwordSchema, personalDetailsSchema } from "../../utils/validators";
-import { toast } from "react-toastify";
 
 const Avatar = () => {
   const submit = useSubmit();
   const data = useLoaderData();
-  const navigation = useNavigation();
-
-  const isSubmitting =
-    [
-      "/settings/profile/profile-picture/delete",
-      "/settings/profile/profile-picture/upload",
-    ].includes(navigation.formAction) && navigation.state === "submitting";
 
   const handleSubmit = (values) => {
     const formData = new FormData();
-
-    if (!values?.avatar && !values.avatar_url) {
-      submit(formData, {
-        method: "post",
-        encType: "multipart/form-data",
-        action: "/settings/profile/profile-picture/delete",
-      });
-      return;
-    }
-
     formData.append("avatar", values.avatar);
+
     submit(formData, {
       method: "post",
       encType: "multipart/form-data",
       action: "/settings/profile/profile-picture/upload",
     });
-    return;
   };
 
   return (
@@ -50,8 +30,8 @@ const Avatar = () => {
             <div className="flex justify-between h-fit w-full p-4 bg-grey rounded lg:h-24 lg:min-h-fit flex-wrap gap-y-2 items-end lg:items-start">
               <section className="flex flex-1 lg:flex-none w-fit gap-x-4 h-fit">
                 <div className="relative w-24 group">
-                  <div className="p-1 absolute -top-3 lg:-top-9 right-0 bg-gray-200 w-6 h-6 rounded-full hidden lg:hidden lg:group-hover:flex justify-center items-center z-10 border border-greyborder animate-pulse" />
-                  <div className="static bg-grey lg:absolute -top-8 w-24 h-24 rounded-full animate-pulse border border-greyborder" />
+                  <div className="p-1 absolute -top-3 lg:-top-9 right-0 bg-grey w-6 h-6 rounded-full hidden lg:hidden lg:group-hover:flex justify-center items-center z-10 border border-greyborder animate-pulse" />
+                  <div className="static bg-gray-200 lg:absolute -top-8 w-24 h-24 rounded-full animate-pulse border border-greyborder" />
                 </div>
               </section>
               <div className="flex lg:h-full items-end">
@@ -70,6 +50,7 @@ const Avatar = () => {
     >
       <Await resolve={data?.profile}>
         {(data) => {
+          console.log("Data: ", data)
           return (
             <Formik
               initialValues={{ avatar: null, ...data }}
@@ -121,7 +102,7 @@ const Avatar = () => {
                                 id="avatar_url"
                                 name="logo"
                                 className="hidden group"
-                                accept="image/jpg, image/png, image/jpeg"
+                                accept="image/*"
                                 onChange={(event) => {
                                   if (event.currentTarget.files?.length > 0) {
                                     getBase64(
@@ -150,12 +131,9 @@ const Avatar = () => {
                           <Button
                             type="submit"
                             className=" w-fit h-fit px-6 py-4 font-bold text-small"
-                            disabled={
-                              values.avatar_url === data.avatar_url ||
-                              isSubmitting
-                            }
+                            disabled={!values.avatar}
                           >
-                            {isSubmitting ? "Updating ..." : "Update"}
+                            Update
                           </Button>
                         </div>
                       </div>
@@ -172,211 +150,129 @@ const Avatar = () => {
 };
 
 const PersonalDetails = () => {
-  const submit = useSubmit();
-  const data = useLoaderData();
-  const navigation = useNavigation();
-
-  const handleSubmit = (values, { resetForm }) => {
-    const formData = new FormData();
-
-    formData.append("email", values.email);
-    formData.append("name", values.name);
-    formData.append("password", values.password);
-
-    submit(formData, {
-      method: "post",
-      encType: "multipart/form-data",
-      action: "/settings/profile/personal-details/update",
-    });
+  const initialValues = {
+    name: "",
+    email: "",
+    password: "",
   };
 
-  const isSubmitting =
-    navigation.formAction === "/settings/profile/personal-details/update" &&
-    navigation.state === "submitting";
+  const handleSubmit = (values) => {
+    console.log("Values: ", values);
+  };
+
 
   return (
-    <Suspense
-      fallback={
-        <div className="pt-4 flex gap-y-2 flex-col animate-pulse">
-          <div className="h-6 w-32 bg-gray-200 rounded"></div>
-
-          <div className="flex flex-col gap-y-4 p-4 bg-grey rounded">
-            <section className="flex flex-col gap-2">
-              <div className="flex flex-col md:flex-row md:flex-wrap justify-between gap-4 md:items-end">
-                <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
-                  <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                    <div className="h-5 w-16 bg-gray-200 rounded"></div>
-                    <div className="h-12 w-full bg-gray-200 rounded"></div>
+    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      {({ touched, errors }) => {
+        return (
+          <div className="pt-4 flex gap-y-2 flex-col">
+            <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
+              Personal Details
+            </h4>
+            <Form className="flex flex-col gap-y-4 p-4 bg-grey rounded">
+              <section className="flex flex-col gap-2">
+                <div className="flex flex-col md:flex-row md:flex-wrap justify-between gap-4 md:items-end">
+                  <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
+                    <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                      <label
+                        htmlFor="name"
+                        className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                      >
+                        Name
+                      </label>
+                      <Field
+                        id="name"
+                        name="name"
+                        type="text"
+                        className={cn(
+                          "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                          {
+                            "border-error focus:border-error":
+                              touched?.name && errors?.name,
+                          }
+                        )}
+                        placeholder="Name"
+                      />
+                      <ErrorMessage name="name">
+                        {(msg) => (
+                          <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                            {msg}
+                          </div>
+                        )}
+                      </ErrorMessage>
+                    </div>
+                    <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                      <label
+                        htmlFor="email"
+                        className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                      >
+                        Email
+                      </label>
+                      <Field
+                        id="email"
+                        name="email"
+                        type="text"
+                        className={cn(
+                          "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                          {
+                            "border-error focus:border-error":
+                              touched?.email && errors?.email,
+                          }
+                        )}
+                        placeholder="Email"
+                      />
+                      <ErrorMessage name="email">
+                        {(msg) => (
+                          <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                            {msg}
+                          </div>
+                        )}
+                      </ErrorMessage>
+                    </div>
+                    <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                      <label
+                        htmlFor="password"
+                        className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                      >
+                        Current Password
+                      </label>
+                      <Field
+                        id="password"
+                        name="password"
+                        type="password"
+                        className={cn(
+                          "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                          {
+                            "border-error focus:border-error":
+                              touched?.email && errors?.email,
+                          }
+                        )}
+                        placeholder="Password"
+                      />
+                      <ErrorMessage name="password">
+                        {(msg) => (
+                          <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                            {msg}
+                          </div>
+                        )}
+                      </ErrorMessage>
+                    </div>
                   </div>
-
-                  <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                    <div className="h-5 w-16 bg-gray-200 rounded"></div>
-                    <div className="h-12 w-full bg-gray-200 rounded"></div>
-                  </div>
-
-                  <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                    <div className="h-5 w-32 bg-gray-200 rounded"></div>
-                    <div className="h-12 w-full bg-gray-200 rounded"></div>
+                  <div className="flex flex-grow justify-end">
+                    <Button
+                      type="submit"
+                      className=" w-fit h-fit px-6 py-4 font-bold text-small"
+                    >
+                      Update
+                    </Button>
                   </div>
                 </div>
-
-                <div className="flex flex-grow justify-end">
-                  <Button
-                    type="submit"
-                    className="w-fit h-fit px-6 py-4 font-bold text-small"
-                    disabled={true}
-                  >
-                    Update
-                  </Button>
-                </div>
-              </div>
-            </section>
+              </section>
+            </Form>
           </div>
-        </div>
-      }
-    >
-      <Await resolve={data?.profile}>
-        {(data) => {
-          return (
-            <Formik
-              initialValues={{ password: "", ...data }}
-              onSubmit={handleSubmit}
-              validationSchema={personalDetailsSchema}
-            >
-              {({ values, touched, errors, resetForm, isValid, dirty }) => {
-                useEffect(() => {
-                  if (
-                    navigation.state === "loading" &&
-                    navigation.json != null &&
-                    navigation.formAction !== navigation.location.pathname
-                  ) {
-                    resetForm({
-                      values: {
-                        email: values.email,
-                        name: values.name,
-                        password: "",
-                      },
-                    });
-                  }
-                }, [navigation.state, navigation.formData]);
-
-                return (
-                  <div className="pt-4 flex gap-y-2 flex-col">
-                    <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
-                      Personal Details
-                    </h4>
-                    <Form className="flex flex-col gap-y-4 p-4 bg-grey rounded">
-                      <section className="flex flex-col gap-2">
-                        <div className="flex flex-col md:flex-row md:flex-wrap justify-between gap-4 md:items-end">
-                          <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
-                            <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                              <label
-                                htmlFor="name"
-                                className="font-satoshi font-medium text-small leading-100 tracking-normal"
-                              >
-                                Name
-                              </label>
-                              <Field
-                                id="name"
-                                name="name"
-                                type="text"
-                                className={cn(
-                                  "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
-                                  {
-                                    "border-error focus:border-error":
-                                      touched?.name && errors?.name,
-                                  }
-                                )}
-                                placeholder="Name"
-                                disabled={isSubmitting}
-                              />
-                              <ErrorMessage name="name">
-                                {(msg) => (
-                                  <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                                    {msg}
-                                  </div>
-                                )}
-                              </ErrorMessage>
-                            </div>
-                            <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                              <label
-                                htmlFor="email"
-                                className="font-satoshi font-medium text-small leading-100 tracking-normal"
-                              >
-                                Email
-                              </label>
-                              <Field
-                                id="email"
-                                name="email"
-                                type="text"
-                                className={cn(
-                                  "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
-                                  {
-                                    "border-error focus:border-error":
-                                      touched?.email && errors?.email,
-                                  }
-                                )}
-                                placeholder="Email"
-                                disabled={isSubmitting}
-                              />
-                              <ErrorMessage name="email">
-                                {(msg) => (
-                                  <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                                    {msg}
-                                  </div>
-                                )}
-                              </ErrorMessage>
-                            </div>
-                            <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                              <label
-                                htmlFor="password"
-                                className="font-satoshi font-medium text-small leading-100 tracking-normal"
-                              >
-                                Current Password
-                              </label>
-                              <Field
-                                id="password"
-                                name="password"
-                                type="password"
-                                className={cn(
-                                  "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
-                                  {
-                                    "border-error focus:border-error":
-                                      touched?.password && errors?.password,
-                                  }
-                                )}
-                                placeholder="Password"
-                                disabled={isSubmitting}
-                              />
-                              <ErrorMessage name="password">
-                                {(msg) => (
-                                  <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                                    {msg}
-                                  </div>
-                                )}
-                              </ErrorMessage>
-                            </div>
-                          </div>
-                          <div className="flex flex-grow justify-end">
-                            <Button
-                              type="submit"
-                              className=" w-fit h-fit px-6 py-4 font-bold text-small"
-                              disabled={!(dirty && isValid) || isSubmitting}
-                            >
-                              {isSubmitting ? "Updating ..." : "Update"}
-                            </Button>
-                          </div>
-                        </div>
-                      </section>
-                    </Form>
-                  </div>
-                );
-              }}
-            </Formik>
-          );
-        }}
-      </Await>
-    </Suspense>
+        );
+      }}
+    </Formik>
   );
 };
 
@@ -540,64 +436,17 @@ const OrganisationDetails = () => {
 
 const Password = () => {
   const initialValues = {
-    new_password: "",
+    password: "",
     confirm_password: "",
-    current_password: "",
   };
-  const formikRef = useRef(null);
-  const fetcher = useFetcher();
 
   const handleSubmit = (values) => {
-    const formData = new FormData();
-    console.log("These are my values", values);
-
-    formData.append("new_password", values.new_password);
-    formData.append("current_password", values.current_password);
-
-    fetcher.submit(formData, {
-      method: "POST",
-      action: "/settings/profile/change-password",
-      replace: true,
-    });
+    console.log("Values: ", values);
   };
 
-  useEffect(() => {
-    let mounted = true;
-
-    if (mounted && fetcher.state === "idle" && fetcher.data?.success) {
-      toast.success(fetcher.data?.message);
-      formikRef.current?.resetForm({
-        values: initialValues,
-        touched: {},
-        errors: {},
-      });
-    }
-
-    if (mounted && fetcher.state === "idle" && fetcher.data?.error) {
-      toast.error(fetcher.data?.error);
-    }
-
-    return () => {
-      mounted = false;
-
-      if (formikRef.current) {
-        formikRef.current.resetForm({
-          values: initialValues,
-          touched: {},
-          errors: {},
-        });
-      }
-    };
-  }, [fetcher.state, fetcher.data]);
-
   return (
-    <Formik
-      initialValues={initialValues}
-      innerRef={formikRef}
-      onSubmit={handleSubmit}
-      validationSchema={passwordSchema}
-    >
-      {({ touched, errors, dirty, isValid }) => {
+    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      {({ touched, errors }) => {
         return (
           <div className="pt-4 flex gap-y-2 flex-col">
             <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
@@ -609,25 +458,25 @@ const Password = () => {
                   <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
                     <div className="md:w-[17.375rem] flex flex-col gap-y-2">
                       <label
-                        htmlFor="new_password"
+                        htmlFor="password"
                         className="font-satoshi font-medium text-small leading-100 tracking-normal"
                       >
                         New Password
                       </label>
                       <Field
-                        id="new_password"
-                        name="new_password"
+                        id="password"
+                        name="password"
                         type="password"
                         className={cn(
                           "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
                           {
                             "border-error focus:border-error":
-                              touched?.new_password && errors?.new_password,
+                              touched?.password && errors?.password,
                           }
                         )}
                         placeholder="Password"
                       />
-                      <ErrorMessage name="new_password">
+                      <ErrorMessage name="password">
                         {(msg) => (
                           <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                             {msg}
@@ -656,7 +505,7 @@ const Password = () => {
                         )}
                         placeholder="Password"
                       />
-                      <ErrorMessage name="confirm_password">
+                      <ErrorMessage name="email">
                         {(msg) => (
                           <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                             {msg}
@@ -679,8 +528,7 @@ const Password = () => {
                           "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
                           {
                             "border-error focus:border-error":
-                              touched?.current_password &&
-                              errors?.current_password,
+                              touched?.email && errors?.email,
                           }
                         )}
                         placeholder="Current Password"
@@ -698,16 +546,8 @@ const Password = () => {
                     <Button
                       type="submit"
                       className="w-fit h-fit px-6 py-4 font-bold text-small"
-                      disabled={
-                        !(dirty && isValid) || fetcher.state === "submitting"
-                      }
-                      onClick={() => {
-                        console.log("error: ", errors);
-                      }}
                     >
-                      {fetcher.state === "submitting"
-                        ? "Updating ..."
-                        : "Update"}
+                      Update
                     </Button>
                   </div>
                 </div>

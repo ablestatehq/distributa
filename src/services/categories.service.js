@@ -26,8 +26,6 @@ class Category extends AppwriteService {
       let ancestors = [];
       let level = 0;
 
-      const currentUser = await this.account.get();
-
       // If parent exists, get its data
       if (parentId) {
         const parent = await this.getCategory(parentId);
@@ -55,9 +53,9 @@ class Category extends AppwriteService {
           description,
         },
         [
-          Permission.read(Role.user(currentUser.$id)),
-          Permission.update(Role.user(currentUser.$id)),
-          Permission.delete(Role.any(currentUser.$id)),
+          Permission.read(Role.any()),
+          Permission.update(Role.any()),
+          Permission.delete(Role.any()),
         ]
       );
 

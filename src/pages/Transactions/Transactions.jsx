@@ -1,12 +1,11 @@
 import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
-import { Book, Edit, Delete } from "../../components/common/icons";
+import { Book } from "../../components/common/icons";
 import { useLoaderData, Await } from "react-router-dom";
 import { CreateTransaction, TransactionDetails } from "../../components/Modals";
 import { useState, Suspense } from "react";
 import { groupBy, map, sumBy } from "lodash";
 import { format, parse } from "date-fns";
-import TransactionRow from "../../features/transactions/components/table/TransactionRow";
 
 const Transactions = () => {
   const data = useLoaderData();
@@ -185,12 +184,40 @@ const Transactions = () => {
                               </header>
                               <table className="w-full">
                                 <tbody>
-                                  {transactions.map((transaction) => (
-                                    <TransactionRow
-                                      transaction={transaction}
-                                      key={transaction.$id}
-                                    />
-                                  ))}
+                                  {transactions.map((transaction) => {
+                                    const prefix =
+                                      transaction?.type === "income"
+                                        ? "+"
+                                        : "-";
+
+                                    return (
+                                      <tr
+                                        key={transaction.$id}
+                                        className="border-b border-b-greyborder"
+                                      >
+                                        <td className="w-full pr-6 pt-4 pb-2 font-satoshi font-normal text-tiny leading-120 tracking-normal">
+                                          {transaction.item}
+                                        </td>
+                                        <td className="pr-6 pt-4 pb-2 font-satoshi font-normal text-tiny leading-120 tracking-normal">
+                                          {prefix}
+                                          {transaction.amount}
+                                        </td>
+                                        <td className="pt-4 pb-2 font-satoshi font-normal text-tiny leading-100 tracking-normal">
+                                          <button
+                                            className="underline min-w-[58px]"
+                                            onClick={() => {
+                                              setTransactionDetails(
+                                                transaction
+                                              );
+                                              toggleTransactionDetailsModal();
+                                            }}
+                                          >
+                                            See Details
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
                                 </tbody>
                               </table>
                             </li>

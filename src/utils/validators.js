@@ -92,8 +92,7 @@ export const newInvoiceSchema = Yup.object({
 });
 
 export const createTransactionSchema = Yup.object({
-  $id: Yup.string().nullable(),
-  flow_type: Yup.string().required("Flow type is required"),
+  type: Yup.string().required("Type is required"),
   item: Yup.string().required("Title is required"),
   date: Yup.date().required("Date is required").nullable(),
   amount: Yup.number()
@@ -103,78 +102,15 @@ export const createTransactionSchema = Yup.object({
   description: Yup.string(),
   payer_payee: Yup.string().required("Payer/Payee is required"),
   invoice_receipt_no: Yup.string(),
+  // .required(
+  //   "Invoice/Receipt number is required"
+  // )
   payment_method: Yup.string().required("Payment method is required"),
   category: Yup.string().required("Category is required"),
-  payment_terms: Yup.string()
-    .required("Payment terms is required")
-    .oneOf(["immediate", "deferred"]),
-  transaction_status: Yup.string()
-    .required("Status is required")
-    .test(
-      "valid-status-transition",
-      "Invalid status transition",
-      function (newStatus) {
-        const { payment_terms, transaction_status } = this.parent;
-
-        if (!transaction_status) return true;
-
-        const statusTransitions = {
-          immediate: {
-            pending: ["cleared", "bounced", "failed", "void"],
-            cleared: ["void"],
-            bounced: ["pending", "void"],
-            failed: ["pending", "void"],
-            void: [],
-          },
-          deferred: {
-            scheduled: ["pending", "void"],
-            pending: ["cleared", "bounced", "failed", "void"],
-            cleared: ["void"],
-            bounced: ["pending", "void"],
-            failed: ["pending", "void"],
-            void: [],
-          },
-        };
-
-        const validTransitions =
-          statusTransitions[payment_terms][transaction_status];
-        const isValidTransition = validTransitions.includes(newStatus);
-        if (
-          !isValidTransition &&
-          this.parent.$id &&
-          newStatus !== transaction_status
-        ) {
-          return this.createError({
-            path: "transaction_status",
-            message: `Cannot transition from ${transaction_status} to ${newStatus}.`,
-          });
-        }
-
-        return true;
-      }
-    ),
 });
 
 export const createCategorySchema = Yup.object({
   name: Yup.string().required("Name is required"),
   description: Yup.string().nullable(),
   type: Yup.string().required("Type is required"),
-});
-
-export const passwordSchema = Yup.object().shape({
-  current_password: Yup.string().required("Current password is required"),
-  new_password: Yup.string()
-    .required("New password is required")
-    .min(8, "Password must be at least 8 characters"),
-  confirm_password: Yup.string()
-    .required("Confirm password is required")
-    .oneOf([Yup.ref("new_password"), null], "Passwords must match"),
-});
-
-export const personalDetailsSchema = Yup.object().shape({
-  name: Yup.string().nullable(),
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string()
-    .required("Password is required")
-    .min(8, "Password must be at least 8 characters"),
 });
