@@ -58,13 +58,13 @@ const CreateCategory = ({ handleClose }) => {
         >
           {({ values, touched, errors, setFieldValue }) => (
             <Form>
-              <div className="w-full flex p-4 lg:px-16 gap-x-4">
+              <div className="grid grid-cols-3 p-4 lg:px-16 gap-x-4">
                 <button
                   type="button"
                   kind="secondary"
-                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold w-1/2 transition-all duration-75 ${cn(
+                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold transition-all duration-75 ${cn(
                     {
-                      "border-transparent": values.type === "income",
+                      "border-transparent": values.type !== "expense",
                       "border-black": values.type === "expense",
                     }
                   )}`}
@@ -76,9 +76,9 @@ const CreateCategory = ({ handleClose }) => {
                 <button
                   type="button"
                   kind="secondary"
-                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold w-1/2 transition-all duration-75 ${cn(
+                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold transition-all duration-75 ${cn(
                     {
-                      "border-transparent": values.type === "expense",
+                      "border-transparent": values.type !== "income",
                       "border-black": values.type === "income",
                     }
                   )}`}
@@ -86,6 +86,20 @@ const CreateCategory = ({ handleClose }) => {
                   disabled={navigation.state === "submitting"}
                 >
                   Income
+                </button>
+                <button
+                  type="button"
+                  kind="secondary"
+                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey px-6 py-3 text-small font-bold transition-all duration-75 ${cn(
+                    {
+                      "border-transparent": values.type !== "both",
+                      "border-black": values.type === "both",
+                    }
+                  )}`}
+                  onClick={() => setFieldValue("type", "both")}
+                  disabled={navigation.state === "submitting"}
+                >
+                  Both
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-4 py-8 px-4 lg:px-16">
