@@ -15,10 +15,11 @@ import {
   CategorySettings,
   BillingSettings,
   ProfileSettings,
+  PartiesSettings,
 } from "../pages";
 import { SettingsLayout } from "../Layouts/components";
 import InvoicePreview from "../components/Modals/InvoicePreview";
-import { Permission, Role, ID } from "appwrite";
+import { Permission, Role, ID, Query } from "appwrite";
 
 const appwrite = new Appwrite();
 
@@ -296,6 +297,81 @@ export const protectedRoutes = [
           {
             path: "billing",
             element: <BillingSettings />,
+          },
+          {
+            path: "parties",
+            element: <PartiesSettings />,
+            loader: async () => {
+              const { $id: userId } = await appwrite.account.get();
+              const partiesPromise = appwrite.database.listDocuments(
+                appwrite.getVariables().DATABASE_ID,
+                appwrite.getVariables().PARTIES_COLLECTION_ID,
+                [
+                  Query.orderDesc("$createdAt"),
+                  Query.equal("created_by", userId),
+                ]
+              );
+
+              return defer({ parties: partiesPromise });
+            },
+            children: [
+              {
+                path: "new",
+                action: async ({ request }) => {
+                  try {
+                    const data = await request.json();
+                    const { $id: userId } = await appwrite.account.get();
+                    const party = await appwrite.database.createDocument(
+                      appwrite.getVariables().DATABASE_ID,
+                      appwrite.getVariables().PARTIES_COLLECTION_ID,
+                      ID.unique(),
+                      { ...data, created_by: userId },
+                      [
+                        Permission.read(Role.any()),
+                        Permission.update(Role.user(userId)),
+                        Permission.delete(Role.user(userId)),
+                      ]
+                    );
+
+                    return json({ success: true, data: party });
+                  } catch (error) {
+                    return json({ success: false, error: error.message }, { status: 400 });
+                  }
+                },
+              },
+              {
+                path: ":id/edit",
+                action: async ({ request, params }) => {
+                  try {
+                    const data = await request.json();
+                    await appwrite.database.updateDocument(
+                      appwrite.getVariables().DATABASE_ID,
+                      appwrite.getVariables().PARTIES_COLLECTION_ID,
+                      params.id,
+                      data
+                    );
+                    return redirect("/settings/parties");
+                  } catch (error) {
+                    throw error;
+                  }
+                },
+              },
+              {
+                path: ":id/delete",
+                action: async ({ params }) => {
+                  try {
+                    await appwrite.database.deleteDocument(
+                      appwrite.getVariables().DATABASE_ID,
+                      appwrite.getVariables().PARTIES_COLLECTION_ID,
+                      params.id
+                    );
+                    return redirect("/settings/parties");
+                  } catch (error) {
+                    throw error;
+                  }
+                },
+              },
+            ],
           },
           {
             loader: async () => {
