@@ -40,17 +40,23 @@ const EditTransaction = ({ transaction, handleClose }) => {
     const calculateStatementChanges = (
       statement,
       transaction,
-      isRemoving = false
+      isRemoving = false,
+      changes = null
     ) => {
       const {
         income,
         expense,
         number_of_transactions,
         average_transaction_amount,
+        budget_utilised,
       } = statement;
 
       let newIncome = income;
       let newExpense = expense;
+      let newBugetUtilised =
+        changes?.flow_type === "expense"
+          ? budget_utilised - transaction.amount
+          : budget_utilised ?? 0;
 
       if (isRemoving) {
         if (transaction.flow_type === "income") {
@@ -71,6 +77,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
           expense: newExpense,
           number_of_transactions: number_of_transactions - 1,
           average_transaction_amount: newAverage,
+          budget_utilised: newBugetUtilised,
         };
       }
 
@@ -94,6 +101,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
               : transaction.amount)) /
           number_of_transactions,
         number_of_transactions: number_of_transactions,
+        budget_utilised: newBugetUtilised,
       };
     };
 
@@ -123,7 +131,8 @@ const EditTransaction = ({ transaction, handleClose }) => {
             const prevMonthChanges = calculateStatementChanges(
               prevStatement,
               transaction,
-              true
+              true,
+              changes
             );
 
             const {
@@ -161,7 +170,8 @@ const EditTransaction = ({ transaction, handleClose }) => {
             const newMonthChanges = calculateStatementChanges(
               newStatement,
               transaction,
-              false
+              false,
+              changes
             );
 
             await appwrite.database.updateDocument(

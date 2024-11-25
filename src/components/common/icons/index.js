@@ -15,6 +15,8 @@ import PlusSquare from "./PlusSquare";
 import Edit from "./Edit";
 import Delete from "./Delete";
 import Category from "./Category";
+import Warning from "./Warning";
+import Download from "./Download";
 
 export {
   Facebook,
@@ -34,4 +36,6 @@ export {
   Edit,
   Delete,
   Category,
+  Warning,
+  Download,
 };

@@ -5,6 +5,7 @@ import TransactionDetails from "./TransactionDetails";
 import EditCategory from "./EditCategory";
 import CreateCategory from "./CreateCategory";
 import DeleteCategoryModal from "./DeleteCategoryModal";
+import CreateParty from "./CreateParty";
 
 export {
   EditInvoiceStatus,
@@ -14,4 +15,5 @@ export {
   EditCategory,
   CreateCategory,
   DeleteCategoryModal,
+  CreateParty,
 };

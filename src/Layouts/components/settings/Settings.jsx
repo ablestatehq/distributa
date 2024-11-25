@@ -39,6 +39,20 @@ const Settings = () => {
           >
             Categories
           </NavLink>
+          <NavLink
+            to="/settings/parties"
+            className={({ isActive }) =>
+              cn(
+                "px-0.5 pb-1 pt-3 font-satoshi font-normal leading-100 tracking-normal ease-in-out delay-75 transition-all",
+                {
+                  "border-b border-b-black": isActive,
+                  "border-b border-b-transparent": !isActive,
+                }
+              )
+            }
+          >
+            Parties
+          </NavLink>
         </nav>
       </header>
       <main className="flex-1">

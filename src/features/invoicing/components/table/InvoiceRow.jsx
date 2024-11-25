@@ -1,7 +1,9 @@
 import React, { useState, Fragment, useEffect } from "react";
 import { useNavigate, useFetcher } from "react-router-dom";
-import { Edit } from "../../../../components/common/icons";
+import { Delete, Download, Edit } from "../../../../components/common/icons";
 import { EditInvoiceStatus } from "../../../../components/Modals";
+import Document from "../document/Document";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 const InvoiceRow = React.memo(({ invoiceData, index }) => {
   const navigate = useNavigate();
@@ -60,13 +62,13 @@ const InvoiceRow = React.memo(({ invoiceData, index }) => {
         <td className="w-auto font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start flex gap-x-2">
           <button
             type="button"
-            className="font-satoshi font-normal underline text-error leading-100 tracking-normal capitalize text-tiny outline-none"
+            className="group font-satoshi font-normal underline text-error leading-100 tracking-normal capitalize text-tiny outline-none"
             onClick={async (event) => {
               event.stopPropagation();
               console.log("Let's invoke the deleting action here");
             }}
           >
-            Delete
+            <Delete />
           </button>
           <button
             type="button"
@@ -77,7 +79,19 @@ const InvoiceRow = React.memo(({ invoiceData, index }) => {
             }}
             disabled={invoice?.status === "paid"}
           >
-            Edit
+            <Edit />
+          </button>
+          <button
+            type="button"
+            className="outline-none group"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <PDFDownloadLink
+              document={<Document data={invoice} />}
+              fileName={`#${invoice?.invoice_no}.pdf` || "#invoice.pdf"}
+            >
+              <Download />
+            </PDFDownloadLink>
           </button>
         </td>
       </tr>
