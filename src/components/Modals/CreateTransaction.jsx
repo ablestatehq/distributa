@@ -8,28 +8,74 @@ import {
   BalancesService,
   CategoryService,
 } from "../../services";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useFetcher } from "react-router-dom";
 import { createTransactionSchema } from "../../utils/validators";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+
+const initialValues = {
+  $id: null,
+  flow_type: "expense",
+  date: "",
+  item: "",
+  amount: "",
+  description: "",
+  payer_payee: "",
+  invoice_receipt_no: "",
+  payment_method: "",
+  category: "",
+  payment_terms: "immediate",
+  transaction_status: "",
+};
 
 const CreateTransaction = ({ handleClose }) => {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState({ income: [], expense: [] });
 
-  const initialValues = {
-    $id: null,
-    flow_type: "expense",
-    date: "",
-    item: "",
-    amount: "",
-    description: "",
-    payer_payee: "",
-    invoice_receipt_no: "",
-    payment_method: "",
-    category: "",
-    payment_terms: "immediate",
-    transaction_status: "",
-  };
+  const categoriesFetcher = useFetcher();
+  const partiesFetcher = useFetcher();
+
+  const [categories, setCategories] = useState(null);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [groupedCategories, setGroupedCategories] = useState({});
+
+  const [parties, setParties] = useState(null);
+  const [loadingParties, setLoadingParties] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setLoadingCategories(true);
+      setLoadingParties(true);
+
+      categoriesFetcher.load("/settings/categories");
+      partiesFetcher.load("/settings/parties");
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      categoriesFetcher.state === "idle" &&
+      categoriesFetcher.data?.categoryList
+    ) {
+      setCategories(() => categoriesFetcher.data.categoryList);
+      setGroupedCategories(() =>
+        groupCategoryByType(categoriesFetcher.data.categoryList.documents)
+      );
+      setLoadingCategories(false);
+    }
+  }, [categoriesFetcher.state, categoriesFetcher.data?.categoryList]);
+
+  useEffect(() => {
+    if (partiesFetcher.state === "idle" && partiesFetcher.data?.parties) {
+      setParties(() => partiesFetcher.data.parties);
+      setLoadingParties(false);
+    }
+  }, [partiesFetcher.state, partiesFetcher.data?.parties]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const groupCategoryByType = (categories) => {
     const groupedCategories = categories.reduce((acc, category) => {
@@ -64,16 +110,6 @@ const CreateTransaction = ({ handleClose }) => {
       handleClose();
     }
   };
-
-  const fetchCategories = async () => {
-    const categories = await CategoryService.getCategoryTree();
-    const groupCategories = groupCategoryByType(categories);
-    setCategories(() => groupCategories);
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
@@ -351,7 +387,7 @@ const CreateTransaction = ({ handleClose }) => {
                   >
                     Payer/Payee
                   </label>
-                  <Field
+                  {/* <Field
                     id="payer_payee"
                     name="payer_payee"
                     type="text"
@@ -364,7 +400,76 @@ const CreateTransaction = ({ handleClose }) => {
                       }
                     )}
                     disabled={isSubmitting}
-                  />
+                  /> */}
+
+                  {loadingParties ? (
+                    <div className="relative w-full">
+                      <Field
+                        id="payer_payee"
+                        name="payer_payee"
+                        className={cn(
+                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
+                          {
+                            "border-error focus:border-error":
+                              touched?.payer_payee && errors?.payer_payee,
+                          }
+                        )}
+                        as="select"
+                        disabled
+                      >
+                        <option value="">Loading Parties</option>
+                      </Field>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg
+                          className="fill-greyborder h-4 w-4 "
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                      </div>
+                    </div>
+                  ) : parties && parties?.total > 0 ? (
+                    <div className="relative w-full">
+                      <Field
+                        id="payer_payee"
+                        name="payer_payee"
+                        className={cn(
+                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
+                          {
+                            "border-error focus:border-error":
+                              touched?.payer_payee && errors?.payer_payee,
+                          }
+                        )}
+                        as="select"
+                        disabled={isSubmitting}
+                      >
+                        <option value="">Select one</option>
+                        {parties.documents.map((party) => (
+                          <option key={party.$id} value={party.$id}>
+                            {party.name}
+                          </option>
+                        ))}
+                      </Field>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg
+                          className="fill-greyborder h-4 w-4 "
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      type="button"
+                      onClick={() => navigate("/settings/parties")}
+                    >
+                      {" "}
+                      Create Party{" "}
+                    </Button>
+                  )}
                   <ErrorMessage name="payer_payee">
                     {(msg) => (
                       <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
@@ -462,51 +567,90 @@ const CreateTransaction = ({ handleClose }) => {
                   >
                     Category
                   </label>
-                  <div className="relative w-full">
-                    <Field
-                      id="category"
-                      name="category"
-                      className={cn(
-                        "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                        {
-                          "border-error focus:border-error":
-                            touched?.category && errors?.category,
-                        }
-                      )}
-                      as="select"
-                      disabled={isSubmitting}
-                    >
-                      <option value="">Select one</option>
-                      {values.flow_type === "income" && categories?.income
-                        ? categories.income.map((category) => (
-                            <option key={category.$id} value={category.$id}>
-                              {category.name}
-                            </option>
-                          ))
-                        : values.flow_type === "expense" && categories?.expense
-                        ? categories.expense.map((category) => (
-                            <option key={category.$id} value={category.$id}>
-                              {category.name}
-                            </option>
-                          ))
-                        : null}
-                      {categories?.both &&
-                        categories.both.map((category) => (
-                          <option key={category.$id} value={category.$id}>
-                            {category.name}
-                          </option>
-                        ))}
-                    </Field>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg
-                        className="fill-greyborder h-4 w-4 "
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
+
+                  {loadingCategories ? (
+                    <div className="relative w-full">
+                      <Field
+                        id="category"
+                        name="category"
+                        className={cn(
+                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
+                          {
+                            "border-error focus:border-error":
+                              touched?.category && errors?.category,
+                          }
+                        )}
+                        as="select"
+                        disabled
                       >
-                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                      </svg>
+                        <option value="">Loading Categories</option>
+                      </Field>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg
+                          className="fill-greyborder h-4 w-4 "
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                      </div>
                     </div>
-                  </div>
+                  ) : categories && categories.total == 0 ? (
+                    <Button
+                      type="button"
+                      onClick={() => navigate("/settings/categories")}
+                    >
+                      Create Category
+                    </Button>
+                  ) : (
+                    <div className="relative w-full">
+                      <Field
+                        id="category"
+                        name="category"
+                        className={cn(
+                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
+                          {
+                            "border-error focus:border-error":
+                              touched?.category && errors?.category,
+                          }
+                        )}
+                        as="select"
+                        disabled={isSubmitting}
+                      >
+                        <option value="">Select one</option>
+                        {values.flow_type === "income" &&
+                        groupedCategories?.income
+                          ? groupedCategories.income.map((category) => (
+                              <option key={category.$id} value={category.$id}>
+                                {category.name}
+                              </option>
+                            ))
+                          : values.flow_type === "expense" &&
+                            groupedCategories?.expense
+                          ? groupedCategories.expense.map((category) => (
+                              <option key={category.$id} value={category.$id}>
+                                {category.name}
+                              </option>
+                            ))
+                          : null}
+                        {groupedCategories?.both &&
+                          groupedCategories.both.map((category) => (
+                            <option key={category.$id} value={category.$id}>
+                              {category.name}
+                            </option>
+                          ))}
+                      </Field>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <svg
+                          className="fill-greyborder h-4 w-4 "
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
                   <ErrorMessage name="category">
                     {(msg) => (
                       <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
@@ -519,7 +663,15 @@ const CreateTransaction = ({ handleClose }) => {
                 <Button
                   type="submit"
                   className="font-bold text-small col-span-2"
-                  disabled={isSubmitting}
+                  disabled={
+                    isSubmitting ||
+                    loadingCategories ||
+                    loadingParties ||
+                    (!loadingCategories &&
+                      categories &&
+                      categories?.total === 0) ||
+                    (!loadingParties && parties && parties?.total === 0)
+                  }
                 >
                   {isSubmitting ? "Adding Transaction ..." : "Add"}
                 </Button>
