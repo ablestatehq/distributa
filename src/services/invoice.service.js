@@ -211,10 +211,11 @@ class Invoice extends AppwriteService {
           flow_type: "income",
           date: payment_date,
           item: invoice.title,
-          amount: invoice.balance_due,
+          amount: invoice.amount_due,
           payer_payee: invoice.billed_to.name,
           invoice_receipt_no: invoice.invoice_no,
           source_ref: invoice.$id,
+          transaction_status: "cleared",
         }
       );
 
