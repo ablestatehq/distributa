@@ -4,44 +4,55 @@ import cn from "../../utils/cn";
 import { createPortal } from "react-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { useFetcher } from "react-router-dom";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import { createPartySchema } from "../../utils/validators";
 
-const CreateParty = ({ handleClose }) => {
+const EditParty = ({ handleClose, party }) => {
   const fetcher = useFetcher();
 
-  const initialValues = {
-    name: "",
-    email: "",
-    phone: "",
-    type: "individual",
-    address: "",
-    preferred_currency: "",
-  };
+  const getChanges = useCallback((formValues, party) => {
+    if (!formValues || !party) return null;
 
-  const handleSubmit = async (values) => {
-    try {
-      fetcher.submit(JSON.stringify(values), {
-        method: "post",
-        action: "/settings/parties/new",
-        encType: "application/json",
-      });
-    } catch (error) {
-      throw error;
-    }
-  };
+    const changes = Object.entries(formValues).reduce((acc, [key, value]) => {
+      if (key !== "$permissions" && value !== party[key]) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+
+    return Object.keys(changes).length > 0 ? changes : null;
+  }, []);
+
+  const handleSubmit = useCallback(
+    async (values) => {
+      try {
+        const changes = getChanges(values, party);
+
+        if (changes) {
+          fetcher.submit(JSON.stringify(changes), {
+            method: "post",
+            action: `/settings/parties/${party.$id}/edit`,
+            encType: "application/json",
+          });
+        }
+      } catch (error) {
+        throw error;
+      }
+    },
+    [fetcher, party, getChanges]
+  );
 
   useEffect(() => {
     if (fetcher?.state === "idle" && fetcher?.data) {
       if (fetcher.data?.success) {
-        toast.success("Party created successfully");
+        toast.success("Party updated successfully"); 
         handleClose();
-      } else if (fetcher.data.success === false) {
+      } else if (fetcher.data?.success === false) {
         toast.error(fetcher.data.message || "An error occurred");
       }
     }
-  }, [fetcher.state, fetcher.data, fetcher.formAction, fetcher.formData]);
+  }, [fetcher.state, fetcher.data, handleClose]);
 
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
@@ -55,7 +66,7 @@ const CreateParty = ({ handleClose }) => {
           </button>
         </header>
         <Formik
-          initialValues={initialValues}
+          initialValues={party}
           onSubmit={handleSubmit}
           validationSchema={createPartySchema}
         >
@@ -275,12 +286,14 @@ const CreateParty = ({ handleClose }) => {
                   type="submit"
                   className="font-bold text-small col-span-2"
                   disabled={
-                    fetcher.state === "submitting" || !(dirty && isValid)
+                    fetcher.state === "submitting" ||
+                    !(dirty && isValid) ||
+                    !getChanges(values, party)
                   }
                 >
                   {fetcher.state === "submitting"
-                    ? "Creating Party ..."
-                    : "Create"}
+                    ? "Updating Party ..."
+                    : "Update"}
                 </Button>
               </div>
             </Form>
@@ -292,4 +305,4 @@ const CreateParty = ({ handleClose }) => {
   );
 };
 
-export default CreateParty;
+export default EditParty;

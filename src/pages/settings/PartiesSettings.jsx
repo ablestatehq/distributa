@@ -6,6 +6,7 @@ import { useLoaderData, Await } from "react-router-dom";
 import { UserPlus } from "../../components/common/icons";
 import { DATABASE_ID, PARTIES_COLLECTION_ID } from "../../data/constants";
 import { appwrite } from "../../lib/appwrite";
+import PartyRow from "../../features/parties/components/table/PartyRow";
 
 const PartiesSettings = () => {
   const [createParty, setCreateParty] = useState(false);
@@ -22,7 +23,7 @@ const PartiesSettings = () => {
         <div className="p-4 rounded-lg border border-accent-200 bg-accent-50 align-middle">
           <Warning className="float-left mr-1" />
           <p className="font-satoshi text-tiny leading-150 tracking-normal text-accent-800">
-            Parties represent organizations and individuals involved in your
+            Parties represent individuals, companies and organizations involved in your
             transactions as payers or payees. They will appear in invoices,
             receipts, and transaction records. All parties must have valid
             contact information.
@@ -38,13 +39,7 @@ const PartiesSettings = () => {
           Create Party
         </Button>
       </div>
-      <Suspense
-        fallback={
-          <div className="flex h-full flex-col gap-y-4 border border-red-500">
-            Loading
-          </div>
-        }
-      >
+      <Suspense fallback={<PartiesListSkeleton />}>
         <Await resolve={data?.parties}>
           {(data) => (
             <PartyContent
@@ -113,11 +108,80 @@ function PartyContent({ total, documents, toggleCreateParty }) {
   }, []);
 
   return total > 0 ? (
-    <div>Map the Parties</div>
+    <PartiesList data={documents} />
   ) : (
     <PartiesEmptyState createParty={toggleCreateParty} />
   );
 }
+
+const PartiesList = ({ data }) => {
+  return (
+    <div className="h-full w-full overflow-x-auto">
+      <table className="min-w-full table-fixed">
+        <thead>
+          <tr className="border-b border-b-greyborder">
+            <th className="w-auto min-w-[5.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+              Name
+            </th>
+            <th className="w-auto min-w-[5.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+              Address
+            </th>
+            <th className="w-auto font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data?.map((party, index) => (
+            <PartyRow key={party?.$id} partyData={party} index={index} />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const PartiesListSkeleton = () => {
+  const loadingRows = Array(5).fill(null);
+
+  return (
+    <div className="h-full w-full overflow-x-auto">
+      <table className="min-w-full table-fixed">
+        <thead>
+          <tr className="border-b border-b-greyborder">
+            <th className="w-auto min-w-[5.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+              Name
+            </th>
+            <th className="w-auto min-w-[5.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+              Address
+            </th>
+            <th className="w-auto font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {loadingRows.map((_, index) => (
+            <tr key={index} className="animate-pulse">
+              <td className="px-2 lg:px-4 py-4">
+                <div className="h-4 bg-grey rounded animate-pulse w-32"></div>
+              </td>
+              <td className="px-2 lg:px-4 py-4">
+                <div className="h-4 bg-grey rounded animate-pulse w-48"></div>
+              </td>
+              <td className="px-2 lg:px-4 py-4">
+                <div className="flex gap-2">
+                  <div className="h-4 w-4 bg-grey rounded-sm animate-pulse"></div>
+                  <div className="h-4 w-4 bg-grey rounded-sm animate-pulse"></div>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 function PartiesEmptyState({ createParty }) {
   return (

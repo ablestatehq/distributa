@@ -335,24 +335,31 @@ export const protectedRoutes = [
 
                     return json({ success: true, data: party });
                   } catch (error) {
-                    return json({ success: false, error: error.message }, { status: 400 });
+                    return json(
+                      { success: false, error: error.message },
+                      { status: 400 }
+                    );
                   }
                 },
               },
               {
                 path: ":id/edit",
                 action: async ({ request, params }) => {
+                  console.log("Reached here: ", params)
                   try {
                     const data = await request.json();
-                    await appwrite.database.updateDocument(
+                    const party = await appwrite.database.updateDocument(
                       appwrite.getVariables().DATABASE_ID,
                       appwrite.getVariables().PARTIES_COLLECTION_ID,
                       params.id,
                       data
                     );
-                    return redirect("/settings/parties");
+                    return json({ success: true, data: party });
                   } catch (error) {
-                    throw error;
+                    return json(
+                      { success: false, error: error.message },
+                      { status: 400 }
+                    );
                   }
                 },
               },
