@@ -345,7 +345,7 @@ export const protectedRoutes = [
               {
                 path: ":id/edit",
                 action: async ({ request, params }) => {
-                  console.log("Reached here: ", params)
+                  console.log("Reached here: ", params);
                   try {
                     const data = await request.json();
                     const party = await appwrite.database.updateDocument(
@@ -383,7 +383,12 @@ export const protectedRoutes = [
           {
             loader: async () => {
               const categoriesPromise = CategoryService.getCategoryTree();
-              return defer({ categories: categoriesPromise });
+              const categoryListPromise = CategoryService.listCategories();
+
+              return defer({
+                categories: categoriesPromise,
+                categoryList: categoryListPromise,
+              });
             },
             path: "categories",
             element: <CategorySettings />,
