@@ -23,10 +23,10 @@ const PartiesSettings = () => {
         <div className="p-4 rounded-lg border border-accent-200 bg-accent-50 align-middle">
           <Warning className="float-left mr-1" />
           <p className="font-satoshi text-tiny leading-150 tracking-normal text-accent-800">
-            Parties represent individuals, companies and organizations involved in your
-            transactions as payers or payees. They will appear in invoices,
-            receipts, and transaction records. All parties must have valid
-            contact information.
+            Parties represent individuals, companies and organizations involved
+            in your transactions as payers or payees. They will appear in
+            invoices, receipts, and transaction records. All parties must have
+            valid contact information.
           </p>
         </div>
       </header>
