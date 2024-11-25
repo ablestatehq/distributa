@@ -178,3 +178,23 @@ export const personalDetailsSchema = Yup.object().shape({
     .required("Password is required")
     .min(8, "Password must be at least 8 characters"),
 });
+
+export const createPartySchema = Yup.object({
+  $id: Yup.string().nullable(),
+  name: Yup.string().required("Name is required"),
+  email: Yup.string().email("Invalid email"),
+  phone: Yup.string()
+    .nullable()
+    .matches(
+      /^\+[1-9]\d{1,14}$/,
+      "Please enter a valid international phone number starting with + and country code (e.g. +12345678901)"
+    ),
+  type: Yup.string()
+    .required("Type is required")
+    .oneOf(
+      ["individual", "company", "organisation"],
+      "Type must be either individual, company or organisation"
+    ),
+  address: Yup.string().required("Address is required"),
+  preferred_currency: Yup.string().nullable(),
+});
