@@ -23,10 +23,10 @@ const PartiesSettings = () => {
         <div className="p-4 rounded-lg border border-accent-200 bg-accent-50 align-middle">
           <Warning className="float-left mr-1" />
           <p className="font-satoshi text-tiny leading-150 tracking-normal text-accent-800">
-            Parties represent individuals, companies and organizations involved
-            in your transactions as payers or payees. They will appear in
-            invoices, receipts, and transaction records. All parties must have
-            valid contact information.
+            Parties represent individuals or groups involved in your
+            transactions as payers or payees. They will appear in invoices,
+            receipts, and transaction records. All parties must have valid
+            contact information.
           </p>
         </div>
       </header>
@@ -148,15 +148,15 @@ const PartiesListSkeleton = () => {
     <div className="h-full w-full overflow-x-auto">
       <table className="min-w-full table-fixed">
         <thead>
-          <tr className="border-b border-b-greyborder">
+          <tr className="border-b border-b-grey">
             <th className="w-auto min-w-[5.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
-              Name
+              <div className="h-4 bg-grey rounded w-20"></div>
             </th>
             <th className="w-auto min-w-[5.2rem] font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
-              Address
+              <div className="h-4 bg-grey rounded w-20"></div>
             </th>
             <th className="w-auto font-satoshi font-normal text-tiny lg:text-small leading-100 tracking-normal px-2 lg:px-4 pb-2 text-start">
-              Actions
+              <div className="h-4 bg-grey rounded w-20"></div>
             </th>
           </tr>
         </thead>

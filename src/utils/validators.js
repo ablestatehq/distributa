@@ -100,11 +100,12 @@ export const createTransactionSchema = Yup.object({
     .typeError("Amount must be a valid number")
     .min(0, "Amount must be a positive number")
     .required("Amount is required"),
-  description: Yup.string(),
+  description: Yup.string().nullable(),
   payer_payee: Yup.string().required("Payer/Payee is required"),
   invoice_receipt_no: Yup.string(),
-  payment_method: Yup.string().required("Payment method is required"),
-  category: Yup.string().required("Category is required"),
+  payment_method: Yup.string().nullable(),
+  // .required("Payment method is required"),
+  category: Yup.string().nullable(),
   payment_terms: Yup.string()
     .required("Payment terms is required")
     .oneOf(["immediate", "deferred"]),
@@ -192,7 +193,7 @@ export const createPartySchema = Yup.object({
   type: Yup.string()
     .required("Type is required")
     .oneOf(
-      ["individual", "company", "organisation"],
+      ["individual", "group"],
       "Type must be either individual, company or organisation"
     ),
   address: Yup.string().required("Address is required"),

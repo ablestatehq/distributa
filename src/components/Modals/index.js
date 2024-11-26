@@ -6,7 +6,7 @@ import EditCategory from "./EditCategory";
 import CreateCategory from "./CreateCategory";
 import DeleteCategoryModal from "./DeleteCategoryModal";
 import CreateParty from "./CreateParty";
-import PartyDetails from "./PartyDetals";
+import PartyDetails from "./PartyDetails";
 import EditParty from "./EditParty";
 
 export {

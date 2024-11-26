@@ -36,191 +36,193 @@ const EditTransaction = ({ transaction, handleClose }) => {
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    const calculateStatementChanges = (
-      statement,
-      transaction,
-      isRemoving = false,
-      changes = null
-    ) => {
-      const {
-        income,
-        expense,
-        number_of_transactions,
-        average_transaction_amount,
-        budget_utilised,
-      } = statement;
+    const changes = getChanges(values, transaction);
+    console.log("Changes: ", changes);
+    // const calculateStatementChanges = (
+    //   statement,
+    //   transaction,
+    //   isRemoving = false,
+    //   changes = null
+    // ) => {
+    //   const {
+    //     income,
+    //     expense,
+    //     number_of_transactions,
+    //     average_transaction_amount,
+    //     budget_utilised,
+    //   } = statement;
 
-      let newIncome = income;
-      let newExpense = expense;
-      let newBugetUtilised =
-        changes?.flow_type === "expense"
-          ? budget_utilised - transaction.amount
-          : budget_utilised ?? 0;
+    //   let newIncome = income;
+    //   let newExpense = expense;
+    //   let newBugetUtilised =
+    //     changes?.flow_type === "expense"
+    //       ? budget_utilised - transaction.amount
+    //       : budget_utilised ?? 0;
 
-      if (isRemoving) {
-        if (transaction.flow_type === "income") {
-          newIncome -= transaction.amount;
-        } else if (transaction.flow_type === "expense") {
-          newExpense -= transaction.amount;
-        }
+    //   if (isRemoving) {
+    //     if (transaction.flow_type === "income") {
+    //       newIncome -= transaction.amount;
+    //     } else if (transaction.flow_type === "expense") {
+    //       newExpense -= transaction.amount;
+    //     }
 
-        const newAverage =
-          number_of_transactions > 1
-            ? (average_transaction_amount * number_of_transactions -
-                transaction.amount) /
-              (number_of_transactions - 1)
-            : 0;
+    //     const newAverage =
+    //       number_of_transactions > 1
+    //         ? (average_transaction_amount * number_of_transactions -
+    //             transaction.amount) /
+    //           (number_of_transactions - 1)
+    //         : 0;
 
-        return {
-          income: newIncome,
-          expense: newExpense,
-          number_of_transactions: number_of_transactions - 1,
-          average_transaction_amount: newAverage,
-          budget_utilised: newBugetUtilised,
-        };
-      }
+    //     return {
+    //       income: newIncome,
+    //       expense: newExpense,
+    //       number_of_transactions: number_of_transactions - 1,
+    //       average_transaction_amount: newAverage,
+    //       budget_utilised: newBugetUtilised,
+    //     };
+    //   }
 
-      if (changes?.flow_type) {
-        if (changes.flow_type === "income") {
-          newIncome += changes?.amount ?? transaction.amount;
-          newExpense -= changes?.amount ?? transaction.amount;
-        } else if (changes.flow_type === "expense") {
-          newExpense += changes?.amount ?? transaction.amount;
-          newIncome -= changes?.amount ?? transaction.amount;
-        }
-      }
+    //   if (changes?.flow_type) {
+    //     if (changes.flow_type === "income") {
+    //       newIncome += changes?.amount ?? transaction.amount;
+    //       newExpense -= changes?.amount ?? transaction.amount;
+    //     } else if (changes.flow_type === "expense") {
+    //       newExpense += changes?.amount ?? transaction.amount;
+    //       newIncome -= changes?.amount ?? transaction.amount;
+    //     }
+    //   }
 
-      return {
-        income: newIncome,
-        expense: newExpense,
-        average_transaction_amount:
-          (average_transaction_amount * number_of_transactions +
-            (changes?.amount
-              ? changes.amount - transaction.amount
-              : transaction.amount)) /
-          number_of_transactions,
-        number_of_transactions: number_of_transactions,
-        budget_utilised: newBugetUtilised,
-      };
-    };
+    //   return {
+    //     income: newIncome,
+    //     expense: newExpense,
+    //     average_transaction_amount:
+    //       (average_transaction_amount * number_of_transactions +
+    //         (changes?.amount
+    //           ? changes.amount - transaction.amount
+    //           : transaction.amount)) /
+    //       number_of_transactions,
+    //     number_of_transactions: number_of_transactions,
+    //     budget_utilised: newBugetUtilised,
+    //   };
+    // };
 
-    try {
-      values.amount = parseFloat(values.amount);
-      const changes = getChanges(values, transaction);
-      const { $id: userId } = await appwrite.account.get();
+    // try {
+    //   values.amount = parseFloat(values.amount);
+    //   const changes = getChanges(values, transaction);
+    //   const { $id: userId } = await appwrite.account.get();
 
-      if (changes?.date) {
-        const prevMonth = format(new Date(transaction.date), "MM");
-        const currentMonth = format(new Date(changes.date), "MM");
-        const prevTransYrMonth = format(new Date(transaction.date), "yyyy-MM");
+    //   if (changes?.date) {
+    //     const prevMonth = format(new Date(transaction.date), "MM");
+    //     const currentMonth = format(new Date(changes.date), "MM");
+    //     const prevTransYrMonth = format(new Date(transaction.date), "yyyy-MM");
 
-        if (prevMonth !== currentMonth) {
-          const {
-            documents: [prevStatement],
-          } = await appwrite.database.listDocuments(
-            appwrite.getVariables().DATABASE_ID,
-            appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
-            [
-              Query.equal("user_id", userId),
-              Query.equal("year_month", prevTransYrMonth),
-            ]
-          );
+    //     if (prevMonth !== currentMonth) {
+    //       const {
+    //         documents: [prevStatement],
+    //       } = await appwrite.database.listDocuments(
+    //         appwrite.getVariables().DATABASE_ID,
+    //         appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+    //         [
+    //           Query.equal("user_id", userId),
+    //           Query.equal("year_month", prevTransYrMonth),
+    //         ]
+    //       );
 
-          if (prevStatement) {
-            const prevMonthChanges = calculateStatementChanges(
-              prevStatement,
-              transaction,
-              true,
-              changes
-            );
+    //       if (prevStatement) {
+    //         const prevMonthChanges = calculateStatementChanges(
+    //           prevStatement,
+    //           transaction,
+    //           true,
+    //           changes
+    //         );
 
-            const {
-              documents: [largerTransaction],
-            } = await appwrite.database.listDocuments(
-              appwrite.getVariables().DATABASE_ID,
-              appwrite.getVariables().TRANSACTIONS_COLLECTION_ID,
-              [Query.orderDesc("amount"), Query.limit(1)]
-            );
+    //         const {
+    //           documents: [largerTransaction],
+    //         } = await appwrite.database.listDocuments(
+    //           appwrite.getVariables().DATABASE_ID,
+    //           appwrite.getVariables().TRANSACTIONS_COLLECTION_ID,
+    //           [Query.orderDesc("amount"), Query.limit(1)]
+    //         );
 
-            await appwrite.database.updateDocument(
-              appwrite.getVariables().DATABASE_ID,
-              appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
-              prevStatement.$id,
-              {
-                ...prevMonthChanges,
-                largest_transaction_amount: largerTransaction?.amount || 0,
-              }
-            );
-          }
+    //         await appwrite.database.updateDocument(
+    //           appwrite.getVariables().DATABASE_ID,
+    //           appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+    //           prevStatement.$id,
+    //           {
+    //             ...prevMonthChanges,
+    //             largest_transaction_amount: largerTransaction?.amount || 0,
+    //           }
+    //         );
+    //       }
 
-          const newYrMonth = format(new Date(changes.date), "yyyy-MM");
-          const {
-            documents: [newStatement],
-          } = await appwrite.database.listDocuments(
-            appwrite.getVariables().DATABASE_ID,
-            appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
-            [
-              Query.equal("user_id", userId),
-              Query.equal("year_month", newYrMonth),
-            ]
-          );
+    //       const newYrMonth = format(new Date(changes.date), "yyyy-MM");
+    //       const {
+    //         documents: [newStatement],
+    //       } = await appwrite.database.listDocuments(
+    //         appwrite.getVariables().DATABASE_ID,
+    //         appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+    //         [
+    //           Query.equal("user_id", userId),
+    //           Query.equal("year_month", newYrMonth),
+    //         ]
+    //       );
 
-          if (newStatement) {
-            const newMonthChanges = calculateStatementChanges(
-              newStatement,
-              transaction,
-              false,
-              changes
-            );
+    //       if (newStatement) {
+    //         const newMonthChanges = calculateStatementChanges(
+    //           newStatement,
+    //           transaction,
+    //           false,
+    //           changes
+    //         );
 
-            await appwrite.database.updateDocument(
-              appwrite.getVariables().DATABASE_ID,
-              appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
-              newStatement.$id,
-              newMonthChanges
-            );
-          } else {
-            const newSummary = await appwrite.database.createDocument(
-              appwrite.getVariables().DATABASE_ID,
-              appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
-              ID.unique(),
-              {
-                user_id: userId,
-                year_month: newYrMonth,
-                income: values.flow_type === "income" ? values.amount : 0,
-                expense: values.flow_type === "expense" ? values.amount : 0,
-                budget_utilised: 0,
-                recurring_expenses: 0,
-                savings_amount: 0,
-                number_of_transactions: 1,
-                average_transaction_amount: values.amount,
-                largest_transaction_amount: values.amount,
-              }
-            );
+    //         await appwrite.database.updateDocument(
+    //           appwrite.getVariables().DATABASE_ID,
+    //           appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+    //           newStatement.$id,
+    //           newMonthChanges
+    //         );
+    //       } else {
+    //         const newSummary = await appwrite.database.createDocument(
+    //           appwrite.getVariables().DATABASE_ID,
+    //           appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+    //           ID.unique(),
+    //           {
+    //             user_id: userId,
+    //             year_month: newYrMonth,
+    //             income: values.flow_type === "income" ? values.amount : 0,
+    //             expense: values.flow_type === "expense" ? values.amount : 0,
+    //             budget_utilised: 0,
+    //             recurring_expenses: 0,
+    //             savings_amount: 0,
+    //             number_of_transactions: 1,
+    //             average_transaction_amount: values.amount,
+    //             largest_transaction_amount: values.amount,
+    //           }
+    //         );
 
-            console.log("Updated Transaction: ", newSummary);
-          }
-        }
-      }
+    //         console.log("Updated Transaction: ", newSummary);
+    //       }
+    //     }
+    //   }
 
-      // Update the transaction itself
-      const updatedTransaction = await appwrite.database.updateDocument(
-        appwrite.getVariables().DATABASE_ID,
-        appwrite.getVariables().TRANSACTIONS_COLLECTION_ID,
-        transaction.$id,
-        changes
-      );
+    //   // Update the transaction itself
+    //   const updatedTransaction = await appwrite.database.updateDocument(
+    //     appwrite.getVariables().DATABASE_ID,
+    //     appwrite.getVariables().TRANSACTIONS_COLLECTION_ID,
+    //     transaction.$id,
+    //     changes
+    //   );
 
-      console.log("Updated Transaction: ", updatedTransaction);
+    //   console.log("Updated Transaction: ", updatedTransaction);
 
-      navigate("/transactions");
-    } catch (error) {
-      console.error("Error updating transaction:", error);
-      throw error;
-    } finally {
-      setSubmitting(false);
-      handleClose();
-    }
+    //   navigate("/transactions");
+    // } catch (error) {
+    //   console.error("Error updating transaction:", error);
+    //   throw error;
+    // } finally {
+    //   setSubmitting(false);
+    //   handleClose();
+    // }
   };
 
   const fetchCategories = async () => {
@@ -237,7 +239,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
     const changes = {};
     for (const key in formValues) {
       if (key === "category") {
-        if (formValues[key] !== transaction[key]?.$id) {
+        if (transaction?.category && formValues[key] !== transaction[key]?.$id) {
           changes[key] = formValues[key];
         }
         continue;
@@ -272,7 +274,6 @@ const EditTransaction = ({ transaction, handleClose }) => {
         <Formik
           initialValues={{
             ...transaction,
-            category: transaction.category?.$id ?? null,
             date: format(new Date(transaction.date), "yyyy-MM-dd"),
           }}
           validationSchema={createTransactionSchema}
@@ -523,6 +524,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
                         }
                       )}
                       disabled={isSubmitting}
+                      value={values.description || ""}
                     />
                     <ErrorMessage name="description">
                       {(msg) => (
@@ -611,6 +613,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
                         )}
                         as="select"
                         disabled={isSubmitting}
+                        value={values.payment_method || ""}
                       >
                         <option value="">Select one</option>
                         <option value="cash">Cash</option>
@@ -663,6 +666,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
                         )}
                         as="select"
                         disabled={isSubmitting}
+                        value={values.category || ""}
                       >
                         <option value="">Select one</option>
                         {values.flow_type === "income" && categories?.income

@@ -17,7 +17,6 @@ const CreateParty = ({ handleClose }) => {
     phone: "",
     type: "individual",
     address: "",
-    preferred_currency: "",
   };
 
   const handleSubmit = async (values) => {
@@ -61,7 +60,7 @@ const CreateParty = ({ handleClose }) => {
         >
           {({ values, touched, errors, dirty, setFieldValue, isValid }) => (
             <Form>
-              <div className="w-full grid grid-cols-3 p-4 lg:px-16 gap-x-4">
+              <div className="w-full grid grid-cols-2 p-4 lg:px-16 gap-x-4">
                 <button
                   type="button"
                   kind="secondary"
@@ -81,32 +80,18 @@ const CreateParty = ({ handleClose }) => {
                   kind="secondary"
                   className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey py-3 text-small font-bold transition-all duration-75 ${cn(
                     {
-                      "border-transparent": values.type !== "company",
-                      "border-black": values.type === "company",
+                      "border-transparent": values.type !== "group",
+                      "border-black": values.type === "group",
                     }
                   )}`}
-                  onClick={() => setFieldValue("type", "company")}
+                  onClick={() => setFieldValue("type", "group")}
                   disabled={fetcher.state === "submitting"}
                 >
-                  Company
-                </button>
-                <button
-                  type="button"
-                  kind="secondary"
-                  className={`font-satoshi tracking-normal leading-100 bg-grey border disabled:border-greyborder text-black disabled:bg-grey disabled:text-greyborder  hover:bg-grey py-3 text-small font-bold transition-all duration-75 ${cn(
-                    {
-                      "border-transparent": values.type !== "organisation",
-                      "border-black": values.type === "organisation",
-                    }
-                  )}`}
-                  onClick={() => setFieldValue("type", "organisation")}
-                  disabled={fetcher.state === "submitting"}
-                >
-                  Organisation
+                  Group
                 </button>
               </div>
               <div className="grid grid-cols-2 gap-4 py-8 px-4 lg:px-16">
-                <div className="w-full flex flex-col gap-y-2">
+                <div className="w-full col-span-2 flex flex-col gap-y-2">
                   <label
                     htmlFor="name"
                     className="font-satoshi font-normal text-small leading-100 tracking-normal"
@@ -184,53 +169,6 @@ const CreateParty = ({ handleClose }) => {
                     disabled={fetcher.state === "submitting"}
                   />
                   <ErrorMessage name="phone">
-                    {(msg) => (
-                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                        {msg}
-                      </div>
-                    )}
-                  </ErrorMessage>
-                </div>
-
-                <div className="w-full flex flex-col gap-y-2">
-                  <label
-                    htmlFor="payment_timing"
-                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                  >
-                    Preferred Currency
-                  </label>
-                  <div className="relative w-full">
-                    <Field
-                      id="preferred_currency"
-                      name="preferred_currency"
-                      className={cn(
-                        "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                        {
-                          "border-error focus:border-error":
-                            touched?.preferred_currency &&
-                            errors?.preferred_currency,
-                        }
-                      )}
-                      as="select"
-                      disabled={fetcher.state === "submitting"}
-                    >
-                      <option value="">Select one</option>
-                      <option value="UGX">Uganda Shillings</option>
-                      <option value="KSH">Kenyan Shillings</option>
-                      <option value="USD">United States Dollar</option>
-                      <option value="GBP">Great Britain Pound</option>
-                    </Field>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg
-                        className="fill-greyborder h-4 w-4 "
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <ErrorMessage name="preferred_currency">
                     {(msg) => (
                       <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
                         {msg}

@@ -11,6 +11,7 @@ import {
 import { useNavigate, useFetcher } from "react-router-dom";
 import { createTransactionSchema } from "../../utils/validators";
 import { useEffect, useState, useCallback } from "react";
+import { CategorySelect, PartySelect, CommonSelect } from "../common/forms";
 
 const initialValues = {
   $id: null,
@@ -27,6 +28,20 @@ const initialValues = {
   transaction_status: "",
 };
 
+const paymentOptions = [
+  { value: "", label: "Select One" },
+  { value: "cash", label: "Cash" },
+  { value: "bank_transfer", label: "Bank Transfer" },
+  { value: "credit_card", label: "Credit Card" },
+  { value: "debit_card", label: "Debit Card" },
+  { value: "cheque", label: "Check" },
+  { value: "momo", label: "Momo" },
+  { value: "airtel_money", label: "Airtel Money" },
+  { value: "visa", label: "Visa" },
+  { value: "paypal", label: "Paypal" },
+  { value: "pesapal", label: "Pesapal" },
+  { value: "other", label: "Other" },
+];
 const CreateTransaction = ({ handleClose }) => {
   const navigate = useNavigate();
 
@@ -92,23 +107,24 @@ const CreateTransaction = ({ handleClose }) => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     values.amount = parseFloat(values.amount);
+    console.log(values);
 
-    try {
-      await TransactionService.createTransaction(values);
-      await BalancesService.updateBalances(
-        parseFloat(values.amount),
-        values.flow_type,
-        values.date,
-        values.category
-      );
-      navigate(`/transactions`);
-    } catch (error) {
-      console.log("Error: ", error);
-      throw error;
-    } finally {
-      setSubmitting(false);
-      handleClose();
-    }
+    // try {
+    //   await TransactionService.createTransaction(values);
+    //   await BalancesService.updateBalances(
+    //     parseFloat(values.amount),
+    //     values.flow_type,
+    //     values.date,
+    //     values.category
+    //   );
+    //   navigate(`/transactions`);
+    // } catch (error) {
+    //   console.log("Error: ", error);
+    //   throw error;
+    // } finally {
+    //   setSubmitting(false);
+    //   handleClose();
+    // }
   };
 
   return createPortal(
@@ -430,37 +446,12 @@ const CreateTransaction = ({ handleClose }) => {
                       </div>
                     </div>
                   ) : parties && parties?.total > 0 ? (
-                    <div className="relative w-full">
-                      <Field
-                        id="payer_payee"
-                        name="payer_payee"
-                        className={cn(
-                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                          {
-                            "border-error focus:border-error":
-                              touched?.payer_payee && errors?.payer_payee,
-                          }
-                        )}
-                        as="select"
-                        disabled={isSubmitting}
-                      >
-                        <option value="">Select one</option>
-                        {parties.documents.map((party) => (
-                          <option key={party.$id} value={party.$id}>
-                            {party.name}
-                          </option>
-                        ))}
-                      </Field>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <svg
-                          className="fill-greyborder h-4 w-4 "
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                      </div>
-                    </div>
+                    <PartySelect
+                      name="payer_payee"
+                      id="payer_payee"
+                      loading={loadingParties}
+                      optionData={parties}
+                    />
                   ) : (
                     <Button
                       type="button"
@@ -515,43 +506,13 @@ const CreateTransaction = ({ handleClose }) => {
                   >
                     Payment Method
                   </label>
-                  <div className="relative w-full">
-                    <Field
-                      id="payment_method"
-                      name="payment_method"
-                      className={cn(
-                        "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                        {
-                          "border-error focus:border-error":
-                            touched?.payment_method && errors?.payment_method,
-                        }
-                      )}
-                      as="select"
-                      disabled={isSubmitting}
-                    >
-                      <option value="">Select one</option>
-                      <option value="cash">Cash</option>
-                      <option value="bank_transfer">Bank Transfer</option>
-                      <option value="credit_card">Credit Card</option>
-                      <option value="debit_card">Debit Card</option>
-                      <option value="cheque">Check</option>
-                      <option value="momo">Momo</option>
-                      <option value="airtel_money">Airtel Money</option>
-                      <option value="visa">Visa</option>
-                      <option value="paypal">Paypal</option>
-                      <option value="pesapal">Pesapal</option>
-                      <option value="other">Other</option>
-                    </Field>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg
-                        className="fill-greyborder h-4 w-4 "
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                      </svg>
-                    </div>
-                  </div>
+                  <CommonSelect
+                    id="payment_method"
+                    name="payment_method"
+                    placeholder="Select Method"
+                    optionData={paymentOptions}
+                  />
+
                   <ErrorMessage name="payment_method">
                     {(msg) => (
                       <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
@@ -603,53 +564,13 @@ const CreateTransaction = ({ handleClose }) => {
                       Create Category
                     </Button>
                   ) : (
-                    <div className="relative w-full">
-                      <Field
-                        id="category"
-                        name="category"
-                        className={cn(
-                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                          {
-                            "border-error focus:border-error":
-                              touched?.category && errors?.category,
-                          }
-                        )}
-                        as="select"
-                        disabled={isSubmitting}
-                      >
-                        <option value="">Select one</option>
-                        {values.flow_type === "income" &&
-                        groupedCategories?.income
-                          ? groupedCategories.income.map((category) => (
-                              <option key={category.$id} value={category.$id}>
-                                {category.name}
-                              </option>
-                            ))
-                          : values.flow_type === "expense" &&
-                            groupedCategories?.expense
-                          ? groupedCategories.expense.map((category) => (
-                              <option key={category.$id} value={category.$id}>
-                                {category.name}
-                              </option>
-                            ))
-                          : null}
-                        {groupedCategories?.both &&
-                          groupedCategories.both.map((category) => (
-                            <option key={category.$id} value={category.$id}>
-                              {category.name}
-                            </option>
-                          ))}
-                      </Field>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <svg
-                          className="fill-greyborder h-4 w-4 "
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                      </div>
-                    </div>
+                    <CategorySelect
+                      name="category"
+                      id="category"
+                      placeholder="Select Category"
+                      loading={loadingCategories}
+                      optionData={groupedCategories}
+                    />
                   )}
                   <ErrorMessage name="category">
                     {(msg) => (
