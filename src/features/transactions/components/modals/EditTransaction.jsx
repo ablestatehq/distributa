@@ -237,7 +237,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
     const changes = {};
     for (const key in formValues) {
       if (key === "category") {
-        if (formValues[key] !== transaction[key].$id) {
+        if (formValues[key] !== transaction[key]?.$id) {
           changes[key] = formValues[key];
         }
         continue;
@@ -272,7 +272,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
         <Formik
           initialValues={{
             ...transaction,
-            category: transaction.category.$id,
+            category: transaction.category?.$id ?? null,
             date: format(new Date(transaction.date), "yyyy-MM-dd"),
           }}
           validationSchema={createTransactionSchema}
