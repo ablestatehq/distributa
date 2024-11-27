@@ -91,7 +91,9 @@ const TransactionDetails = ({ handleClose, transaction }) => {
               {transaction.type === "income" ? "Payer" : "Payee"}
             </span>
             <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
-              {transaction?.payer_payee || "N/A"}
+              {transaction?.payer_payee
+                ? transaction?.payer_payee?.name
+                : "N/A"}
             </span>
           </div>
         </div>

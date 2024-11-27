@@ -4,7 +4,7 @@ import cn from "../../utils/cn";
 import { createPortal } from "react-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { TransactionService, BalancesService } from "../../services";
-import { useFetcher } from "react-router-dom";
+import { useNavigate, useFetcher } from "react-router-dom";
 import { createTransactionSchema } from "../../utils/validators";
 import { useEffect, useState, useCallback } from "react";
 import { CategorySelect, PartySelect, CommonSelect } from "../common/forms";
@@ -16,7 +16,7 @@ const initialValues = {
   item: "",
   amount: "",
   description: "",
-  party: "",
+  payer_payee: "",
   invoice_receipt_no: "",
   payment_method: "",
   category: "",
@@ -324,8 +324,8 @@ const CreateTransaction = ({ handleClose }) => {
 
                 <PartySelect
                   label="Payer/Payee"
-                  name="party"
-                  id="party"
+                  name="payer_payee"
+                  id="payer_payee"
                   loading={loadingParties}
                   optionData={parties}
                 />
