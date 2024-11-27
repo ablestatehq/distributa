@@ -8,24 +8,40 @@ import {
   BalancesService,
   CategoryService,
 } from "../../services";
-import { useNavigate, useFetcher } from "react-router-dom";
+import { useFetcher } from "react-router-dom";
 import { createTransactionSchema } from "../../utils/validators";
 import { useEffect, useState, useCallback } from "react";
 import { CategorySelect, PartySelect, CommonSelect } from "../common/forms";
 
+// const initialValues = {
+//   $id: null,
+//   flow_type: "expense",
+//   date: "",
+//   item: "",
+//   amount: "",
+//   description: "",
+//   payer_payee: "",
+//   invoice_receipt_no: "",
+//   payment_method: "",
+//   category: "",
+//   payment_terms: "immediate",
+//   transaction_status: "",
+// };
+
 const initialValues = {
   $id: null,
-  flow_type: "expense",
-  date: "",
-  item: "",
-  amount: "",
-  description: "",
-  payer_payee: "",
-  invoice_receipt_no: "",
-  payment_method: "",
+  flow_type: "income",
+  date: "2024-11-27",
+  item: "Stationery",
+  amount: 1000,
+  description:
+    "Deliver stationery including pens, paper and printer ink for the month of November to Acme Corporation Limited",
+  payer_payee: "67459a16001ca802f586",
+  invoice_receipt_no: "INV-2024-0315",
+  payment_method: "cash",
   category: "",
   payment_terms: "immediate",
-  transaction_status: "",
+  transaction_status: "pending",
 };
 
 const paymentOptions = [
@@ -42,9 +58,23 @@ const paymentOptions = [
   { value: "pesapal", label: "Pesapal" },
   { value: "other", label: "Other" },
 ];
-const CreateTransaction = ({ handleClose }) => {
-  const navigate = useNavigate();
 
+const transactionStatusOptions = [
+  { value: "scheduled", label: "Scheduled", options: ["deferred"] },
+  { value: "pending", label: "Pending", options: ["immediate", "deferred"] },
+  { value: "cleared", label: "Cleared", options: ["immediate", "deferred"] },
+  { value: "bounced", label: "Bounced", options: ["immediate", "deferred"] },
+  { value: "failed", label: "Failed", options: ["immediate", "deferred"] },
+  { value: "void", label: "Void", options: ["immediate", "deferred"] },
+];
+
+const paymentTermOptions = [
+  { value: "", label: "Select one" },
+  { value: "immediate", label: "Immediate" },
+  { value: "deferred", label: "Deferred" },
+];
+
+const CreateTransaction = ({ handleClose }) => {
   const categoriesFetcher = useFetcher();
   const partiesFetcher = useFetcher();
 
@@ -107,6 +137,7 @@ const CreateTransaction = ({ handleClose }) => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     values.amount = parseFloat(values.amount);
+
     console.log(values);
 
     // try {
@@ -233,109 +264,25 @@ const CreateTransaction = ({ handleClose }) => {
                     )}
                   </ErrorMessage>
                 </div>
-                <div className="w-full flex flex-col gap-y-2">
-                  <label
-                    htmlFor="payment_timing"
-                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                  >
-                    Payment Terms
-                  </label>
-                  <div className="relative w-full">
-                    <Field
-                      id="payment_terms"
-                      name="payment_terms"
-                      className={cn(
-                        "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                        {
-                          "border-error focus:border-error":
-                            touched?.payment_terms && errors?.payment_terms,
-                        }
-                      )}
-                      as="select"
-                      disabled={isSubmitting}
-                    >
-                      <option value="">Select one</option>
-                      <option value="immediate">Immediate</option>
-                      <option value="deferred">Deferred</option>
-                    </Field>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg
-                        className="fill-greyborder h-4 w-4 "
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <ErrorMessage name="payment_terms">
-                    {(msg) => (
-                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                        {msg}
-                      </div>
-                    )}
-                  </ErrorMessage>
-                </div>
-                <div className="w-full flex flex-col gap-y-2">
-                  <label
-                    htmlFor="transaction_status"
-                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                  >
-                    Transaction Status
-                  </label>
-                  <div className="relative w-full">
-                    <Field
-                      id="transaction_status"
-                      name="transaction_status"
-                      className={cn(
-                        "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                        {
-                          "border-error focus:border-error":
-                            touched?.transaction_status &&
-                            errors?.transaction_status,
-                        }
-                      )}
-                      as="select"
-                      disabled={isSubmitting}
-                    >
-                      <option value="">Select one</option>
-                      {values.payment_terms === "immediate" ? (
-                        <>
-                          <option value="pending">Pending</option>
-                          <option value="cleared">Cleared</option>
-                          <option value="bounced">Bounced</option>
-                          <option value="failed">Failed</option>
-                          <option value="void">Void</option>
-                        </>
-                      ) : (
-                        <>
-                          <option value="scheduled">Scheduled</option>
-                          <option value="pending">Pending</option>
-                          <option value="cleared">Cleared</option>
-                          <option value="bounced">Bounced</option>
-                          <option value="failed">Failed</option>
-                          <option value="void">Void</option>
-                        </>
-                      )}
-                    </Field>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                      <svg
-                        className="fill-greyborder h-4 w-4 "
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                      </svg>
-                    </div>
-                  </div>
-                  <ErrorMessage name="transaction_status">
-                    {(msg) => (
-                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                        {msg}
-                      </div>
-                    )}
-                  </ErrorMessage>
-                </div>
+                <CommonSelect
+                  label="Payment Terms"
+                  id="payment_terms"
+                  name="payment_terms"
+                  placeholder="Select One"
+                  loading={false}
+                  optionData={paymentTermOptions}
+                />
+
+                <CommonSelect
+                  label="Transaction Status"
+                  id="transaction_status"
+                  name="transaction_status"
+                  placeholder="Select One"
+                  loading={false}
+                  optionData={transactionStatusOptions.filter((status) =>
+                    status.options.includes(values.payment_terms)
+                  )}
+                />
                 <div className="col-span-2 flex flex-col gap-y-2">
                   <label
                     htmlFor="amount"
@@ -396,79 +343,15 @@ const CreateTransaction = ({ handleClose }) => {
                     )}
                   </ErrorMessage>
                 </div>
-                <div className="flex flex-col gap-y-2">
-                  <label
-                    htmlFor="payer_payee"
-                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                  >
-                    Payer/Payee
-                  </label>
-                  {/* <Field
-                    id="payer_payee"
-                    name="payer_payee"
-                    type="text"
-                    placeholder="Payee/Payee"
-                    className={cn(
-                      "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                      {
-                        "border-error focus:border-error":
-                          touched?.payer_payee && errors?.payer_payee,
-                      }
-                    )}
-                    disabled={isSubmitting}
-                  /> */}
 
-                  {loadingParties ? (
-                    <div className="relative w-full">
-                      <Field
-                        id="payer_payee"
-                        name="payer_payee"
-                        className={cn(
-                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                          {
-                            "border-error focus:border-error":
-                              touched?.payer_payee && errors?.payer_payee,
-                          }
-                        )}
-                        as="select"
-                        disabled
-                      >
-                        <option value="">Loading Parties</option>
-                      </Field>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <svg
-                          className="fill-greyborder h-4 w-4 "
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                      </div>
-                    </div>
-                  ) : parties && parties?.total > 0 ? (
-                    <PartySelect
-                      name="payer_payee"
-                      id="payer_payee"
-                      loading={loadingParties}
-                      optionData={parties}
-                    />
-                  ) : (
-                    <Button
-                      type="button"
-                      onClick={() => navigate("/settings/parties")}
-                    >
-                      {" "}
-                      Create Party{" "}
-                    </Button>
-                  )}
-                  <ErrorMessage name="payer_payee">
-                    {(msg) => (
-                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                        {msg}
-                      </div>
-                    )}
-                  </ErrorMessage>
-                </div>
+                <PartySelect
+                  label="Payer/Payee"
+                  name="payer_payee"
+                  id="payer_payee"
+                  loading={loadingParties}
+                  optionData={parties}
+                />
+
                 <div className="flex flex-col gap-y-2">
                   <label
                     htmlFor="invoice_receipt_no"
@@ -499,87 +382,24 @@ const CreateTransaction = ({ handleClose }) => {
                     )}
                   </ErrorMessage>
                 </div>
-                <div className="w-full flex flex-col gap-y-2">
-                  <label
-                    htmlFor="payment_method"
-                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                  >
-                    Payment Method
-                  </label>
-                  <CommonSelect
-                    id="payment_method"
-                    name="payment_method"
-                    placeholder="Select Method"
-                    optionData={paymentOptions}
-                  />
 
-                  <ErrorMessage name="payment_method">
-                    {(msg) => (
-                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                        {msg}
-                      </div>
-                    )}
-                  </ErrorMessage>
-                </div>
-                <div className="w-full flex flex-col gap-y-2">
-                  <label
-                    htmlFor="category"
-                    className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                  >
-                    Category
-                  </label>
+                <CommonSelect
+                  label="Payment Method"
+                  id="payment_method"
+                  name="payment_method"
+                  placeholder="Select Method"
+                  loading={false}
+                  optionData={paymentOptions}
+                />
 
-                  {loadingCategories ? (
-                    <div className="relative w-full">
-                      <Field
-                        id="category"
-                        name="category"
-                        className={cn(
-                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                          {
-                            "border-error focus:border-error":
-                              touched?.category && errors?.category,
-                          }
-                        )}
-                        as="select"
-                        disabled
-                      >
-                        <option value="">Loading Categories</option>
-                      </Field>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <svg
-                          className="fill-greyborder h-4 w-4 "
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                      </div>
-                    </div>
-                  ) : categories && categories.total == 0 ? (
-                    <Button
-                      type="button"
-                      onClick={() => navigate("/settings/categories")}
-                    >
-                      Create Category
-                    </Button>
-                  ) : (
-                    <CategorySelect
-                      name="category"
-                      id="category"
-                      placeholder="Select Category"
-                      loading={loadingCategories}
-                      optionData={groupedCategories}
-                    />
-                  )}
-                  <ErrorMessage name="category">
-                    {(msg) => (
-                      <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                        {msg}
-                      </div>
-                    )}
-                  </ErrorMessage>
-                </div>
+                <CategorySelect
+                  label="Category"
+                  name="category"
+                  id="category"
+                  placeholder="Select Category"
+                  loading={loadingCategories}
+                  optionData={groupedCategories}
+                />
 
                 <Button
                   type="submit"

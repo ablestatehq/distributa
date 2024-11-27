@@ -10,42 +10,50 @@ const CategorySelect = ({ optionData, ...props }) => {
 
   const defaultOption = {
     value: "",
-    label: <div className="font-satoshi text-tiny">Select One</div>,
+    label: <div className="p-3 font-satoshi text-tiny">Select One</div>,
   };
 
   const lastOption = {
     value: "new",
     label: (
-      <Button
-        type="button"
-        className="font-bold text-small w-full"
-        onClick={() => navigate("/settings/categories")}
-        kind="secondary"
-      >
-        Create Category
-      </Button>
+      <div className="border-t border-t-[#CCCCCC] bg-white p-3">
+        <Button
+          type="button"
+          className="font-medium text-[0.5rem] px-2 h-4 py-0 align-middle border-transparent text-black"
+          onClick={() => navigate("/settings/categories")}
+          kind="secondary"
+        >
+          Create Category
+        </Button>
+      </div>
     ),
     isDisabled: true,
   };
 
   const generateOption = (category) => ({
     value: category.$id,
-    label: <div className="font-satoshi text-tiny">{category.name}</div>,
+    label: <div className="p-3 font-satoshi text-tiny">{category.name}</div>,
   });
 
   const options = useMemo(() => {
-    if (values.flow_type === "income" && optionData?.income) {
+    if (values.flow_type === "income" && optionData) {
+      const bothOptions = optionData.both || [];
+      const incomeOptions = optionData.income || [];
+
       return [
         defaultOption,
-        ...[...optionData.both, ...optionData.income].map(generateOption),
+        ...[...bothOptions, ...incomeOptions].map(generateOption),
         lastOption,
       ];
     }
 
-    if (values.flow_type === "expense" && optionData?.expense) {
+    if (values.flow_type === "expense" && optionData) {
+      const bothOptions = optionData.both || [];
+      const expenseOptions = optionData.expense || [];
+
       return [
         defaultOption,
-        ...[...optionData.both, ...optionData.expense].map(generateOption),
+        ...[...bothOptions, ...expenseOptions].map(generateOption),
         lastOption,
       ];
     }

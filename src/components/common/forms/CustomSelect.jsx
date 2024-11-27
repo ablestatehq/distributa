@@ -23,50 +23,57 @@ function DropdownIndicator(props) {
   );
 }
 
-const placeholderStyles =
-  "px-3 py-3.5 font-satoshi font-normal text-tiny leading-100 tracking-normal";
-const selectInputStyles = "px-3 py-3.5";
-const valueContainerStyles =
-  "font-satoshi font-normal text-tiny leading-100 tracking-normal";
-const singleValueStyles = "leading-7 ml-1";
-const multiValueStyles =
-  "bg-gray-100 rounded items-center py-0.5 pl-2 pr-1 gap-1.5";
-const multiValueLabelStyles = "leading-6 py-0.5";
-const multiValueRemoveStyles =
-  "border border-gray-200 bg-white hover:bg-red-50 hover:text-red-800 text-gray-500 hover:border-red-300 rounded-md";
-const indicatorsContainerStyles = "py-3 px-1.5";
-const clearIndicatorStyles =
-  "text-gray-500 p-1 rounded-md hover:bg-red-50 hover:text-red-800";
-const indicatorSeparatorStyles = "none";
-const dropdownIndicatorStyles = "";
-const menuStyles = "bg-[#F5F5F5] max-h-[200px] overflow-y-auto";
-const menuListStyles =
-  "h-20 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100";
-const groupHeadingStyles = "ml-3 mt-2 mb-1 text-gray-500 text-sm";
-const optionStyles = {
-  base: "hover:cursor-pointer p-3 font-satoshi text-tiny leading-100 tracking-normal",
-  focus: "bg-gray-100 active:bg-secondary-50",
-  selected: "font-satoshi text-tiny bg-accent-50 hover:bg-accent-50 ",
-};
-const controlStyles = {
-  base: "border border-greyborder pl-2 font-satoshi text-tiny leading-100 tracking-normal",
-  focus: "border-secondary-500 ring-none",
-  nonFocus: "border-secondary-100",
-};
-
-const noOptionsMessageStyles =
-  "text-black text-center p-3 font-satoshi text-[0.5rem] leading-100 tracking-normal";
-
 const CustomSelect = ({ label, options, loading, disabled, ...props }) => {
   const [field, meta, helpers] = useField(props);
   const { setValue } = helpers;
   const { error, touched } = meta;
 
+  const placeholderStyles =
+    "px-3 py-3.5 font-satoshi font-normal text-tiny leading-100 tracking-normal";
+  const selectInputStyles = "";
+  const valueContainerStyles =
+    "font-satoshi font-normal  text-tiny leading-100 tracking-normal ";
+  const singleValueStyles = "";
+  const multiValueStyles =
+    "bg-gray-100 rounded items-center py-0.5 pl-2 pr-1 gap-1.5";
+  const multiValueLabelStyles = "leading-6 py-0.5";
+  const multiValueRemoveStyles =
+    "border border-gray-200 bg-white hover:bg-red-50 hover:text-red-800 text-gray-500 hover:border-red-300 rounded-md";
+  const indicatorsContainerStyles = "";
+  const clearIndicatorStyles =
+    "text-gray-500 p-1 rounded-md hover:bg-red-50 hover:text-red-800";
+  const indicatorSeparatorStyles = "none";
+  const dropdownIndicatorStyles = "py-3 px-1.5";
+  const menuStyles = "bg-[#F5F5F5] max-h-[200px] overflow-y-auto";
+  const menuListStyles =
+    "h-20 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100";
+  const groupHeadingStyles = "ml-3 mt-2 mb-1 text-gray-500 text-sm";
+  const optionStyles = {
+    base: "hover:cursor-pointer  font-satoshi text-tiny leading-100 tracking-normal",
+    focus: "bg-gray-100 active:bg-secondary-50",
+    selected: "font-satoshi text-tiny bg-accent-50 hover:bg-accent-50 ",
+  };
+  const controlStyles = {
+    base: "font-satoshi text-tiny leading-100 tracking-normal",
+    focus: "border-secondary-500 ring-none",
+    nonFocus: "border-secondary-100",
+  };
+
+  const noOptionsMessageStyles =
+    "text-black text-center p-3 font-satoshi text-[0.5rem] leading-100 tracking-normal";
+
   const handleChange = (selectedOption) => setValue(selectedOption.value);
 
   return (
-    <div className="">
-      <label>{label}</label>
+    <div className="w-full flex flex-col gap-y-2">
+      {label ? (
+        <label
+          className="font-satoshi font-normal text-small leading-100 tracking-normal"
+          htmlFor={props.name}
+        >
+          {label}
+        </label>
+      ) : null}
       <Select
         {...field}
         onChange={handleChange}
@@ -85,6 +92,8 @@ const CustomSelect = ({ label, options, loading, disabled, ...props }) => {
             "input:focus": {
               boxShadow: "none",
             },
+            margin: 0,
+            padding: 0,
           }),
           multiValueLabel: (base) => ({
             ...base,
@@ -103,7 +112,10 @@ const CustomSelect = ({ label, options, loading, disabled, ...props }) => {
           control: ({ isFocused }) =>
             clsx(
               isFocused ? controlStyles.focus : controlStyles.nonFocus,
-              controlStyles.base
+              controlStyles.base,
+              meta.touched && meta.error
+                ? "border border-error focus:border-error"
+                : "border border-greyborder focus:border-grey"
             ),
           menuStyles: () => menuStyles,
           menuList: () => menuListStyles,
@@ -129,7 +141,11 @@ const CustomSelect = ({ label, options, loading, disabled, ...props }) => {
           noOptionsMessage: () => noOptionsMessageStyles,
         }}
       />
-      {touched && error ? <div className="error">{meta.error}</div> : null}
+      {touched && error ? (
+        <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+          {meta.error}
+        </div>
+      ) : null}
     </div>
   );
 };

@@ -8,29 +8,31 @@ const PartySelect = ({ optionData, ...props }) => {
   const lastOption = {
     value: "new",
     label: (
-      <Button
-        type="button"
-        className="font-bold text-small w-full"
-        onClick={() => navigate("/settings/parties")}
-        kind="secondary"
-      >
-        Create Party
-      </Button>
+      <div className="border-t border-t-[#CCCCCC] bg-white p-3">
+        <Button
+          type="button"
+          className="font-medium text-[0.5rem] px-2 h-4 py-0 align-middle border-transparent text-black"
+          onClick={() => navigate("/settings/parties")}
+          kind="secondary"
+        >
+          Create Party
+        </Button>
+      </div>
     ),
-    isDisabled: true,   
+    isDisabled: true,
   };
 
   const generateOption = (option) => ({
     value: option.$id,
-    label: <div className="font-satoshi text-tiny">{option.name}</div>,
+    label: <div className="p-3 font-satoshi text-tiny">{option.name}</div>,
   });
 
   const options = useMemo(() => {
-    if (optionData.total > 0)
+    if (optionData?.total && optionData.total > 0)
       return [...optionData.documents.map(generateOption), lastOption];
 
     return [lastOption];
-  }, [optionData.documents, optionData.total]);
+  }, [optionData?.documents, optionData?.total]);
 
   return <Select options={options} {...props} />;
 };
