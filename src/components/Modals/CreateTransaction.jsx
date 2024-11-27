@@ -13,36 +13,36 @@ import { createTransactionSchema } from "../../utils/validators";
 import { useEffect, useState, useCallback } from "react";
 import { CategorySelect, PartySelect, CommonSelect } from "../common/forms";
 
-// const initialValues = {
-//   $id: null,
-//   flow_type: "expense",
-//   date: "",
-//   item: "",
-//   amount: "",
-//   description: "",
-//   payer_payee: "",
-//   invoice_receipt_no: "",
-//   payment_method: "",
-//   category: "",
-//   payment_terms: "immediate",
-//   transaction_status: "",
-// };
-
 const initialValues = {
   $id: null,
-  flow_type: "income",
-  date: "2024-11-27",
-  item: "Stationery",
-  amount: 1000,
-  description:
-    "Deliver stationery including pens, paper and printer ink for the month of November to Acme Corporation Limited",
-  payer_payee: "67459a16001ca802f586",
-  invoice_receipt_no: "INV-2024-0315",
-  payment_method: "cash",
+  flow_type: "expense",
+  date: "",
+  item: "",
+  amount: "",
+  description: "",
+  payer_payee: "",
+  invoice_receipt_no: "",
+  payment_method: "",
   category: "",
   payment_terms: "immediate",
-  transaction_status: "pending",
+  transaction_status: "",
 };
+
+// const initialValues = {
+//   $id: null,
+//   flow_type: "income",
+//   date: "2024-11-27",
+//   item: "Stationery",
+//   amount: 1000,
+//   description:
+//     "Deliver stationery including pens, paper and printer ink for the month of November to Acme Corporation Limited",
+//   payer_payee: "67459a16001ca802f586",
+//   invoice_receipt_no: "INV-2024-0315",
+//   payment_method: "cash",
+//   category: "",
+//   payment_terms: "immediate",
+//   transaction_status: "pending",
+// };
 
 const paymentOptions = [
   { value: "", label: "Select One" },
