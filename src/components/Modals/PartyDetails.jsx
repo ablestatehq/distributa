@@ -35,14 +35,7 @@ const PartyDetails = ({ handleClose, party }) => {
               {party.type}
             </span>
           </div>
-          <div className="flex justify-between pb-2 pt-4 border-b border-b-greyborder">
-            <span className="font-satoshi font-normal text-small leading-100 tracking-0">
-              Peferred Currency
-            </span>
-            <span className="font-satoshi font-medium text-tiny leading-120 tracking-0 capitalize">
-              {party.preferred_currency || "N/A"}
-            </span>
-          </div>
+
           <div className="flex justify-between pb-2 pt-4 border-b border-b-greyborder">
             <span className="font-satoshi font-normal text-small leading-100 tracking-0">
               Phone
