@@ -3,11 +3,7 @@ import { Button } from "../common/forms";
 import cn from "../../utils/cn";
 import { createPortal } from "react-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import {
-  TransactionService,
-  BalancesService,
-  CategoryService,
-} from "../../services";
+import { TransactionService, BalancesService } from "../../services";
 import { useFetcher } from "react-router-dom";
 import { createTransactionSchema } from "../../utils/validators";
 import { useEffect, useState, useCallback } from "react";
@@ -20,29 +16,13 @@ const initialValues = {
   item: "",
   amount: "",
   description: "",
-  payer_payee: "",
+  party: "",
   invoice_receipt_no: "",
   payment_method: "",
   category: "",
   payment_terms: "immediate",
   transaction_status: "",
 };
-
-// const initialValues = {
-//   $id: null,
-//   flow_type: "income",
-//   date: "2024-11-27",
-//   item: "Stationery",
-//   amount: 1000,
-//   description:
-//     "Deliver stationery including pens, paper and printer ink for the month of November to Acme Corporation Limited",
-//   payer_payee: "67459a16001ca802f586",
-//   invoice_receipt_no: "INV-2024-0315",
-//   payment_method: "cash",
-//   category: "",
-//   payment_terms: "immediate",
-//   transaction_status: "pending",
-// };
 
 const paymentOptions = [
   { value: "", label: "Select One" },
@@ -138,24 +118,22 @@ const CreateTransaction = ({ handleClose }) => {
   const handleSubmit = async (values, { setSubmitting }) => {
     values.amount = parseFloat(values.amount);
 
-    console.log(values);
-
-    // try {
-    //   await TransactionService.createTransaction(values);
-    //   await BalancesService.updateBalances(
-    //     parseFloat(values.amount),
-    //     values.flow_type,
-    //     values.date,
-    //     values.category
-    //   );
-    //   navigate(`/transactions`);
-    // } catch (error) {
-    //   console.log("Error: ", error);
-    //   throw error;
-    // } finally {
-    //   setSubmitting(false);
-    //   handleClose();
-    // }
+    try {
+      await TransactionService.createTransaction(values);
+      await BalancesService.updateBalances(
+        parseFloat(values.amount),
+        values.flow_type,
+        values.date,
+        values.category
+      );
+      navigate(`/transactions`);
+    } catch (error) {
+      console.log("Error: ", error);
+      throw error;
+    } finally {
+      setSubmitting(false);
+      handleClose();
+    }
   };
 
   return createPortal(
@@ -346,8 +324,8 @@ const CreateTransaction = ({ handleClose }) => {
 
                 <PartySelect
                   label="Payer/Payee"
-                  name="payer_payee"
-                  id="payer_payee"
+                  name="party"
+                  id="party"
                   loading={loadingParties}
                   optionData={parties}
                 />

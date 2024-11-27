@@ -101,7 +101,7 @@ export const createTransactionSchema = Yup.object({
     .min(0, "Amount must be a positive number")
     .required("Amount is required"),
   description: Yup.string().nullable(),
-  payer_payee: Yup.string().required("Payer/Payee is required"),
+  party: Yup.string().required("Payer/Payee is required"),
   invoice_receipt_no: Yup.string(),
   payment_method: Yup.string().nullable(),
   // .required("Payment method is required"),
