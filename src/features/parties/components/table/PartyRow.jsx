@@ -1,10 +1,9 @@
 import React, { useState, Fragment, useEffect } from "react";
-import { useNavigate, useFetcher } from "react-router-dom";
+import { useFetcher } from "react-router-dom";
 import { Delete, Edit } from "../../../../components/common/icons";
 import { EditParty, PartyDetails } from "../../../../components/Modals";
 
 const PartyRow = React.memo(({ partyData, index }) => {
-  const navigate = useNavigate();
   const fetcher = useFetcher();
 
   const [editModal, setEditModal] = useState(false);

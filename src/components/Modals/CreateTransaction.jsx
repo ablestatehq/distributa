@@ -57,6 +57,7 @@ const paymentTermOptions = [
 const CreateTransaction = ({ handleClose }) => {
   const categoriesFetcher = useFetcher();
   const partiesFetcher = useFetcher();
+  const navigate = useNavigate();
 
   const [categories, setCategories] = useState(null);
   const [loadingCategories, setLoadingCategories] = useState(false);
@@ -136,6 +137,8 @@ const CreateTransaction = ({ handleClose }) => {
     }
   };
 
+  const loadingCategoriesParties = loadingCategories || loadingParties;
+
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
       <section className="w-96 lg:w-[36rem] h-fit max-h-full overflow-y-auto flex flex-col bg-white">
@@ -165,7 +168,7 @@ const CreateTransaction = ({ handleClose }) => {
                     }
                   )}`}
                   onClick={() => setFieldValue("flow_type", "expense")}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || loadingCategoriesParties}
                 >
                   Expense
                 </button>
@@ -179,7 +182,7 @@ const CreateTransaction = ({ handleClose }) => {
                     }
                   )}`}
                   onClick={() => setFieldValue("flow_type", "income")}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || loadingCategoriesParties}
                 >
                   Income
                 </button>
@@ -203,7 +206,7 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.date && errors?.date,
                       }
                     )}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || loadingCategoriesParties}
                   />
                   <ErrorMessage name="date">
                     {(msg) => (
@@ -232,7 +235,7 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.item && errors?.item,
                       }
                     )}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || loadingCategoriesParties}
                   />
                   <ErrorMessage name="item">
                     {(msg) => (
@@ -249,6 +252,7 @@ const CreateTransaction = ({ handleClose }) => {
                   placeholder="Select One"
                   loading={false}
                   optionData={paymentTermOptions}
+                  disabled={isSubmitting || loadingCategoriesParties}
                 />
 
                 <CommonSelect
@@ -260,7 +264,9 @@ const CreateTransaction = ({ handleClose }) => {
                   optionData={transactionStatusOptions.filter((status) =>
                     status.options.includes(values.payment_terms)
                   )}
+                  disabled={isSubmitting || loadingCategoriesParties}
                 />
+
                 <div className="col-span-2 flex flex-col gap-y-2">
                   <label
                     htmlFor="amount"
@@ -280,7 +286,7 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.amount && errors?.amount,
                       }
                     )}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || loadingCategoriesParties}
                   />
                   <ErrorMessage name="amount">
                     {(msg) => (
@@ -311,7 +317,7 @@ const CreateTransaction = ({ handleClose }) => {
                           touched?.description && errors?.description,
                       }
                     )}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || loadingCategoriesParties}
                   />
                   <ErrorMessage name="description">
                     {(msg) => (
@@ -328,6 +334,7 @@ const CreateTransaction = ({ handleClose }) => {
                   id="payer_payee"
                   loading={loadingParties}
                   optionData={parties}
+                  disabled={isSubmitting || loadingCategoriesParties}
                 />
 
                 <div className="flex flex-col gap-y-2">
@@ -350,7 +357,7 @@ const CreateTransaction = ({ handleClose }) => {
                           errors?.invoice_receipt_no,
                       }
                     )}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || loadingCategoriesParties}
                   />
                   <ErrorMessage name="invoice_receipt_no">
                     {(msg) => (
@@ -368,6 +375,7 @@ const CreateTransaction = ({ handleClose }) => {
                   placeholder="Select Method"
                   loading={false}
                   optionData={paymentOptions}
+                  disabled={isSubmitting || loadingCategoriesParties}
                 />
 
                 <CategorySelect
@@ -377,6 +385,7 @@ const CreateTransaction = ({ handleClose }) => {
                   placeholder="Select Category"
                   loading={loadingCategories}
                   optionData={groupedCategories}
+                  disabled={isSubmitting || loadingCategoriesParties}
                 />
 
                 <Button

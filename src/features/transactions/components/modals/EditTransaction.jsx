@@ -10,17 +10,113 @@ import {
   AppwriteService,
 } from "../../../../services";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useFetcher } from "react-router-dom";
 import { createTransactionSchema } from "../../../../utils/validators";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
 import { Query, ID } from "appwrite";
+import {
+  CategorySelect,
+  PartySelect,
+  CommonSelect,
+} from "../../../../components/common/forms";
 
 const appwrite = new AppwriteService();
 
+const initialValues = {
+  $id: null,
+  flow_type: "expense",
+  date: "",
+  item: "",
+  amount: "",
+  description: "",
+  payer_payee: "",
+  invoice_receipt_no: "",
+  payment_method: "",
+  category: "",
+  payment_terms: "immediate",
+  transaction_status: "",
+};
+
+const paymentOptions = [
+  { value: "", label: "Select One" },
+  { value: "cash", label: "Cash" },
+  { value: "bank_transfer", label: "Bank Transfer" },
+  { value: "credit_card", label: "Credit Card" },
+  { value: "debit_card", label: "Debit Card" },
+  { value: "cheque", label: "Check" },
+  { value: "momo", label: "Momo" },
+  { value: "airtel_money", label: "Airtel Money" },
+  { value: "visa", label: "Visa" },
+  { value: "paypal", label: "Paypal" },
+  { value: "pesapal", label: "Pesapal" },
+  { value: "other", label: "Other" },
+];
+
+const transactionStatusOptions = [
+  { value: "scheduled", label: "Scheduled", options: ["deferred"] },
+  { value: "pending", label: "Pending", options: ["immediate", "deferred"] },
+  { value: "cleared", label: "Cleared", options: ["immediate", "deferred"] },
+  { value: "bounced", label: "Bounced", options: ["immediate", "deferred"] },
+  { value: "failed", label: "Failed", options: ["immediate", "deferred"] },
+  { value: "void", label: "Void", options: ["immediate", "deferred"] },
+];
+
+const paymentTermOptions = [
+  { value: "", label: "Select one" },
+  { value: "immediate", label: "Immediate" },
+  { value: "deferred", label: "Deferred" },
+];
+
 const EditTransaction = ({ transaction, handleClose }) => {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState({ income: [], expense: [] });
+
+  const categoriesFetcher = useFetcher();
+  const partiesFetcher = useFetcher();
+
+  const [categories, setCategories] = useState(null);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [groupedCategories, setGroupedCategories] = useState({});
+
+  const [parties, setParties] = useState(null);
+  const [loadingParties, setLoadingParties] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    try {
+      setLoadingCategories(true);
+      setLoadingParties(true);
+
+      categoriesFetcher.load("/settings/categories");
+      partiesFetcher.load("/settings/parties");
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      categoriesFetcher.state === "idle" &&
+      categoriesFetcher.data?.categoryList
+    ) {
+      setCategories(() => categoriesFetcher.data.categoryList);
+      setGroupedCategories(() =>
+        groupCategoryByType(categoriesFetcher.data.categoryList.documents)
+      );
+      setLoadingCategories(false);
+    }
+  }, [categoriesFetcher.state, categoriesFetcher.data?.categoryList]);
+
+  useEffect(() => {
+    if (partiesFetcher.state === "idle" && partiesFetcher.data?.parties) {
+      setParties(() => partiesFetcher.data.parties);
+      setLoadingParties(false);
+    }
+  }, [partiesFetcher.state, partiesFetcher.data?.parties]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const groupCategoryByType = (categories) => {
     const groupedCategories = categories.reduce((acc, category) => {
@@ -36,194 +132,194 @@ const EditTransaction = ({ transaction, handleClose }) => {
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    const changes = getChanges(values, transaction);
-    console.log("Changes: ", changes);
-    // const calculateStatementChanges = (
-    //   statement,
-    //   transaction,
-    //   isRemoving = false,
-    //   changes = null
-    // ) => {
-    //   const {
-    //     income,
-    //     expense,
-    //     number_of_transactions,
-    //     average_transaction_amount,
-    //     budget_utilised,
-    //   } = statement;
+    const calculateStatementChanges = (
+      statement,
+      transaction,
+      isRemoving = false,
+      changes = null
+    ) => {
+      const {
+        income,
+        expense,
+        number_of_transactions,
+        average_transaction_amount,
+        budget_utilised,
+      } = statement;
 
-    //   let newIncome = income;
-    //   let newExpense = expense;
-    //   let newBugetUtilised =
-    //     changes?.flow_type === "expense"
-    //       ? budget_utilised - transaction.amount
-    //       : budget_utilised ?? 0;
+      let newIncome = income;
+      let newExpense = expense;
+      let newBugetUtilised =
+        changes?.flow_type === "expense"
+          ? budget_utilised - transaction.amount
+          : budget_utilised ?? 0;
 
-    //   if (isRemoving) {
-    //     if (transaction.flow_type === "income") {
-    //       newIncome -= transaction.amount;
-    //     } else if (transaction.flow_type === "expense") {
-    //       newExpense -= transaction.amount;
-    //     }
+      if (isRemoving) {
+        if (transaction.flow_type === "income") {
+          newIncome -= transaction.amount;
+        } else if (transaction.flow_type === "expense") {
+          newExpense -= transaction.amount;
+        }
 
-    //     const newAverage =
-    //       number_of_transactions > 1
-    //         ? (average_transaction_amount * number_of_transactions -
-    //             transaction.amount) /
-    //           (number_of_transactions - 1)
-    //         : 0;
+        const newAverage =
+          number_of_transactions > 1
+            ? (average_transaction_amount * number_of_transactions -
+                transaction.amount) /
+              (number_of_transactions - 1)
+            : 0;
 
-    //     return {
-    //       income: newIncome,
-    //       expense: newExpense,
-    //       number_of_transactions: number_of_transactions - 1,
-    //       average_transaction_amount: newAverage,
-    //       budget_utilised: newBugetUtilised,
-    //     };
-    //   }
+        return {
+          income: newIncome,
+          expense: newExpense,
+          number_of_transactions: number_of_transactions - 1,
+          average_transaction_amount: newAverage,
+          budget_utilised: newBugetUtilised,
+        };
+      }
 
-    //   if (changes?.flow_type) {
-    //     if (changes.flow_type === "income") {
-    //       newIncome += changes?.amount ?? transaction.amount;
-    //       newExpense -= changes?.amount ?? transaction.amount;
-    //     } else if (changes.flow_type === "expense") {
-    //       newExpense += changes?.amount ?? transaction.amount;
-    //       newIncome -= changes?.amount ?? transaction.amount;
-    //     }
-    //   }
+      if (changes?.flow_type) {
+        if (changes.flow_type === "income") {
+          newIncome += changes?.amount ?? transaction.amount;
+          newExpense -= changes?.amount ?? transaction.amount;
+        } else if (changes.flow_type === "expense") {
+          newExpense += changes?.amount ?? transaction.amount;
+          newIncome -= changes?.amount ?? transaction.amount;
+        }
+      }
 
-    //   return {
-    //     income: newIncome,
-    //     expense: newExpense,
-    //     average_transaction_amount:
-    //       (average_transaction_amount * number_of_transactions +
-    //         (changes?.amount
-    //           ? changes.amount - transaction.amount
-    //           : transaction.amount)) /
-    //       number_of_transactions,
-    //     number_of_transactions: number_of_transactions,
-    //     budget_utilised: newBugetUtilised,
-    //   };
-    // };
+      return {
+        income: newIncome,
+        expense: newExpense,
+        average_transaction_amount:
+          (average_transaction_amount * number_of_transactions +
+            (changes?.amount
+              ? changes.amount - transaction.amount
+              : transaction.amount)) /
+          number_of_transactions,
+        number_of_transactions: number_of_transactions,
+        budget_utilised: newBugetUtilised,
+      };
+    };
 
-    // try {
-    //   values.amount = parseFloat(values.amount);
-    //   const changes = getChanges(values, transaction);
-    //   const { $id: userId } = await appwrite.account.get();
+    try {
+      values.amount = parseFloat(values.amount);
+      const changes = getChanges(values, transaction);
+      const { $id: userId } = await appwrite.account.get();
 
-    //   if (changes?.date) {
-    //     const prevMonth = format(new Date(transaction.date), "MM");
-    //     const currentMonth = format(new Date(changes.date), "MM");
-    //     const prevTransYrMonth = format(new Date(transaction.date), "yyyy-MM");
+      if (changes?.date) {
+        const prevMonth = format(new Date(transaction.date), "MM");
+        const currentMonth = format(new Date(changes.date), "MM");
+        const prevTransYrMonth = format(new Date(transaction.date), "yyyy-MM");
 
-    //     if (prevMonth !== currentMonth) {
-    //       const {
-    //         documents: [prevStatement],
-    //       } = await appwrite.database.listDocuments(
-    //         appwrite.getVariables().DATABASE_ID,
-    //         appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
-    //         [
-    //           Query.equal("user_id", userId),
-    //           Query.equal("year_month", prevTransYrMonth),
-    //         ]
-    //       );
+        if (prevMonth !== currentMonth) {
+          const {
+            documents: [prevStatement],
+          } = await appwrite.database.listDocuments(
+            appwrite.getVariables().DATABASE_ID,
+            appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+            [
+              Query.equal("user_id", userId),
+              Query.equal("year_month", prevTransYrMonth),
+            ]
+          );
 
-    //       if (prevStatement) {
-    //         const prevMonthChanges = calculateStatementChanges(
-    //           prevStatement,
-    //           transaction,
-    //           true,
-    //           changes
-    //         );
+          if (prevStatement) {
+            const prevMonthChanges = calculateStatementChanges(
+              prevStatement,
+              transaction,
+              true,
+              changes
+            );
 
-    //         const {
-    //           documents: [largerTransaction],
-    //         } = await appwrite.database.listDocuments(
-    //           appwrite.getVariables().DATABASE_ID,
-    //           appwrite.getVariables().TRANSACTIONS_COLLECTION_ID,
-    //           [Query.orderDesc("amount"), Query.limit(1)]
-    //         );
+            const {
+              documents: [largerTransaction],
+            } = await appwrite.database.listDocuments(
+              appwrite.getVariables().DATABASE_ID,
+              appwrite.getVariables().TRANSACTIONS_COLLECTION_ID,
+              [Query.orderDesc("amount"), Query.limit(1)]
+            );
 
-    //         await appwrite.database.updateDocument(
-    //           appwrite.getVariables().DATABASE_ID,
-    //           appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
-    //           prevStatement.$id,
-    //           {
-    //             ...prevMonthChanges,
-    //             largest_transaction_amount: largerTransaction?.amount || 0,
-    //           }
-    //         );
-    //       }
+            await appwrite.database.updateDocument(
+              appwrite.getVariables().DATABASE_ID,
+              appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+              prevStatement.$id,
+              {
+                ...prevMonthChanges,
+                largest_transaction_amount: largerTransaction?.amount || 0,
+              }
+            );
+          }
 
-    //       const newYrMonth = format(new Date(changes.date), "yyyy-MM");
-    //       const {
-    //         documents: [newStatement],
-    //       } = await appwrite.database.listDocuments(
-    //         appwrite.getVariables().DATABASE_ID,
-    //         appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
-    //         [
-    //           Query.equal("user_id", userId),
-    //           Query.equal("year_month", newYrMonth),
-    //         ]
-    //       );
+          const newYrMonth = format(new Date(changes.date), "yyyy-MM");
+          const {
+            documents: [newStatement],
+          } = await appwrite.database.listDocuments(
+            appwrite.getVariables().DATABASE_ID,
+            appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+            [
+              Query.equal("user_id", userId),
+              Query.equal("year_month", newYrMonth),
+            ]
+          );
 
-    //       if (newStatement) {
-    //         const newMonthChanges = calculateStatementChanges(
-    //           newStatement,
-    //           transaction,
-    //           false,
-    //           changes
-    //         );
+          if (newStatement) {
+            const newMonthChanges = calculateStatementChanges(
+              newStatement,
+              transaction,
+              false,
+              changes
+            );
 
-    //         await appwrite.database.updateDocument(
-    //           appwrite.getVariables().DATABASE_ID,
-    //           appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
-    //           newStatement.$id,
-    //           newMonthChanges
-    //         );
-    //       } else {
-    //         const newSummary = await appwrite.database.createDocument(
-    //           appwrite.getVariables().DATABASE_ID,
-    //           appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
-    //           ID.unique(),
-    //           {
-    //             user_id: userId,
-    //             year_month: newYrMonth,
-    //             income: values.flow_type === "income" ? values.amount : 0,
-    //             expense: values.flow_type === "expense" ? values.amount : 0,
-    //             budget_utilised: 0,
-    //             recurring_expenses: 0,
-    //             savings_amount: 0,
-    //             number_of_transactions: 1,
-    //             average_transaction_amount: values.amount,
-    //             largest_transaction_amount: values.amount,
-    //           }
-    //         );
+            await appwrite.database.updateDocument(
+              appwrite.getVariables().DATABASE_ID,
+              appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+              newStatement.$id,
+              newMonthChanges
+            );
+          } else {
+            const newSummary = await appwrite.database.createDocument(
+              appwrite.getVariables().DATABASE_ID,
+              appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+              ID.unique(),
+              {
+                user_id: userId,
+                year_month: newYrMonth,
+                income: values.flow_type === "income" ? values.amount : 0,
+                expense: values.flow_type === "expense" ? values.amount : 0,
+                budget_utilised: 0,
+                recurring_expenses: 0,
+                savings_amount: 0,
+                number_of_transactions: 1,
+                average_transaction_amount: values.amount,
+                largest_transaction_amount: values.amount,
+              }
+            );
 
-    //         console.log("Updated Transaction: ", newSummary);
-    //       }
-    //     }
-    //   }
+            console.log("Updated Transaction: ", newSummary);
+          }
+        }
+      }
 
-    //   // Update the transaction itself
-    //   const updatedTransaction = await appwrite.database.updateDocument(
-    //     appwrite.getVariables().DATABASE_ID,
-    //     appwrite.getVariables().TRANSACTIONS_COLLECTION_ID,
-    //     transaction.$id,
-    //     changes
-    //   );
+      // Update the transaction itself
+      const updatedTransaction = await appwrite.database.updateDocument(
+        appwrite.getVariables().DATABASE_ID,
+        appwrite.getVariables().TRANSACTIONS_COLLECTION_ID,
+        transaction.$id,
+        changes
+      );
 
-    //   console.log("Updated Transaction: ", updatedTransaction);
+      console.log("Updated Transaction: ", updatedTransaction);
 
-    //   navigate("/transactions");
-    // } catch (error) {
-    //   console.error("Error updating transaction:", error);
-    //   throw error;
-    // } finally {
-    //   setSubmitting(false);
-    //   handleClose();
-    // }
+      navigate("/transactions");
+    } catch (error) {
+      console.error("Error updating transaction:", error);
+      throw error;
+    } finally {
+      setSubmitting(false);
+      handleClose();
+    }
   };
+
+  const loadingCategoriesParties = loadingCategories || loadingParties;
 
   const fetchCategories = async () => {
     const categories = await CategoryService.getCategoryTree();
@@ -239,7 +335,18 @@ const EditTransaction = ({ transaction, handleClose }) => {
     const changes = {};
     for (const key in formValues) {
       if (key === "category") {
-        if (transaction?.category && formValues[key] !== transaction[key]?.$id) {
+        if (
+          transaction?.category &&
+          formValues[key] !== transaction[key]?.$id
+        ) {
+          changes[key] = formValues[key];
+        }
+        continue;
+      } else if (key === "payer_payee") {
+        if (
+          transaction?.payer_payee &&
+          formValues[key] !== transaction[key]?.$id
+        ) {
           changes[key] = formValues[key];
         }
         continue;
@@ -274,6 +381,8 @@ const EditTransaction = ({ transaction, handleClose }) => {
         <Formik
           initialValues={{
             ...transaction,
+            payer_payee: transaction?.payer_payee?.$id ?? null,
+            category: transaction?.category?.$id ?? null,
             date: format(new Date(transaction.date), "yyyy-MM-dd"),
           }}
           validationSchema={createTransactionSchema}
@@ -293,7 +402,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
                       }
                     )}`}
                     onClick={() => setFieldValue("flow_type", "expense")}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || loadingCategoriesParties}
                   >
                     Expense
                   </button>
@@ -307,7 +416,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
                       }
                     )}`}
                     onClick={() => setFieldValue("flow_type", "income")}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || loadingCategoriesParties}
                   >
                     Income
                   </button>
@@ -331,7 +440,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
                             touched?.date && errors?.date,
                         }
                       )}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || loadingCategoriesParties}
                     />
                     <ErrorMessage name="date">
                       {(msg) => (
@@ -360,7 +469,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
                             touched?.item && errors?.item,
                         }
                       )}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || loadingCategoriesParties}
                     />
                     <ErrorMessage name="item">
                       {(msg) => (
@@ -370,109 +479,28 @@ const EditTransaction = ({ transaction, handleClose }) => {
                       )}
                     </ErrorMessage>
                   </div>
-                  <div className="w-full flex flex-col gap-y-2">
-                    <label
-                      htmlFor="payment_timing"
-                      className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                    >
-                      Payment Terms
-                    </label>
-                    <div className="relative w-full">
-                      <Field
-                        id="payment_terms"
-                        name="payment_terms"
-                        className={cn(
-                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                          {
-                            "border-error focus:border-error":
-                              touched?.payment_terms && errors?.payment_terms,
-                          }
-                        )}
-                        as="select"
-                        disabled={isSubmitting}
-                      >
-                        <option value="">Select one</option>
-                        <option value="immediate">Immediate</option>
-                        <option value="deferred">Deferred</option>
-                      </Field>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <svg
-                          className="fill-greyborder h-4 w-4 "
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                      </div>
-                    </div>
-                    <ErrorMessage name="payment_terms">
-                      {(msg) => (
-                        <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                          {msg}
-                        </div>
-                      )}
-                    </ErrorMessage>
-                  </div>
-                  <div className="w-full flex flex-col gap-y-2">
-                    <label
-                      htmlFor="transaction_status"
-                      className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                    >
-                      Transaction Status
-                    </label>
-                    <div className="relative w-full">
-                      <Field
-                        id="transaction_status"
-                        name="transaction_status"
-                        className={cn(
-                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                          {
-                            "border-error focus:border-error":
-                              touched?.transaction_status &&
-                              errors?.transaction_status,
-                          }
-                        )}
-                        as="select"
-                        disabled={isSubmitting}
-                      >
-                        <option value="">Select one</option>
-                        {values.payment_terms === "immediate" ? (
-                          <>
-                            <option value="pending">Pending</option>
-                            <option value="cleared">Cleared</option>
-                            <option value="bounced">Bounced</option>
-                            <option value="failed">Failed</option>
-                            <option value="void">Void</option>
-                          </>
-                        ) : (
-                          <>
-                            <option value="scheduled">Scheduled</option>
-                            <option value="pending">Pending</option>
-                            <option value="cleared">Cleared</option>
-                            <option value="bounced">Bounced</option>
-                            <option value="failed">Failed</option>
-                            <option value="void">Void</option>
-                          </>
-                        )}
-                      </Field>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <svg
-                          className="fill-greyborder h-4 w-4 "
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                      </div>
-                    </div>
-                    <ErrorMessage name="transaction_status">
-                      {(msg) => (
-                        <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                          {msg}
-                        </div>
-                      )}
-                    </ErrorMessage>
-                  </div>
+                  <CommonSelect
+                    label="Payment Terms"
+                    id="payment_terms"
+                    name="payment_terms"
+                    placeholder="Select One"
+                    loading={false}
+                    optionData={paymentTermOptions}
+                    disabled={isSubmitting || loadingCategoriesParties}
+                  />
+
+                  <CommonSelect
+                    label="Transaction Status"
+                    id="transaction_status"
+                    name="transaction_status"
+                    placeholder="Select One"
+                    loading={false}
+                    optionData={transactionStatusOptions.filter((status) =>
+                      status.options.includes(values.payment_terms)
+                    )}
+                    disabled={isSubmitting || loadingCategoriesParties}
+                  />
+
                   <div className="col-span-2 flex flex-col gap-y-2">
                     <label
                       htmlFor="amount"
@@ -492,7 +520,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
                             touched?.amount && errors?.amount,
                         }
                       )}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || loadingCategoriesParties}
                     />
                     <ErrorMessage name="amount">
                       {(msg) => (
@@ -523,8 +551,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
                             touched?.description && errors?.description,
                         }
                       )}
-                      disabled={isSubmitting}
-                      value={values.description || ""}
+                      disabled={isSubmitting || loadingCategoriesParties}
                     />
                     <ErrorMessage name="description">
                       {(msg) => (
@@ -534,35 +561,16 @@ const EditTransaction = ({ transaction, handleClose }) => {
                       )}
                     </ErrorMessage>
                   </div>
-                  <div className="flex flex-col gap-y-2">
-                    <label
-                      htmlFor="payer_payee"
-                      className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                    >
-                      Payer/Payee
-                    </label>
-                    <Field
-                      id="payer_payee"
-                      name="payer_payee"
-                      type="text"
-                      placeholder="Payee/Payee"
-                      className={cn(
-                        "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                        {
-                          "border-error focus:border-error":
-                            touched?.payer_payee && errors?.payer_payee,
-                        }
-                      )}
-                      disabled={isSubmitting}
-                    />
-                    <ErrorMessage name="payer_payee">
-                      {(msg) => (
-                        <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                          {msg}
-                        </div>
-                      )}
-                    </ErrorMessage>
-                  </div>
+
+                  <PartySelect
+                    label="Payer/Payee"
+                    name="payer_payee"
+                    id="payer_payee"
+                    loading={loadingParties}
+                    optionData={parties}
+                    disabled={isSubmitting || loadingCategoriesParties}
+                  />
+
                   <div className="flex flex-col gap-y-2">
                     <label
                       htmlFor="invoice_receipt_no"
@@ -583,7 +591,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
                             errors?.invoice_receipt_no,
                         }
                       )}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || loadingCategoriesParties}
                     />
                     <ErrorMessage name="invoice_receipt_no">
                       {(msg) => (
@@ -593,125 +601,40 @@ const EditTransaction = ({ transaction, handleClose }) => {
                       )}
                     </ErrorMessage>
                   </div>
-                  <div className="w-full flex flex-col gap-y-2">
-                    <label
-                      htmlFor="payment_method"
-                      className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                    >
-                      Payment Method
-                    </label>
-                    <div className="relative w-full">
-                      <Field
-                        id="payment_method"
-                        name="payment_method"
-                        className={cn(
-                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                          {
-                            "border-error focus:border-error":
-                              touched?.payment_method && errors?.payment_method,
-                          }
-                        )}
-                        as="select"
-                        disabled={isSubmitting}
-                        value={values.payment_method || ""}
-                      >
-                        <option value="">Select one</option>
-                        <option value="cash">Cash</option>
-                        <option value="bank_transfer">Bank Transfer</option>
-                        <option value="credit_card">Credit Card</option>
-                        <option value="debit_card">Debit Card</option>
-                        <option value="cheque">Check</option>
-                        <option value="momo">Momo</option>
-                        <option value="airtel_money">Airtel Money</option>
-                        <option value="visa">Visa</option>
-                        <option value="paypal">Paypal</option>
-                        <option value="pesapal">Pesapal</option>
-                        <option value="other">Other</option>
-                      </Field>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <svg
-                          className="fill-greyborder h-4 w-4 "
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                      </div>
-                    </div>
-                    <ErrorMessage name="payment_method">
-                      {(msg) => (
-                        <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                          {msg}
-                        </div>
-                      )}
-                    </ErrorMessage>
-                  </div>
-                  <div className="w-full flex flex-col gap-y-2">
-                    <label
-                      htmlFor="category"
-                      className="font-satoshi font-normal text-small leading-100 tracking-normal"
-                    >
-                      Category
-                    </label>
-                    <div className="relative w-full">
-                      <Field
-                        id="category"
-                        name="category"
-                        className={cn(
-                          "w-full border border-greyborder focus:border-accent px-3 py-3.5 pr-10 bg-white font-satoshi font-normal text-tiny outline-none placeholder-black leading-100 tracking-0 appearance-none",
-                          {
-                            "border-error focus:border-error":
-                              touched?.category && errors?.category,
-                          }
-                        )}
-                        as="select"
-                        disabled={isSubmitting}
-                        value={values.category || ""}
-                      >
-                        <option value="">Select one</option>
-                        {values.flow_type === "income" && categories?.income
-                          ? categories.income.map((category) => (
-                              <option key={category.$id} value={category.$id}>
-                                {category.name}
-                              </option>
-                            ))
-                          : values.flow_type === "expense" &&
-                            categories?.expense
-                          ? categories.expense.map((category) => (
-                              <option key={category.$id} value={category.$id}>
-                                {category.name}
-                              </option>
-                            ))
-                          : null}
-                        {categories?.both &&
-                          categories.both.map((category) => (
-                            <option key={category.$id} value={category.$id}>
-                              {category.name}
-                            </option>
-                          ))}
-                      </Field>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                        <svg
-                          className="fill-greyborder h-4 w-4 "
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                      </div>
-                    </div>
-                    <ErrorMessage name="category">
-                      {(msg) => (
-                        <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                          {msg}
-                        </div>
-                      )}
-                    </ErrorMessage>
-                  </div>
+
+                  <CommonSelect
+                    label="Payment Method"
+                    id="payment_method"
+                    name="payment_method"
+                    placeholder="Select Method"
+                    loading={false}
+                    optionData={paymentOptions}
+                    disabled={isSubmitting || loadingCategoriesParties}
+                  />
+
+                  <CategorySelect
+                    label="Category"
+                    name="category"
+                    id="category"
+                    placeholder="Select Category"
+                    loading={loadingCategories}
+                    optionData={groupedCategories}
+                    disabled={isSubmitting || loadingCategoriesParties}
+                  />
+
                   <Button
                     type="submit"
                     className="font-bold text-small col-span-2"
-                    disabled={isSubmitting || !getChanges(values, transaction)}
+                    disabled={
+                      !getChanges(values, transaction) ||
+                      isSubmitting ||
+                      loadingCategories ||
+                      loadingParties ||
+                      (!loadingCategories &&
+                        categories &&
+                        categories?.total === 0) ||
+                      (!loadingParties && parties && parties?.total === 0)
+                    }
                   >
                     {isSubmitting ? "Updating Transaction ..." : "Update"}
                   </Button>
