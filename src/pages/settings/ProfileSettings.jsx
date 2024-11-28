@@ -16,8 +16,8 @@ const Avatar = () => {
 
   const isSubmitting =
     [
-      "/settings/profile/profile-picture/delete",
-      "/settings/profile/profile-picture/upload",
+      "/settings/account/profile-picture/delete",
+      "/settings/account/profile-picture/upload",
     ].includes(navigation.formAction) && navigation.state === "submitting";
 
   const handleSubmit = (values) => {
@@ -27,7 +27,7 @@ const Avatar = () => {
       submit(formData, {
         method: "post",
         encType: "multipart/form-data",
-        action: "/settings/profile/profile-picture/delete",
+        action: "/settings/account/profile-picture/delete",
       });
       return;
     }
@@ -36,38 +36,13 @@ const Avatar = () => {
     submit(formData, {
       method: "post",
       encType: "multipart/form-data",
-      action: "/settings/profile/profile-picture/upload",
+      action: "/settings/account/profile-picture/upload",
     });
     return;
   };
 
   return (
-    <Suspense
-      fallback={
-        <div className="pt-4 flex gap-y-2 flex-col">
-          <div className="col-span-2 h-6 w-28 bg-grey rounded animate-pulse" />
-          <div className="flex flex-col gap-y-4 lg:pt-6">
-            <div className="flex justify-between h-fit w-full p-4 bg-grey rounded lg:h-24 lg:min-h-fit flex-wrap gap-y-2 items-end lg:items-start">
-              <section className="flex flex-1 lg:flex-none w-fit gap-x-4 h-fit">
-                <div className="relative w-24 group">
-                  <div className="p-1 absolute -top-3 lg:-top-9 right-0 bg-gray-200 w-6 h-6 rounded-full hidden lg:hidden lg:group-hover:flex justify-center items-center z-10 border border-greyborder animate-pulse" />
-                  <div className="static bg-grey lg:absolute -top-8 w-24 h-24 rounded-full animate-pulse border border-greyborder" />
-                </div>
-              </section>
-              <div className="flex lg:h-full items-end">
-                <Button
-                  type="button"
-                  className=" w-fit h-fit px-6 py-4 font-bold text-small"
-                  disabled
-                >
-                  Update
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<AvatarSkeleton />}>
       <Await resolve={data?.profile}>
         {(data) => {
           return (
@@ -171,6 +146,46 @@ const Avatar = () => {
   );
 };
 
+function AvatarSkeleton() {
+  return (
+    <div className="pt-4 flex gap-y-2 flex-col">
+      <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
+        Profile Picture
+      </h4>
+      <form className="flex flex-col gap-y-4 lg:pt-6">
+        <div className="flex justify-between h-fit w-full p-4 bg-grey rounded lg:h-24 lg:min-h-fit flex-wrap gap-y-2 items-end lg:items-start">
+          <section className="flex flex-1 lg:flex-none w-fit gap-x-4 h-fit">
+            <label
+              htmlFor="avatar_url"
+              className="bg-white border border-greyborder w-24 h-24 rounded-full flex justify-center items-center cursor-auto p-2 lg:-mt-7"
+            >
+              <input
+                type="file"
+                id="avatar_url"
+                name="logo"
+                className="hidden group"
+                accept="image/jpg, image/png, image/jpeg"
+              />
+              <span className="text-center font-satoshi text-tiny leading-100 tracking-normal max-w-[3.75rem] text-greyborder">
+                loading ...
+              </span>
+            </label>
+          </section>
+          <div className="flex lg:h-full items-end">
+            <Button
+              type="submit"
+              className=" w-fit h-fit px-6 py-4 font-bold text-small"
+              disabled
+            >
+              Update
+            </Button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 const PersonalDetails = () => {
   const submit = useSubmit();
   const data = useLoaderData();
@@ -186,55 +201,16 @@ const PersonalDetails = () => {
     submit(formData, {
       method: "post",
       encType: "multipart/form-data",
-      action: "/settings/profile/personal-details/update",
+      action: "/settings/account/personal-details/update",
     });
   };
 
   const isSubmitting =
-    navigation.formAction === "/settings/profile/personal-details/update" &&
+    navigation.formAction === "/settings/account/personal-details/update" &&
     navigation.state === "submitting";
 
   return (
-    <Suspense
-      fallback={
-        <div className="pt-4 flex gap-y-2 flex-col animate-pulse">
-          <div className="h-6 w-32 bg-gray-200 rounded"></div>
-
-          <div className="flex flex-col gap-y-4 p-4 bg-grey rounded">
-            <section className="flex flex-col gap-2">
-              <div className="flex flex-col md:flex-row md:flex-wrap justify-between gap-4 md:items-end">
-                <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
-                  <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                    <div className="h-5 w-16 bg-gray-200 rounded"></div>
-                    <div className="h-12 w-full bg-gray-200 rounded"></div>
-                  </div>
-
-                  <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                    <div className="h-5 w-16 bg-gray-200 rounded"></div>
-                    <div className="h-12 w-full bg-gray-200 rounded"></div>
-                  </div>
-
-                  <div className="md:w-[17.375rem] flex flex-col gap-y-2">
-                    <div className="h-5 w-32 bg-gray-200 rounded"></div>
-                    <div className="h-12 w-full bg-gray-200 rounded"></div>
-                  </div>
-                </div>
-
-                <div className="flex flex-grow justify-end">
-                  <Button
-                    type="submit"
-                    className="w-fit h-fit px-6 py-4 font-bold text-small"
-                    disabled={true}
-                  >
-                    Update
-                  </Button>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<PersonalDetailsSkeleton />}>
       <Await resolve={data?.profile}>
         {(data) => {
           return (
@@ -379,6 +355,81 @@ const PersonalDetails = () => {
     </Suspense>
   );
 };
+
+function PersonalDetailsSkeleton() {
+  return (
+    <div className="pt-4 flex gap-y-2 flex-col">
+      <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
+        Personal Details
+      </h4>
+      <div className="flex flex-col gap-y-4 p-4 bg-grey rounded">
+        <section className="flex flex-col gap-2">
+          <div className="flex flex-col md:flex-row md:flex-wrap justify-between gap-4 md:items-end">
+            <div className="flex flex-col md:flex-row md:flex-wrap gap-4">
+              <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                <label
+                  htmlFor="name"
+                  className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                >
+                  Name
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Name"
+                  className="border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black disabled:placeholder:text-greyborder"
+                  disabled
+                />
+              </div>
+              <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                <label
+                  htmlFor="email"
+                  className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                >
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="text"
+                  className="border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black disabled:placeholder:text-greyborder"
+                  placeholder="Email"
+                  disabled
+                />
+              </div>
+              <div className="md:w-[17.375rem] flex flex-col gap-y-2">
+                <label
+                  htmlFor="password"
+                  className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                >
+                  Current Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  className="border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black disabled:placeholder:text-greyborder"
+                  placeholder="Password"
+                  disabled
+                />
+              </div>
+            </div>
+            <div className="flex flex-grow justify-end">
+              <Button
+                type="submit"
+                className=" w-fit h-fit px-6 py-4 font-bold text-small"
+                disabled
+              >
+                Update
+              </Button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
 
 const OrganisationDetails = () => {
   const initialValues = {
@@ -556,7 +607,7 @@ const Password = () => {
 
     fetcher.submit(formData, {
       method: "POST",
-      action: "/settings/profile/change-password",
+      action: "/settings/account/change-password",
       replace: true,
     });
   };
@@ -724,7 +775,7 @@ const ProfileSettings = () => {
   return (
     <main className="flex w-full flex-col h-fit">
       <h2 className="font-archivo font-normal text-lg lg:text-xl leading-110 tracking-normal pt-4 pb-2">
-        Personal Profile
+        Account Settings
       </h2>
       <div className="flex flex-col gap-y-4">
         <Avatar />

@@ -12,7 +12,7 @@ const Settings = () => {
         </h1>
         <nav className="flex gap-x-2">
           <NavLink
-            to="/settings/profile"
+            to="/settings/account"
             className={({ isActive }) =>
               cn(
                 "px-0.5 pb-1 pt-3 font-satoshi font-normal leading-100 tracking-normal ease-in-out delay-75 transition-all",
@@ -23,7 +23,7 @@ const Settings = () => {
               )
             }
           >
-            Profile
+            Account
           </NavLink>
           <NavLink
             to="/settings/categories"
@@ -52,6 +52,34 @@ const Settings = () => {
             }
           >
             Parties
+          </NavLink>
+          <NavLink
+            to="/settings/currency"
+            className={({ isActive }) =>
+              cn(
+                "px-0.5 pb-1 pt-3 font-satoshi font-normal leading-100 tracking-normal ease-in-out delay-75 transition-all",
+                {
+                  "border-b border-b-black": isActive,
+                  "border-b border-b-transparent": !isActive,
+                }
+              )
+            }
+          >
+            Currency
+          </NavLink>
+          <NavLink
+            to="/settings/organisation"
+            className={({ isActive }) =>
+              cn(
+                "px-0.5 pb-1 pt-3 font-satoshi font-normal leading-100 tracking-normal ease-in-out delay-75 transition-all",
+                {
+                  "border-b border-b-black": isActive,
+                  "border-b border-b-transparent": !isActive,
+                }
+              )
+            }
+          >
+            Organisation
           </NavLink>
         </nav>
       </header>

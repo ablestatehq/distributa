@@ -75,7 +75,7 @@ function SideBar() {
           className={cn("text-black w-fit px-8", {
             "px-4": collapseMenu,
           })}
-          onClick={() => navigate("/settings/profile")}
+          onClick={() => navigate("/settings/account")}
         >
           Settings
         </button>

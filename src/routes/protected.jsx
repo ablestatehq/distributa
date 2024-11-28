@@ -135,7 +135,7 @@ export const protectedRoutes = [
         element: <SettingsLayout />,
         children: [
           {
-            path: "profile",
+            path: "account",
             element: <ProfileSettings />,
             loader: async () => {
               const currentUser = await appwrite.account.get();
@@ -297,6 +297,14 @@ export const protectedRoutes = [
           {
             path: "billing",
             element: <BillingSettings />,
+          },
+          {
+            path: "currency",
+            element: <div>Currencies</div>,
+          },
+          {
+            path: "organisation",
+            element: <div>Organisation</div>,
           },
           {
             path: "parties",
