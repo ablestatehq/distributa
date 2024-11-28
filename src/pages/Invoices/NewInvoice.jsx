@@ -1025,7 +1025,10 @@ const NewInvoice = () => {
                                                 );
                                               }
                                             }}
-                                            disabled={values.items?.length <= 1}
+                                            disabled={
+                                              values.items?.length <= 1 ||
+                                              addItem
+                                            }
                                           >
                                             Delete
                                           </button>
@@ -1037,6 +1040,7 @@ const NewInvoice = () => {
                                             onClick={() =>
                                               setEditIndex(() => index)
                                             }
+                                            disabled={addItem}
                                           >
                                             Edit
                                           </button>
@@ -1047,7 +1051,18 @@ const NewInvoice = () => {
                                 </tbody>
                               </table>
                             </div>
-                            {!addItem && (
+                            {addItem ? (
+                              <Button
+                                type="button"
+                                className="my-2 px-3 py-1.5 font-satoshi font-medium text-tiny leading-100 tracking-normal outline-none"
+                                onClick={() => {
+                                  arrayHelpers.pop();
+                                  setAddItem(() => null);
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            ) : (
                               <Button
                                 type="button"
                                 className="my-2 px-3 py-1.5 font-satoshi font-medium text-tiny leading-100 tracking-normal outline-none"
