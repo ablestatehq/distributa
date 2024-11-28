@@ -15,7 +15,7 @@ function Login() {
     useNavigationLoadingState();
 
   if (response?.error && isReloading)
-    toast.error(response?.error?.message ?? "Unknown error occured");
+    toast.error(response?.error?.response?.message || "Unknown error occured");
 
   if (isRedirecting) toast.success("Successfully logged in");
 
@@ -23,8 +23,8 @@ function Login() {
     submit(values, { method: "POST", action: "/login" });
 
   const initialValues = {
-    email: "admin@distributa.com",
-    password: "07ReHGjOqdKM",
+    email: "",
+    password: "",
   };
 
   return (

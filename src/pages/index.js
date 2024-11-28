@@ -8,6 +8,7 @@ import BillingSettings from "./settings/BillingSettings";
 import CategorySettings from "./settings/CategorySettings";
 import ProfileSettings from "./settings/ProfileSettings";
 import PartiesSettings from "./settings/PartiesSettings";
+import OrganisationSettings from "./settings/OrganisationSettings";
 
 export {
   Invoices,
@@ -20,4 +21,5 @@ export {
   CategorySettings,
   ProfileSettings,
   PartiesSettings,
+  OrganisationSettings
 };

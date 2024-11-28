@@ -10,7 +10,7 @@ const Settings = () => {
         <h1 className="font-archivo font-normal text-xl lg:text-4xl leading-110 tracking-normal">
           Settings
         </h1>
-        <nav className="flex gap-x-2">
+        <nav className="flex gap-x-2 w-full overflow-x-auto">
           <NavLink
             to="/settings/account"
             className={({ isActive }) =>

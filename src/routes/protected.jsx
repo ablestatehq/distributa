@@ -16,6 +16,7 @@ import {
   BillingSettings,
   ProfileSettings,
   PartiesSettings,
+  OrganisationSettings,
 } from "../pages";
 import { SettingsLayout } from "../Layouts/components";
 import InvoicePreview from "../components/Modals/InvoicePreview";
@@ -304,7 +305,7 @@ export const protectedRoutes = [
           },
           {
             path: "organisation",
-            element: <div>Organisation</div>,
+            element: <OrganisationSettings />,
           },
           {
             path: "parties",
@@ -344,7 +345,7 @@ export const protectedRoutes = [
                     return json({ success: true, data: party });
                   } catch (error) {
                     return json(
-                      { success: false, error: error.message },
+                      { success: false, error: error.response.message },
                       { status: 400 }
                     );
                   }

@@ -13,8 +13,8 @@ const CreateParty = ({ handleClose }) => {
 
   const initialValues = {
     name: "",
-    email: "",
-    phone: "",
+    email: null,
+    phone: null,
     type: "individual",
     address: "",
   };
@@ -138,6 +138,10 @@ const CreateParty = ({ handleClose }) => {
                       }
                     )}
                     disabled={fetcher.state === "submitting"}
+                    onChange={(e) =>
+                      setFieldValue("email", e.target?.value || null)
+                    }
+                    value={values.email || ""}
                   />
                   <ErrorMessage name="email">
                     {(msg) => (
@@ -166,7 +170,11 @@ const CreateParty = ({ handleClose }) => {
                           touched?.phone && errors?.phone,
                       }
                     )}
+                    onChange={(e) =>
+                      setFieldValue("phone", e.target?.value || null)
+                    }
                     disabled={fetcher.state === "submitting"}
+                    value={values.phone || ""}
                   />
                   <ErrorMessage name="phone">
                     {(msg) => (

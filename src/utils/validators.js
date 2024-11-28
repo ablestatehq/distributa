@@ -183,7 +183,7 @@ export const personalDetailsSchema = Yup.object().shape({
 export const createPartySchema = Yup.object({
   $id: Yup.string().nullable(),
   name: Yup.string().required("Name is required"),
-  email: Yup.string().email("Invalid email"),
+  email: Yup.string().nullable().email("Invalid email"),
   phone: Yup.string()
     .nullable()
     .matches(

@@ -149,6 +149,10 @@ const EditParty = ({ handleClose, party }) => {
                           touched?.email && errors?.email,
                       }
                     )}
+                    onChange={(e) =>
+                      setFieldValue("email", e.target?.value || null)
+                    }
+                    value={values.email || ""}
                     disabled={fetcher.state === "submitting"}
                   />
                   <ErrorMessage name="email">
@@ -178,6 +182,10 @@ const EditParty = ({ handleClose, party }) => {
                           touched?.phone && errors?.phone,
                       }
                     )}
+                    onChange={(e) =>
+                      setFieldValue("phone", e.target?.value || null)
+                    }
+                    value={values.phone || ""}
                     disabled={fetcher.state === "submitting"}
                   />
                   <ErrorMessage name="phone">
