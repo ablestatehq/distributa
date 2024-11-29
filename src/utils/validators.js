@@ -199,3 +199,19 @@ export const createPartySchema = Yup.object({
   address: Yup.string().required("Address is required"),
   preferred_currency: Yup.string().nullable(),
 });
+
+export const organisationSchema = Yup.object({
+  $id: Yup.string().nullable(),
+  logo: Yup.string().nullable(),
+  logo_url: Yup.string().nullable(),
+  logo_ref: Yup.string().nullable(),
+  name: Yup.string().required("Name is required"),
+  email: Yup.string().email("Invalid email").nullable(),
+  phone: Yup.string()
+    .nullable()
+    .matches(
+      /^\+[1-9]\d{1,14}$/,
+      "Please enter a valid international phone number starting with + and country code (e.g. 000000000000)"
+    ),
+  address: Yup.string().required("Address is required"),
+});

@@ -306,6 +306,119 @@ export const protectedRoutes = [
           {
             path: "organisation",
             element: <OrganisationSettings />,
+            loader: async () => {
+              const { $id: userId } = await appwrite.account.get();
+              const organisationPromise = appwrite.database.getDocument(
+                appwrite.getVariables().DATABASE_ID,
+                appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
+                userId
+              );
+
+              return defer({ organisation: organisationPromise });
+            },
+            action: async ({ request }) => {
+              const formData = await request.formData();
+              const { $id: userId } = await appwrite.account.get();
+              const logo = formData.get("logo");
+
+              let logo_url = formData.get("logo_url");
+              let file_id = formData.get("logo_ref");
+
+              const permissions = [
+                Permission.read(Role.any()),
+                Permission.update(Role.user(userId)),
+                Permission.delete(Role.user(userId)),
+              ];
+
+              if (logo) {
+                try {
+                  const file = await appwrite.storage.createFile(
+                    appwrite.getVariables().LOGOS_BUCKET_ID,
+                    ID.unique(),
+                    logo,
+                    permissions
+                  );
+
+                  const url = appwrite.storage.getFileView(
+                    appwrite.getVariables().LOGOS_BUCKET_ID,
+                    file.$id
+                  );
+
+                  file_id = file.$id;
+                  logo_url = url;
+                } catch (error) {
+                  console.error("Uploading Logo: ", error.response.message);
+                }
+              }
+
+              try {
+                let {
+                  documents: [organisation = null],
+                } = await appwrite.database.listDocuments(
+                  appwrite.getVariables().DATABASE_ID,
+                  appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
+                  [Query.equal("created_by", userId)]
+                );
+
+                const data = {
+                  name: formData.get("name"),
+                  email: formData.get("email"),
+                  phone: formData.get("phone"),
+                  address: formData.get("address"),
+                  logo_url,
+                  logo_ref: logo_url ? file_id : null,
+                  created_by: userId,
+                };
+
+                if (!organisation) {
+                  organisation = await appwrite.database.createDocument(
+                    appwrite.getVariables().DATABASE_ID,
+                    appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
+                    userId,
+                    data,
+                    [
+                      Permission.read(Role.any()),
+                      Permission.update(Role.user(userId)),
+                      Permission.delete(Role.user(userId)),
+                    ]
+                  );
+
+                  return json({ success: true, data: organisation });
+                }
+
+                if (!logo_url) {
+                  if (organisation?.logo) console.log(organisation);
+                  try {
+                    await appwrite.storage.deleteFile(
+                      appwrite.getVariables().LOGOS_BUCKET_ID,
+                      organisation.logo_ref
+                    );
+                  } catch (error) {
+                    console.error(
+                      "Error Deleting file: ",
+                      error?.response?.message
+                    );
+                  }
+                }
+
+                organisation = await appwrite.database.updateDocument(
+                  appwrite.getVariables().DATABASE_ID,
+                  appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
+                  organisation.$id,
+                  data
+                );
+
+                return json({ success: true, data: organisation });
+              } catch (error) {
+                return json(
+                  {
+                    success: false,
+                    error: error?.response?.message || "Unknown error ocurred.",
+                  },
+                  { status: 400 }
+                );
+              }
+            },
           },
           {
             path: "parties",
@@ -354,7 +467,6 @@ export const protectedRoutes = [
               {
                 path: ":id/edit",
                 action: async ({ request, params }) => {
-                  console.log("Reached here: ", params);
                   try {
                     const data = await request.json();
                     const party = await appwrite.database.updateDocument(
