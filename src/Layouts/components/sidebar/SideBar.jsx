@@ -38,9 +38,10 @@ function SideBar() {
       <button
         type="button"
         className={cn(
-          "absolute top-16 -right-3.5 bg-white border border-gray-100 p-1 rounded-full",
+          "top-16 -right-3.5 bg-white border border-gray-100 p-1 rounded-full",
           "transition duration-700",
-          collapseMenu ? "rotate-180" : "rotate-360"
+          collapseMenu ? "rotate-180" : "rotate-360",
+          isDesktop ? "absolute" : "hidden"
         )}
         onClick={() => toggleCollapse()}
       >

@@ -101,6 +101,16 @@ export const protectedRoutes = [
       {
         path: "/invoices/new",
         element: <NewInvoice />,
+        loader: async () => {
+          const { $id: userId } = await appwrite.account.get();
+          const organisationPromise = appwrite.database.listDocuments(
+            appwrite.getVariables().DATABASE_ID,
+            appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
+            [Query.equal("created_by", userId)]
+          );
+
+          return defer({ organisation: organisationPromise });
+        },
         action: async ({ request }) => {
           try {
             const currentUrl = new URL(request.url);
