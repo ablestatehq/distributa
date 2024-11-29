@@ -13,7 +13,7 @@ const NavigationLink = ({
       to={to}
       end={exact}
       className={({ isActive }) =>
-        cn("flex w-full gap-x-4 py-5 ease-in-out duration-700", {
+        cn("flex w-full gap-x-4 py-5", {
           "bg-grey border border-greyborder rounded-lg": isActive,
           "border border-transparent": !isActive,
           "px-8": children,

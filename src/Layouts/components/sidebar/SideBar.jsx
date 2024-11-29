@@ -39,7 +39,7 @@ function SideBar() {
         type="button"
         className={cn(
           "absolute top-16 -right-3.5 bg-white border border-gray-100 p-1 rounded-full",
-          "transition-all duration-700",
+          "transition duration-700",
           collapseMenu ? "rotate-180" : "rotate-360"
         )}
         onClick={() => toggleCollapse()}
@@ -58,7 +58,7 @@ function SideBar() {
             />
           )}
         </button>
-        <nav className="transition-all flex flex-col gap-y-4 w-full text-center">
+        <nav className="transition-all duration-100 flex flex-col gap-y-4 w-full text-center">
           <NavigationLink
             to="/invoices"
             Icon={collapseMenu ? ClipBoard : FileText}
