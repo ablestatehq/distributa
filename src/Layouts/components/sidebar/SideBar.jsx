@@ -2,11 +2,20 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks";
 import Logo from "../../../components/common/Logos/Logo";
 import LogoCondensed from "../../../components/common/Logos/LogoCondensed";
-import { FileText, PlusSquare, Book } from "../../../components/common/icons";
+import {
+  FileText,
+  PlusSquare,
+  Book,
+  ClipBoard,
+} from "../../../components/common/icons";
 import NavigationLink from "../NavigationLink";
 import { useState } from "react";
 import cn from "../../../utils/cn";
 import useMediaQuery from "../../../hooks/useMediaQuery";
+import {
+  HiMiniChevronDoubleLeft,
+  HiMiniChevronDoubleRight,
+} from "react-icons/hi2";
 
 function SideBar() {
   const { logout } = useAuth();
@@ -19,13 +28,24 @@ function SideBar() {
 
   return (
     <aside
-      className={`h-full hidden md:flex flex-col justify-between py-16 border-r border-r-gray-100 flex-shrink-0 ${cn(
+      className={`relative h-full hidden md:flex flex-col justify-between py-16 border-r border-r-gray-100 flex-shrink-0 ${cn(
         {
           "px-8": isDesktop || !collapseMenu,
           "px-4": !isDesktop || collapseMenu,
         }
       )}`}
     >
+      <button
+        type="button"
+        className={cn(
+          "absolute top-16 -right-3.5 bg-white border border-gray-100 p-1 rounded-full",
+          "transition-all duration-700",
+          collapseMenu ? "rotate-180" : "rotate-360"
+        )}
+        onClick={() => toggleCollapse()}
+      >
+        {<HiMiniChevronDoubleLeft size={20} />}
+      </button>
       <section className="flex flex-col gap-y-8">
         <button onClick={toggleCollapse} disabled={!isDesktop}>
           {collapseMenu || !isDesktop ? (
@@ -38,10 +58,10 @@ function SideBar() {
             />
           )}
         </button>
-        <nav className="flex flex-col gap-y-4 w-full text-center">
+        <nav className="transition-all flex flex-col gap-y-4 w-full text-center">
           <NavigationLink
             to="/invoices"
-            Icon={FileText}
+            Icon={collapseMenu ? ClipBoard : FileText}
             children={collapseMenu || !isDesktop ? null : "My invoices"}
             exact={true}
           />

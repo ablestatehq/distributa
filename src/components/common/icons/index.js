@@ -17,6 +17,7 @@ import Delete from "./Delete";
 import Category from "./Category";
 import Warning from "./Warning";
 import Download from "./Download";
+import ClipBoard from "./ClipBoard";
 
 export {
   Facebook,
@@ -38,4 +39,5 @@ export {
   Category,
   Warning,
   Download,
+  ClipBoard,
 };
