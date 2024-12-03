@@ -1,4 +1,3 @@
-// lib/appwrite.js
 import { Client, Databases, Storage, Account } from "appwrite";
 import { API_ENDPOINT, PROJECT_ID } from "../data/constants";
 

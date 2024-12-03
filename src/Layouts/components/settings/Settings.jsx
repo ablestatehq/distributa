@@ -68,7 +68,7 @@ const Settings = () => {
             Currency
           </NavLink>
           <NavLink
-            to="/settings/organisation"
+            to="/settings/business"
             className={({ isActive }) =>
               cn(
                 "px-0.5 pb-1 pt-3 font-satoshi font-normal leading-100 tracking-normal ease-in-out delay-75 transition-all",
@@ -79,11 +79,11 @@ const Settings = () => {
               )
             }
           >
-            Organisation
+            Business
           </NavLink>
         </nav>
       </header>
-      <main className="flex-1">
+      <main className="flex-1 max-h-full">
         <Outlet />
       </main>
     </ContentViewAreaWrapper>

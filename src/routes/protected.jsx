@@ -16,11 +16,13 @@ import {
   BillingSettings,
   ProfileSettings,
   PartiesSettings,
-  OrganisationSettings,
+  BusinessSettings,
+  CurrencySettings,
 } from "../pages";
 import { SettingsLayout } from "../Layouts/components";
 import InvoicePreview from "../components/Modals/InvoicePreview";
 import { Permission, Role, ID, Query } from "appwrite";
+import CurrencyPreferenceService from "../services/currency.prefs.service";
 
 const appwrite = new Appwrite();
 
@@ -311,11 +313,56 @@ export const protectedRoutes = [
           },
           {
             path: "currency",
-            element: <div>Currencies</div>,
+            action: async ({ request }) => {
+              try {
+                const formData = await request.json();
+                console.log("Form Data: ", formData)
+                const { $id: userId } = await appwrite.account.get();
+                await CurrencyPreferenceService.updatePreferences(
+                  userId,
+                  formData
+                );
+                return { success: true, data: null };
+              } catch (error) {
+                return json(
+                  { error: error.message, success: false },
+                  { status: 404 }
+                );
+              }
+            },
+            loader: async () => {
+              const { $id: userId } = await appwrite.account.get();
+              const currencyDataPromise = Promise.all([
+                appwrite.database.listDocuments(
+                  appwrite.getVariables().DATABASE_ID,
+                  appwrite.getVariables().CURRENCY_PREFERENCES_COLLECTION_ID,
+                  [
+                    Query.equal("user_id", userId),
+                    Query.equal("is_preferred", true),
+                  ]
+                ),
+                appwrite.database.listDocuments(
+                  appwrite.getVariables().DATABASE_ID,
+                  appwrite.getVariables().CURRENCY_PREFERENCES_COLLECTION_ID,
+                  [
+                    Query.equal("user_id", userId),
+                    Query.equal("is_available", true),
+                  ]
+                ),
+              ]).then(([preferred, available]) => ({
+                preferredCurrency: preferred,
+                availableCurrencies: available,
+              }));
+
+              return defer({
+                currencySettings: currencyDataPromise,
+              });
+            },
+            element: <CurrencySettings />,
           },
           {
-            path: "organisation",
-            element: <OrganisationSettings />,
+            path: "business",
+            element: <BusinessSettings />,
             loader: async () => {
               const { $id: userId } = await appwrite.account.get();
               const organisationPromise = appwrite.database.getDocument(

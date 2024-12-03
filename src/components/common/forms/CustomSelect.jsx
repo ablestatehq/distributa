@@ -23,7 +23,7 @@ function DropdownIndicator(props) {
   );
 }
 
-const CustomSelect = ({ label, options, loading, disabled, ...props }) => {
+const CustomSelect = ({ label, options, loading, disabled, handleChange, ...props }) => {
   const [field, meta, helpers] = useField(props);
   const { setValue } = helpers;
   const { error, touched } = meta;
@@ -62,7 +62,7 @@ const CustomSelect = ({ label, options, loading, disabled, ...props }) => {
   const noOptionsMessageStyles =
     "text-black text-center p-3 font-satoshi text-[0.5rem] leading-100 tracking-normal";
 
-  const handleChange = (selectedOption) => setValue(selectedOption.value);
+  // const handleChange = (selectedOption) => setValue(selectedOption.value);
 
   return (
     <div className="w-full flex flex-col gap-y-2">

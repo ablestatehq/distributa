@@ -8,7 +8,8 @@ import BillingSettings from "./settings/BillingSettings";
 import CategorySettings from "./settings/CategorySettings";
 import ProfileSettings from "./settings/ProfileSettings";
 import PartiesSettings from "./settings/PartiesSettings";
-import OrganisationSettings from "./settings/OrganisationSettings";
+import BusinessSettings from "./settings/BusinessSettings";
+import CurrencySettings from "./settings/CurrencySettings";
 
 export {
   Invoices,
@@ -21,5 +22,6 @@ export {
   CategorySettings,
   ProfileSettings,
   PartiesSettings,
-  OrganisationSettings
+  BusinessSettings,
+  CurrencySettings,
 };

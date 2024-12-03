@@ -14,7 +14,7 @@ import {
 import { organisationSchema } from "../../utils/validators";
 import { toast } from "react-toastify";
 
-const OrganisationSettings = () => {
+const BusinessSettings = () => {
   const submit = useSubmit();
   const loaderData = useLoaderData();
   const actionData = useActionData();
@@ -76,10 +76,10 @@ const OrganisationSettings = () => {
   return (
     <div className="pt-4 flex gap-y-2 flex-col">
       <h2 className="col-span-2 font-archivo font-normal text-lg lg:text-xl leading-110 tracking-normal pt-4 pb-2">
-        Organisation Details
+        Business Details
       </h2>
 
-      <Suspense fallback={<OrganisationSkeleton />}>
+      <Suspense fallback={<BusinessSkeleton />}>
         <Await resolve={loaderData?.organisation}>
           {(organisation) => {
             useEffect(
@@ -334,7 +334,7 @@ const OrganisationSettings = () => {
   );
 };
 
-function OrganisationSkeleton() {
+function BusinessSkeleton() {
   return (
     <form className="flex flex-col gap-y-4 p-4 bg-grey rounded">
       <section className="flex flex-col gap-2 ">
@@ -438,4 +438,4 @@ function OrganisationSkeleton() {
   );
 }
 
-export default OrganisationSettings;
+export default BusinessSettings;

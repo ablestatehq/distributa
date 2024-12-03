@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Select } from ".";
+import { useFormikContext } from "formik";
 
 const CommonSelect = ({ optionData, ...props }) => {
   const generateOption = (option) => ({
@@ -8,8 +9,13 @@ const CommonSelect = ({ optionData, ...props }) => {
   });
 
   const options = useMemo(() => optionData.map(generateOption), [optionData]);
- 
-  return <Select options={options} {...props} />;
+  const setFieldValue = useFormikContext().setFieldValue;
+
+  const handleChange = (selectedOption) => {
+    setFieldValue(props.name, selectedOption.value);
+  };
+
+  return <Select handleChange={handleChange} options={options} {...props} />;
 };
 
 export default CommonSelect;
