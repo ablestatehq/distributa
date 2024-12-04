@@ -5,6 +5,7 @@ import CategorySelect from "./CategorySelect";
 import PartySelect from "./PartySelect";
 import CommonSelect from "./CommonSelect";
 import CurrencySelect from "./CurrencySelect";
+import InvoiceCurrencySelect from "./InvoiceCurrencySelect";
 
 export {
   Input,
@@ -14,4 +15,5 @@ export {
   PartySelect,
   CommonSelect,
   CurrencySelect,
+  InvoiceCurrencySelect,
 };

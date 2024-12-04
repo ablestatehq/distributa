@@ -24,8 +24,7 @@ function DropdownIndicator(props) {
 }
 
 const CustomSelect = ({ label, options, loading, disabled, handleChange, ...props }) => {
-  const [field, meta, helpers] = useField(props);
-  const { setValue } = helpers;
+  const [field, meta ] = useField(props);
   const { error, touched } = meta;
 
   const placeholderStyles =
@@ -54,15 +53,13 @@ const CustomSelect = ({ label, options, loading, disabled, handleChange, ...prop
     selected: "font-satoshi text-tiny bg-accent-50 hover:bg-accent-50 ",
   };
   const controlStyles = {
-    base: "font-satoshi text-tiny leading-100 tracking-normal",
+    base: "font-satoshi text-tiny leading-100 tracking-normal bg-white",
     focus: "border-secondary-500 ring-none",
     nonFocus: "border-secondary-100",
   };
 
   const noOptionsMessageStyles =
     "text-black text-center p-3 font-satoshi text-[0.5rem] leading-100 tracking-normal";
-
-  // const handleChange = (selectedOption) => setValue(selectedOption.value);
 
   return (
     <div className="w-full flex flex-col gap-y-2">

@@ -9,6 +9,9 @@ import { newInvoiceSchema } from "../../utils/validators";
 import cn from "../../utils/cn";
 import { useSubmit, useLoaderData, Await } from "react-router-dom";
 import { currencyFormatter } from "../../utils/currency.formatter";
+import { CURRENCY_LOCALE_MAP } from "../../data/constants";
+import { CommonSelect, InvoiceCurrencySelect } from "../../components/common/forms";
+
 
 const calculateSubTotal = (items) =>
   items.reduce((acc, { quantity, price }) => {
@@ -40,7 +43,7 @@ const NewInvoice = () => {
   const loaderData = useLoaderData();
 
   const [editIndex, setEditIndex] = useState(null);
-  const [addItem, setAddItem] = useState(null);
+  const [addItem, setAddItem] = useState(0);
 
   const initialValues = {
     logo: null,
@@ -103,6 +106,20 @@ const NewInvoice = () => {
     });
   };
 
+  const orientationOptions = [
+    { value: "", label: "Select One" },
+    { value: "portrait", label: "Portrait" },
+    { value: "landscape", label: "Landscape" },
+  ];
+
+  const paperSizeOptions = [
+    { value: "", label: "Select One" },
+    { value: "a6", label: "A6" },
+    { value: "a5", label: "A5" },
+    { value: "a4", label: "A4" },
+    { value: "letter", label: "Letter" },
+  ];
+
   return (
     <ContentViewAreaWrapper>
       <section className="flex h-fit flex-shrink-0 flex-col gap-y-2">
@@ -115,8 +132,13 @@ const NewInvoice = () => {
       </section>
       <main className="flex w-full flex-col h-fit gap-y-4 lg:pt-6">
         <Suspense fallback={<div></div>}>
-          <Await resolve={loaderData?.organisation}>
-            {({ documents: [organisation = null] }) => {
+          <Await resolve={loaderData?.newInvoiceInitialData}>
+            {({
+              organisationData: {
+                documents: [organisation = null],
+              },
+              currencyOptions: { documents: currencies },
+            }) => {
               if (organisation) {
                 initialValues.billed_from.name = organisation?.name;
                 initialValues.billed_from.email = organisation?.email ?? "";
@@ -125,8 +147,6 @@ const NewInvoice = () => {
                 if (organisation?.logo_url)
                   initialValues.logo = organisation?.logo_url;
               }
-
-        
 
               return (
                 <Formik
@@ -139,7 +159,7 @@ const NewInvoice = () => {
                     return (
                       <Form className="flex flex-col gap-y-4">
                         {/* Header */}
-                        <div className="flex justify-between items-start h-fit lg:items-end w-full p-4 bg-grey rounded lg:h-24 lg:min-h-fit flex-wrap gap-y-2">
+                        <div className="flex justify-between items-start h-fit lg:items-end w-full p-4 bg-grey rounded  lg:min-h-fit flex-wrap gap-y-2">
                           <section className="flex flex-1 lg:flex-none w-fit gap-x-4 items-start">
                             {values?.logo ? (
                               <div className="relative w-24 group">
@@ -192,107 +212,39 @@ const NewInvoice = () => {
                             )}
 
                             <div className="flex-1 flex flex-col md:flex-row md:gap-x-4 md:items-start bg-grey gap-y-4">
-                              <div className="w-full md:w-32 flex flex-col gap-y-2">
-                                <label
-                                  htmlFor="paper_size"
-                                  className="font-satoshi font-medium text-small leading-100 tracking-normal"
-                                >
-                                  Paper size
-                                </label>
-                                <Field
+                              <div className="w-full md:w-32">
+                                <CommonSelect
+                                  label="Paper Size"
                                   id="paper_size"
                                   name="paper_size"
-                                  className={cn(
-                                    "w-full border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer",
-                                    {
-                                      "border-error focus:border-error":
-                                        touched?.paper_size &&
-                                        errors?.paper_size,
-                                    }
-                                  )}
-                                  as="select"
-                                >
-                                  <option value="">Select one</option>
-                                  <option value="a6">A6</option>
-                                  <option value="a5">A5</option>
-                                  <option value="a4">A4</option>
-                                  <option value="letter">Letter</option>
-                                </Field>
-                                <ErrorMessage name="paper_size">
-                                  {(msg) => (
-                                    <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                                      {msg}
-                                    </div>
-                                  )}
-                                </ErrorMessage>
+                                  placeholder="Select One"
+                                  loading={false}
+                                  optionData={paperSizeOptions}
+                                />
                               </div>
-                              <div className="w-full md:w-32 flex flex-col gap-y-2">
-                                <label
-                                  htmlFor="orientation"
-                                  className="font-satoshi font-medium text-small leading-100 tracking-normal"
-                                >
-                                  Orientation
-                                </label>
-                                <Field
+                              <div className="w-full md:w-32">
+                                <CommonSelect
+                                  label="Orientation"
                                   id="orientation"
                                   name="orientation"
-                                  className={cn(
-                                    "w-full border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer",
-                                    {
-                                      "border-error focus:border-error":
-                                        touched?.orientation &&
-                                        errors?.orientation,
-                                    }
-                                  )}
-                                  as="select"
-                                >
-                                  <option value="">Select one</option>
-                                  <option value="portrait">Portrait</option>
-                                  <option value="landscape">Landscape</option>
-                                </Field>
-                                <ErrorMessage name="orientation">
-                                  {(msg) => (
-                                    <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                                      {msg}
-                                    </div>
-                                  )}
-                                </ErrorMessage>
+                                  placeholder="Select One"
+                                  loading={false}
+                                  optionData={orientationOptions}
+                                />
                               </div>
-                              <div className="w-full md:w-32 flex flex-col gap-y-2">
-                                <label
-                                  htmlFor="currency"
-                                  className="font-satoshi font-medium text-small leading-100 tracking-normal"
-                                >
-                                  Currency
-                                </label>
-                                <Field
+                              <div className="w-full md:w-32">
+                                <InvoiceCurrencySelect
+                                  label="Currency"
                                   id="currency"
                                   name="currency"
-                                  className={cn(
-                                    "w-full border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer",
-                                    {
-                                      "border-error focus:border-error":
-                                        touched?.currency && errors?.currency,
-                                    }
-                                  )}
-                                  as="select"
-                                >
-                                  <option value="UGX">Uganda Shillings</option>
-                                  <option value="KSH">Kenyan Shillings</option>
-                                  <option value="USD">
-                                    United States Dollar
-                                  </option>
-                                  <option value="GBP">
-                                    Great Britain Pound
-                                  </option>
-                                </Field>
-                                <ErrorMessage name="currency">
-                                  {(msg) => (
-                                    <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
-                                      {msg}
-                                    </div>
-                                  )}
-                                </ErrorMessage>
+                                  placeholder="Select One"
+                                  loading={false}
+                                  optionData={currencies.map((currency) => ({
+                                    value: currency.code,
+                                    label:
+                                      CURRENCY_LOCALE_MAP[currency.code]?.name,
+                                  }))}
+                                />
                               </div>
                             </div>
                           </section>
@@ -1055,7 +1007,7 @@ const NewInvoice = () => {
                                       >
                                         Cancel
                                       </Button>
-                                    ) : (
+                                    ) : addItem !== 0 ? (
                                       <Button
                                         type="button"
                                         className="my-2 px-3 py-1.5 font-satoshi font-medium text-tiny leading-100 tracking-normal outline-none"
@@ -1073,7 +1025,7 @@ const NewInvoice = () => {
                                       >
                                         Add Item
                                       </Button>
-                                    )}
+                                    ) : null}
                                   </div>
                                 );
                               }}

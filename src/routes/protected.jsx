@@ -105,13 +105,35 @@ export const protectedRoutes = [
         element: <NewInvoice />,
         loader: async () => {
           const { $id: userId } = await appwrite.account.get();
+
           const organisationPromise = appwrite.database.listDocuments(
             appwrite.getVariables().DATABASE_ID,
             appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
             [Query.equal("created_by", userId)]
           );
+          const currenciesPromise = appwrite.database.listDocuments(
+            appwrite.getVariables().DATABASE_ID,
+            appwrite.getVariables().CURRENCY_PREFERENCES_COLLECTION_ID,
+            [Query.equal("is_available", true), Query.equal("user_id", userId)]
+          );
 
-          return defer({ organisation: organisationPromise });
+          const newInvoicePromise = Promise.all([
+            organisationPromise,
+            currenciesPromise,
+          ]).then(([organisation, currencies]) => {
+            return {
+              organisationData: organisation,
+              currencyOptions: currencies,
+            };
+          });
+
+          // return defer({
+          //   organisation: organisationPromise,
+          //   currencies: currenciesPromise,
+          // });
+          return defer({
+            newInvoiceInitialData: newInvoicePromise,
+          });
         },
         action: async ({ request }) => {
           try {
@@ -316,7 +338,7 @@ export const protectedRoutes = [
             action: async ({ request }) => {
               try {
                 const formData = await request.json();
-                console.log("Form Data: ", formData)
+                console.log("Form Data: ", formData);
                 const { $id: userId } = await appwrite.account.get();
                 await CurrencyPreferenceService.updatePreferences(
                   userId,
