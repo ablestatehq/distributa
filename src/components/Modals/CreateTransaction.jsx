@@ -8,6 +8,7 @@ import { useNavigate, useFetcher } from "react-router-dom";
 import { createTransactionSchema } from "../../utils/validators";
 import { useEffect, useState, useCallback } from "react";
 import { CategorySelect, PartySelect, CommonSelect } from "../common/forms";
+import { toast } from "react-toastify";
 
 const initialValues = {
   $id: null,
@@ -127,9 +128,8 @@ const CreateTransaction = ({ handleClose }) => {
         values.date,
         values.category
       );
-      navigate(`/transactions`);
+      toast.success("Transaction Created Successfully");
     } catch (error) {
-      console.log("Error: ", error);
       throw error;
     } finally {
       setSubmitting(false);
