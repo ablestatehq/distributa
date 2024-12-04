@@ -1,7 +1,9 @@
-import React from "react";
+import { Suspense } from "react";
 import { CircleX } from "../common/icons";
 import { createPortal } from "react-dom";
 import { format } from "date-fns";
+import formatCurrency from "../../utils/format.currency";
+import { useLoaderData, Await } from "react-router-dom";
 
 const TransactionDetails = ({ handleClose, transaction }) => {
   const getPrefix = (transaction) =>

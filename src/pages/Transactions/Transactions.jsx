@@ -9,10 +9,10 @@ import { format, parse } from "date-fns";
 import TransactionRow from "../../features/transactions/components/table/TransactionRow";
 import { appwrite } from "../../lib/appwrite";
 import { DATABASE_ID, TRANSACTIONS_COLLECTION_ID } from "../../data/constants";
-import { toast } from "react-toastify";
+import formatCurrency from "../../utils/format.currency";
 
 const Transactions = () => {
-  const data = useLoaderData();
+  const loaderData = useLoaderData();
 
   const [createTransaction, setCreateTransaction] = useState(false);
   const [showTransactionDetails, setShowTransactionDetails] = useState(false);
@@ -56,7 +56,7 @@ const Transactions = () => {
               </div>
             }
           >
-            <Await resolve={data?.currentMonthSummary}>
+            <Await resolve={loaderData?.currentMonthSummary}>
               {(data) => {
                 const income =
                   data?.total > 0 ? data.documents?.[0]?.income : "N/A";
@@ -68,17 +68,53 @@ const Transactions = () => {
                     <section className="flex flex-col gap-y-2">
                       <div className="flex gap-x-2">
                         <article className="flex flex-col gap-y-2 w-1/2 px-4 py-8 rounded-lg bg-grey">
-                          <h3 className="font-archivo font-normal text-xl leading-120 tracking-0">
-                            {income}
-                          </h3>
+                          <Suspense
+                            fallback={
+                              <h3 className="font-archivo font-normal text-xl leading-120 tracking-0 w-10 h-4 bg-gray-100 animate-pulse"></h3>
+                            }
+                          >
+                            <Await resolve={loaderData?.currencyPreferences}>
+                              {(currencyPreferences) => {
+                                return (
+                                  <h3 className="font-archivo font-normal text-xl leading-120 tracking-0">
+                                    {currencyPreferences?.preferredCurrency &&
+                                    income !== "N/A"
+                                      ? formatCurrency(
+                                          income,
+                                          currencyPreferences.preferredCurrency
+                                        )
+                                      : income}
+                                  </h3>
+                                );
+                              }}
+                            </Await>
+                          </Suspense>
                           <p className="font-satoshi font-regular text-tiny leading-100 tracking-normal">
                             Income this month
                           </p>
                         </article>
                         <article className="flex flex-col gap-y-2 w-1/2 px-4 py-8 rounded-lg bg-grey">
-                          <h3 className="font-archivo font-normal text-xl leading-120 tracking-0">
-                            {expense}
-                          </h3>
+                          <Suspense
+                            fallback={
+                              <h3 className="font-archivo font-normal text-xl leading-120 tracking-0 w-10 h-4 bg-gray-100 animate-pulse"></h3>
+                            }
+                          >
+                            <Await resolve={loaderData?.currencyPreferences}>
+                              {(currencyPreferences) => {
+                                return (
+                                  <h3 className="font-archivo font-normal text-xl leading-120 tracking-0">
+                                    {currencyPreferences?.preferredCurrency &&
+                                    expense !== "N/A"
+                                      ? formatCurrency(
+                                          expense,
+                                          currencyPreferences.preferredCurrency
+                                        )
+                                      : expense}
+                                  </h3>
+                                );
+                              }}
+                            </Await>
+                          </Suspense>
                           <p className="font-satoshi font-regular text-tiny leading-100 tracking-normal">
                             Expenses this month
                           </p>
@@ -121,7 +157,7 @@ const Transactions = () => {
                 </ul>
               }
             >
-              <Await resolve={data?.transactions}>
+              <Await resolve={loaderData?.transactions}>
                 {(data) => {
                   if (data?.total > 0)
                     return <TransactionList data={data.documents} />;
@@ -171,6 +207,7 @@ const Transactions = () => {
 
 function TransactionList({ data }) {
   const [transactions, setTransactions] = useState(data);
+  const loaderData = useLoaderData();
 
   const transactionList = useMemo(() => {
     const grouped = groupBy(transactions, (transaction) =>
@@ -202,7 +239,7 @@ function TransactionList({ data }) {
     return totalIncome - totalExpenditure;
   }, []);
 
-  const getPrefix = useCallback((amount) => (amount < 0 ? null : "+"), []);
+  const getPrefix = useCallback((amount) => (amount < 0 ? "-" : "+"), []);
 
   const handleCreate = useCallback((transaction) => {
     setTransactions((transactions) => [transaction, ...transactions]);
@@ -270,10 +307,27 @@ function TransactionList({ data }) {
               <h6 className="font-archivo font-normal text-tiny leading-150 tracking-normal">
                 {formatDateString(date)}
               </h6>
-              <h6 className="font-archivo font-normal text-tiny leading-150 tracking-normal">
-                {prefix}
-                {netBalance}
-              </h6>
+              <Suspense
+                fallback={
+                  <h6 className="font-archivo font-normal text-tiny leading-150 tracking-normal w-20 h-3 bg-gray-100 animate-pulse"></h6>
+                }
+              >
+                <Await resolve={loaderData?.currencyPreferences}>
+                  {(currencyPreferences) => {
+                    return (
+                      <h6 className="font-archivo font-normal text-tiny leading-150 tracking-normal">
+                        {currencyPreferences?.preferredCurrency
+                          ? formatCurrency(
+                              netBalance,
+                              currencyPreferences?.preferredCurrency,
+                              prefix
+                            )
+                          : `${prefix}${netBalance}`}
+                      </h6>
+                    );
+                  }}
+                </Await>
+              </Suspense>
             </header>
             <table className="w-full">
               <tbody>

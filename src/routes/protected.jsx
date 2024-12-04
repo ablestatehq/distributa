@@ -153,13 +153,17 @@ export const protectedRoutes = [
       },
       {
         loader: async () => {
+          const { $id: userId } = await appwrite.account.get();
           const transactionsPromise = TransactionService.listTransactions();
           const currentMonthSummaryPromise =
             BalancesService.getCurrentMonthSummary();
+          const currencyPreferencesPromise =
+            CurrencyPreferenceService.getPreferences(userId);
 
           return defer({
             transactions: transactionsPromise,
             currentMonthSummary: currentMonthSummaryPromise,
+            currencyPreferences: currencyPreferencesPromise,
           });
         },
         path: "/transactions",
