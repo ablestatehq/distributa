@@ -3,12 +3,7 @@ import { Button } from "../../../../components/common/forms";
 import cn from "../../../../utils/cn";
 import { createPortal } from "react-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import {
-  TransactionService,
-  BalancesService,
-  CategoryService,
-  AppwriteService,
-} from "../../../../services";
+import { CategoryService, AppwriteService } from "../../../../services";
 
 import { useNavigate, useFetcher } from "react-router-dom";
 import { createTransactionSchema } from "../../../../utils/validators";
@@ -20,23 +15,9 @@ import {
   PartySelect,
   CommonSelect,
 } from "../../../../components/common/forms";
+import { toast } from "react-toastify";
 
 const appwrite = new AppwriteService();
-
-const initialValues = {
-  $id: null,
-  flow_type: "expense",
-  date: "",
-  item: "",
-  amount: "",
-  description: "",
-  payer_payee: "",
-  invoice_receipt_no: "",
-  payment_method: "",
-  category: "",
-  payment_terms: "immediate",
-  transaction_status: "",
-};
 
 const paymentOptions = [
   { value: "", label: "Select One" },
@@ -307,9 +288,11 @@ const EditTransaction = ({ transaction, handleClose }) => {
         changes
       );
 
-      console.log("Updated Transaction: ", updatedTransaction);
-
-      navigate("/transactions");
+      if (updatedTransaction) {
+        toast.success("Transaction successfully updated");
+        setSubmitting(false);
+        navigate("/transactions");
+      }
     } catch (error) {
       console.error("Error updating transaction:", error);
       throw error;
@@ -340,7 +323,10 @@ const EditTransaction = ({ transaction, handleClose }) => {
           formValues[key] !== transaction[key]?.$id
         ) {
           changes[key] = formValues[key];
+        } else if (transaction[key] === null && formValues[key]) {
+          changes[key] = formValues[key];
         }
+
         continue;
       } else if (key === "payer_payee") {
         if (
@@ -348,14 +334,20 @@ const EditTransaction = ({ transaction, handleClose }) => {
           formValues[key] !== transaction[key]?.$id
         ) {
           changes[key] = formValues[key];
+        } else if (transaction[key] === null && formValues[key]) {
+          changes[key] = formValues[key];
         }
+
         continue;
       } else if (key === "date") {
         if (
           formValues[key] !== format(new Date(transaction[key]), "yyyy-MM-dd")
         ) {
           changes[key] = formValues[key];
+        } else if (transaction[key] === null && formValues[key]) {
+          changes[key] = formValues[key];
         }
+
         continue;
       } else if (key === "$permissions" || key === "invoice_ref") {
         continue;
