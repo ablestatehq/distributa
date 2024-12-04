@@ -1,36 +1,13 @@
 import React from "react";
 import { Formik, ErrorMessage, Form, Field } from "formik";
-import * as Yup from "yup";
 import { CURRENCY_LOCALE_MAP } from "../../data/constants";
 import { toast } from "react-toastify";
 import cn from "../../utils/cn";
 import { CommonSelect, CurrencySelect } from "../../components/common/forms";
 import { Button } from "../../components/common/forms";
 import { useFetcher, useLoaderData, Await } from "react-router-dom";
-
-const CurrencySettingsSchema = Yup.object().shape({
-  preferredCurrency: Yup.object().shape({
-    code: Yup.string().required("Currency code is required"),
-    locale: Yup.string().required("Locale is required"),
-    decimals: Yup.number()
-      .min(0, "Must be greater or equal to zero")
-      .max(3, "Must be less than 3")
-      .required("Decimal places are required"),
-    show_symbol: Yup.boolean(),
-    symbol_position: Yup.string().oneOf(["before", "after"]),
-  }),
-  availableCurrencies: Yup.array()
-    .of(
-      Yup.object().shape({
-        code: Yup.string().required(),
-        locale: Yup.string().required(),
-        decimals: Yup.number().min(0).max(3).required(),
-        show_symbol: Yup.boolean(),
-        symbol_position: Yup.string().oneOf(["before", "after"]),
-      })
-    )
-    .min(1, "At least one currency must be selected"),
-});
+import formatCurrency from "../../utils/format.currency";
+import { CurrencySettingsSchema } from "../../utils/validators";
 
 const CurrencySettings = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -398,39 +375,6 @@ const CurrencySettings = () => {
       </Await>
     </React.Suspense>
   );
-};
-
-const formatCurrency = (amount, settings) => {
-  try {
-    const formatter = new Intl.NumberFormat(settings.locale, {
-      style: "currency",
-      currency: settings.code,
-      minimumFractionDigits: settings.decimals,
-      maximumFractionDigits: settings.decimals,
-    });
-
-    const formatted = formatter.format(amount);
-
-    if (!settings.show_symbol) {
-      return formatted.replace(/[^\d.,]/g, "").trim();
-    }
-
-    if (settings.symbol_position === "after") {
-      const numericPart = formatted.replace(/[^\d.,]/g, "").trim();
-      const symbolPart = formatted.replace(/[\d.,\s]/g, "").trim();
-      return `${numericPart} ${symbolPart}`;
-    }
-
-    if (settings.symbol_position === "before") {
-      const numericPart = formatted.replace(/[^\d.,]/g, "").trim();
-      const symbolPart = formatted.replace(/[\d.,\s]/g, "").trim();
-      return `${symbolPart} ${numericPart}`;
-    }
-
-    return formatted;
-  } catch (error) {
-    return "Invalid format";
-  }
 };
 
 export default CurrencySettings;

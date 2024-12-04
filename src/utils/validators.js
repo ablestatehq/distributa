@@ -215,3 +215,27 @@ export const organisationSchema = Yup.object({
     ),
   address: Yup.string().required("Address is required"),
 });
+
+export const CurrencySettingsSchema = Yup.object().shape({
+  preferredCurrency: Yup.object().shape({
+    code: Yup.string().required("Currency code is required"),
+    locale: Yup.string().required("Locale is required"),
+    decimals: Yup.number()
+      .min(0, "Must be greater or equal to zero")
+      .max(3, "Must be less than 3")
+      .required("Decimal places are required"),
+    show_symbol: Yup.boolean(),
+    symbol_position: Yup.string().oneOf(["before", "after"]),
+  }),
+  availableCurrencies: Yup.array()
+    .of(
+      Yup.object().shape({
+        code: Yup.string().required(),
+        locale: Yup.string().required(),
+        decimals: Yup.number().min(0).max(3).required(),
+        show_symbol: Yup.boolean(),
+        symbol_position: Yup.string().oneOf(["before", "after"]),
+      })
+    )
+    .min(1, "At least one currency must be selected"),
+});
