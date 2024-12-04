@@ -257,7 +257,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
               newMonthChanges
             );
           } else {
-            const newSummary = await appwrite.database.createDocument(
+            await appwrite.database.createDocument(
               appwrite.getVariables().DATABASE_ID,
               appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
               ID.unique(),
@@ -274,13 +274,36 @@ const EditTransaction = ({ transaction, handleClose }) => {
                 largest_transaction_amount: values.amount,
               }
             );
-
-            console.log("Updated Transaction: ", newSummary);
           }
+        }
+      } else if (changes?.flow_type) {
+        const yearMonth = format(new Date(values.date), "yyyy-MM");
+
+        const {
+          documents: [currentMonthStatement],
+        } = await appwrite.database.listDocuments(
+          appwrite.getVariables().DATABASE_ID,
+          appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+          [Query.equal("user_id", userId), Query.equal("year_month", yearMonth)]
+        );
+
+        if (currentMonthStatement) {
+          const statementChanges = calculateStatementChanges(
+            currentMonthStatement,
+            transaction,
+            false,
+            changes
+          );
+
+          await appwrite.database.updateDocument(
+            appwrite.getVariables().DATABASE_ID,
+            appwrite.getVariables().MONTHLY_STATEMENTS_COLLECTION_ID,
+            currentMonthStatement.$id,
+            statementChanges
+          );
         }
       }
 
-      // Update the transaction itself
       const updatedTransaction = await appwrite.database.updateDocument(
         appwrite.getVariables().DATABASE_ID,
         appwrite.getVariables().TRANSACTIONS_COLLECTION_ID,
