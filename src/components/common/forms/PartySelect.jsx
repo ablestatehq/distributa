@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Button, Select } from ".";
 import { useNavigate } from "react-router-dom";
+import { useFormikContext } from "formik";
 
 const PartySelect = ({ optionData, ...props }) => {
   const navigate = useNavigate();
@@ -33,8 +34,13 @@ const PartySelect = ({ optionData, ...props }) => {
 
     return [lastOption];
   }, [optionData?.documents, optionData?.total]);
+  
+  const setFieldValue = useFormikContext().setFieldValue;
+  const handleChange = (selectedOption) => {
+    setFieldValue(props.name, selectedOption.value);
+  };
 
-  return <Select options={options} {...props} />;
+  return <Select handleChange={handleChange} options={options} {...props} />;
 };
 
 export default PartySelect;

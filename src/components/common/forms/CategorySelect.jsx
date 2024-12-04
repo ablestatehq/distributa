@@ -61,7 +61,13 @@ const CategorySelect = ({ optionData, ...props }) => {
     return [defaultOption, lastOption];
   }, [values.flow_type, optionData]);
 
-  return <Select options={options} {...props} />;
+  const setFieldValue = useFormikContext().setFieldValue;
+
+  const handleChange = (selectedOption) => {
+    setFieldValue(props.name, selectedOption.value);
+  };
+
+  return <Select handleChange={handleChange} options={options} {...props} />;
 };
 
 export default CategorySelect;

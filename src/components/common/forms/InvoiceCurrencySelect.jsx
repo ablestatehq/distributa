@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Select, Button } from ".";
 
 import { useNavigate } from "react-router-dom";
+import { useFormikContext } from "formik";
 
 const InvoiceCurrencySelect = ({ optionData, ...props }) => {
   const navigate = useNavigate();
@@ -37,7 +38,13 @@ const InvoiceCurrencySelect = ({ optionData, ...props }) => {
     ];
   }, [optionData]);
 
-  return <Select options={options} {...props} />;
+  const setFieldValue = useFormikContext().setFieldValue;
+
+  const handleChange = (selectedOption) => {
+    setFieldValue(props.name, selectedOption.value);
+  };
+
+  return <Select handleChange={handleChange} options={options} {...props} />;
 };
 
 export default InvoiceCurrencySelect;
