@@ -1,12 +1,15 @@
 import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
-import { Book, Edit, Delete } from "../../components/common/icons";
+import { Book } from "../../components/common/icons";
 import { useLoaderData, Await } from "react-router-dom";
 import { CreateTransaction, TransactionDetails } from "../../components/Modals";
-import { useState, Suspense } from "react";
+import { useState, useCallback, useEffect, Suspense, useMemo } from "react";
 import { groupBy, map, sumBy } from "lodash";
 import { format, parse } from "date-fns";
 import TransactionRow from "../../features/transactions/components/table/TransactionRow";
+import { appwrite } from "../../lib/appwrite";
+import { DATABASE_ID, TRANSACTIONS_COLLECTION_ID } from "../../data/constants";
+import { toast } from "react-toastify";
 
 const Transactions = () => {
   const data = useLoaderData();
@@ -22,45 +25,6 @@ const Transactions = () => {
     setShowTransactionDetails(
       (showTransactionDetails) => !showTransactionDetails
     );
-
-  const groupTransactionsByCreatedDate = (transactions) => {
-    const grouped = groupBy(transactions, (transaction) =>
-      format(transaction.date, "yyyy-MM-dd")
-    );
-
-    return map(grouped, (groupedTransactions, date) => ({
-      date,
-      transactions: groupedTransactions,
-    }));
-  };
-
-  /**
-   * @function formatDateString
-   * @description converts a date string from the format yyyy-MM-dd to the format of month year for example, January 1
-   * @param {string} dateString takes in a date string in the format yyyy-MM-dd
-   * @returns {string} in the format of month year for example, January 1
-   */
-
-  const formatDateString = (dateString) => {
-    const date = parse(dateString, "yyyy-MM-dd", new Date());
-    return format(date, "MMMM d");
-  };
-
-  /**
-   * @function getNetBalance
-   * @description returns the difference between the total income and expenditure of a days transactions
-   * @param { Array } transactions An array of transactions
-   * @returns { number } The difference between the income and expenditure
-   */
-  const getNetBalance = (transactions) => {
-    const groupedByType = groupBy(transactions, "flow_type");
-    const totalIncome = sumBy(groupedByType["income"] || [], "amount") || 0;
-    const totalExpenditure =
-      sumBy(groupedByType["expense"] || [], "amount") || 0;
-    return totalIncome - totalExpenditure;
-  };
-
-  const getPrefix = (amount) => (amount < 0 ? null : "+");
 
   return (
     <ContentViewAreaWrapper>
@@ -159,46 +123,8 @@ const Transactions = () => {
             >
               <Await resolve={data?.transactions}>
                 {(data) => {
-                  if (data?.total > 0) {
-                    const processedTransactions =
-                      groupTransactionsByCreatedDate(data?.documents);
-
-                    return (
-                      <ul className="flex flex-col h-full w-full  gap-y-4 bg-white">
-                        {processedTransactions.map(({ date, transactions }) => {
-                          const netBalance = getNetBalance(transactions);
-                          const prefix = getPrefix(netBalance);
-
-                          return (
-                            <li
-                              key={date}
-                              className="flex flex-col gap-y-2 p-4 rounded-lg bg-grey overflow-x-auto"
-                            >
-                              <header className="flex justify-between">
-                                <h6 className="font-archivo font-normal text-tiny leading-150 tracking-normal">
-                                  {formatDateString(date)}
-                                </h6>
-                                <h6 className="font-archivo font-normal text-tiny leading-150 tracking-normal">
-                                  {prefix}
-                                  {netBalance}
-                                </h6>
-                              </header>
-                              <table className="w-full">
-                                <tbody>
-                                  {transactions.map((transaction) => (
-                                    <TransactionRow
-                                      transaction={transaction}
-                                      key={transaction.$id}
-                                    />
-                                  ))}
-                                </tbody>
-                              </table>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    );
-                  }
+                  if (data?.total > 0)
+                    return <TransactionList data={data.documents} />;
 
                   return (
                     <article className="flex flex-col items-center gap-y-4">
@@ -242,5 +168,128 @@ const Transactions = () => {
     </ContentViewAreaWrapper>
   );
 };
+
+function TransactionList({ data }) {
+  const [transactions, setTransactions] = useState(data);
+
+  const transactionList = useMemo(() => {
+    const grouped = groupBy(transactions, (transaction) =>
+      format(transaction.date, "yyyy-MM-dd")
+    );
+
+    return map(grouped, (groupedTransactions, date) => ({
+      date,
+      transactions: groupedTransactions || [],
+    }));
+  }, [transactions]);
+
+  const formatDateString = useCallback((dateString) => {
+    const date = parse(dateString, "yyyy-MM-dd", new Date());
+    return format(date, "MMMM d");
+  }, []);
+
+  /**
+   * @function getNetBalance
+   * @description returns the difference between the total income and expenditure of a days transactions
+   * @param { Array } transactions An array of transactions
+   * @returns { number } The difference between the income and expenditure
+   */
+  const getNetBalance = useCallback((transactions) => {
+    const groupedByType = groupBy(transactions, "flow_type");
+    const totalIncome = sumBy(groupedByType["income"] || [], "amount") || 0;
+    const totalExpenditure =
+      sumBy(groupedByType["expense"] || [], "amount") || 0;
+    return totalIncome - totalExpenditure;
+  }, []);
+
+  const getPrefix = useCallback((amount) => (amount < 0 ? null : "+"), []);
+
+  const handleCreate = useCallback((transaction) => {
+    setTransactions((transactions) => [transaction, ...transactions]);
+  }, []);
+
+  const handleUpdate = useCallback((updatedTransaction) => {
+    setTransactions((transactions) =>
+      transactions.map((transaction) => {
+        if (transaction.$id === updatedTransaction.$id) {
+          return updatedTransaction;
+        }
+        return transaction;
+      })
+    );
+  }, []);
+
+  const handleDelete = useCallback((transactionId) => {
+    setTransactions((transactions) =>
+      transactions.filter((transaction) => transaction.$id !== transactionId)
+    );
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = appwrite.client.subscribe(
+      `databases.${DATABASE_ID}.collections.${TRANSACTIONS_COLLECTION_ID}.documents`,
+      (response) => {
+        console.log(response.events);
+        if (
+          response.events.includes(
+            "databases.*.collections.*.documents.*.create"
+          )
+        ) {
+          handleCreate(response.payload);
+        } else if (
+          response.events.includes(
+            "databases.*.collections.*.documents.*.update"
+          )
+        ) {
+          handleUpdate(response.payload);
+        } else if (
+          response.events.includes(
+            "databases.*.collections.*.documents.*.delete"
+          )
+        ) {
+          handleDelete(response.payload.$id);
+        }
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  return (
+    <ul className="flex flex-col h-full w-full  gap-y-4 bg-white">
+      {transactionList.map(({ date, transactions }) => {
+        const netBalance = getNetBalance(transactions);
+        const prefix = getPrefix(netBalance);
+
+        return (
+          <li
+            key={date}
+            className="flex flex-col gap-y-2 p-4 rounded-lg bg-grey overflow-x-auto"
+          >
+            <header className="flex justify-between">
+              <h6 className="font-archivo font-normal text-tiny leading-150 tracking-normal">
+                {formatDateString(date)}
+              </h6>
+              <h6 className="font-archivo font-normal text-tiny leading-150 tracking-normal">
+                {prefix}
+                {netBalance}
+              </h6>
+            </header>
+            <table className="w-full">
+              <tbody>
+                {transactions.map((transaction) => (
+                  <TransactionRow
+                    transaction={transaction}
+                    key={transaction.$id}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
 
 export default Transactions;

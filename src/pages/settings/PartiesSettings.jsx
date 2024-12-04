@@ -108,7 +108,7 @@ function PartyContent({ total, documents, toggleCreateParty }) {
   }, []);
 
   return total > 0 ? (
-    <PartiesList data={documents} />
+    <PartiesList data={parties} />
   ) : (
     <PartiesEmptyState createParty={toggleCreateParty} />
   );
