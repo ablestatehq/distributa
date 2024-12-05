@@ -10,8 +10,10 @@ import cn from "../../utils/cn";
 import { useSubmit, useLoaderData, Await } from "react-router-dom";
 import { currencyFormatter } from "../../utils/currency.formatter";
 import { CURRENCY_LOCALE_MAP } from "../../data/constants";
-import { CommonSelect, InvoiceCurrencySelect } from "../../components/common/forms";
-
+import {
+  CommonSelect,
+  InvoiceCurrencySelect,
+} from "../../components/common/forms";
 
 const calculateSubTotal = (items) =>
   items.reduce((acc, { quantity, price }) => {
@@ -42,8 +44,8 @@ const NewInvoice = () => {
   const submit = useSubmit();
   const loaderData = useLoaderData();
 
-  const [editIndex, setEditIndex] = useState(null);
-  const [addItem, setAddItem] = useState(0);
+  const [editIndex, setEditIndex] = useState(0);
+  const [addItem, setAddItem] = useState(null);
 
   const initialValues = {
     logo: null,
@@ -66,10 +68,10 @@ const NewInvoice = () => {
     due_date: "",
     items: [
       {
-        title: "Mackooks",
-        quantity: 1,
-        units: "Piece",
-        price: 0,
+        title: "",
+        quantity: "",
+        units: "",
+        price: "",
       },
     ],
     sub_total: 0,
@@ -1007,7 +1009,7 @@ const NewInvoice = () => {
                                       >
                                         Cancel
                                       </Button>
-                                    ) : addItem !== 0 ? (
+                                    ) : addItem !== 0 && editIndex !== 0 ? (
                                       <Button
                                         type="button"
                                         className="my-2 px-3 py-1.5 font-satoshi font-medium text-tiny leading-100 tracking-normal outline-none"
