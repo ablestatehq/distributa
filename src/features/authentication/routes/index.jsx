@@ -75,21 +75,30 @@ export const authRoutes = [
         //   ]
         // );
 
-        const emailResponse = await appwrite.functions.createExecution(
-          SEND_EMAIL_FUNCTION_ID,
-          JSON.stringify({
-            targets: [email],
-            subject: "Welcome to Distributa",
-            content: "Welcome to Distributa, we're glad to have you here!",
-          })
-        );
+        // const emailResponse = await appwrite.functions.createExecution(
+        //   SEND_EMAIL_FUNCTION_ID,
+        //   JSON.stringify({
+        //     targets: [email],
+        //     subject: "Welcome to Distributa",
+        //     content: "Welcome to Distributa, we're glad to have you here!",
+        //   })
+        // );
 
-        console.log("Email response: ", emailResponse);
+        // console.log("Email response: ", emailResponse);
 
+        const messageBody = JSON.stringify({
+          targets: [email],
+          subject: "Welcome to Distributa",
+          content: "Welcome to Distributa, we're glad to have you here!",
+        });
+        console.log("JSON String: ", messageBody);
+
+        console.log("parsed json: ", JSON.parse(messageBody));
         return null;
 
         // if (session) return redirect("/invoices", { replace: true });
       } catch (error) {
+        console.log(JSON.stringify(error, null, 2));
         return json({ error: error.response });
       }
     },

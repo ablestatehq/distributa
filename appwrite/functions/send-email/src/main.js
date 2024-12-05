@@ -8,41 +8,43 @@ export default async ({ req, res, error, log }) => {
 
   const messaging = new Messaging(client);
 
-  log(req.body);
 
-  const {
-    subject,
-    content,
-    topics = [],
-    users = [],
-    targets = [],
-    cc = [],
-    bcc = [],
-    attachments = [],
-    draft = false,
-    html = false,
-    scheduled_at = "",
-  } = JSON.parse(req.body);
+  // const {
+  //   subject,
+  //   content,
+  //   topics = [],
+  //   users = [],
+  //   targets = [],
+  //   cc = [],
+  //   bcc = [],
+  //   attachments = [],
+  //   draft = false,
+  //   html = false,
+  //   scheduled_at = "",
+  // } = JSON.parse(req.body);
 
   try {
-    const response = messaging.createEmail(
-      ID.unique(),
-      subject,
-      content,
-      topics,
-      users,
-      targets,
-      cc,
-      bcc,
-      attachments,
-      draft,
-      html,
-      scheduled_at
-    );
 
-    log(response);
+  log(req.body);
 
-    if (response) return res.json({ success: true, data: response });
+    // const response = messaging.createEmail(
+    //   ID.unique(),
+    //   subject,
+    //   content,
+    //   topics,
+    //   users,
+    //   targets,
+    //   cc,
+    //   bcc,
+    //   attachments,
+    //   draft,
+    //   html,
+    //   scheduled_at
+    // );
+
+    // log(response);
+
+    // if (response) return res.json({ success: true, data: response });
   } catch (err) {
     error(JSON.stringify(err, null, 2));
 
