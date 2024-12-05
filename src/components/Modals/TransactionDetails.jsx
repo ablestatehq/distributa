@@ -11,6 +11,8 @@ const TransactionDetails = ({ handleClose, transaction }) => {
 
   const prefix = getPrefix(transaction);
 
+  const loaderData = useLoaderData();
+
   return createPortal(
     <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
       <section className="w-full lg:w-96 h-fit max-h-full overflow-y-auto flex flex-col bg-white">
@@ -30,10 +32,30 @@ const TransactionDetails = ({ handleClose, transaction }) => {
             <h4 className="font-archivo font-normal text-medium leading-140 tracking-normal text-start">
               {transaction.item}
             </h4>
-            <span className="font-satoshi font-medium leading-120 tracking-normal text-end">
-              {prefix}
-              {transaction.amount}
-            </span>
+
+            {
+              <Suspense
+                fallback={
+                  <span className="w-10 h-2 bg-gray-100 animiate-pulse"></span>
+                }
+              >
+                <Await resolve={loaderData?.currencyPreferences}>
+                  {(currencyPreferences) => {
+                    return (
+                      <span className="font-satoshi font-medium leading-120 tracking-normal text-end">
+                        {currencyPreferences?.preferredCurrency
+                          ? formatCurrency(
+                              transaction.amount,
+                              currencyPreferences?.preferredCurrency,
+                              prefix
+                            )
+                          : `${prefix}${transaction.amount}`}
+                      </span>
+                    );
+                  }}
+                </Await>
+              </Suspense>
+            }
           </div>
           <p className="font-satoshi font-normal text-small leading-150 tracking-normal">
             {transaction.description}
