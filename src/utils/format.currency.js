@@ -26,8 +26,6 @@ const formatCurrency = (amount, settings, prefix = "") => {
       prefix === "-" ? 0 - absoluteAmount : absoluteAmount
     );
 
-    console.log(prefix === "-" ? 0 - absoluteAmount : absoluteAmount);
-
     return formatted;
   } catch (error) {
     return "Invalid format";

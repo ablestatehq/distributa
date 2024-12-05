@@ -127,10 +127,6 @@ export const protectedRoutes = [
             };
           });
 
-          // return defer({
-          //   organisation: organisationPromise,
-          //   currencies: currenciesPromise,
-          // });
           return defer({
             newInvoiceInitialData: newInvoicePromise,
           });

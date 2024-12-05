@@ -14,6 +14,7 @@ import {
   CommonSelect,
   InvoiceCurrencySelect,
 } from "../../components/common/forms";
+import formatCurrency from "../../utils/format.currency";
 
 const calculateSubTotal = (items) =>
   items.reduce((acc, { quantity, price }) => {
@@ -921,6 +922,7 @@ const NewInvoice = () => {
                                                 </td>
                                                 <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
                                                   {values.items[index]["price"]}
+                                                  {/* TODO: add formatting here */}
                                                 </td>
                                                 <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
                                                   <button
@@ -1040,11 +1042,17 @@ const NewInvoice = () => {
                                   Sub Total
                                 </span>
                                 <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                                  {/* ${values.sub_total} */}
-                                  {currencyFormatter(
-                                    values.sub_total,
-                                    values.currency
-                                  )}
+                                  {values?.currency
+                                    ? formatCurrency(values.sub_total, {
+                                        decimals:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultDecimals,
+                                        locale:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultLocale,
+                                        code: values.currency,
+                                      })
+                                    : values.sub_total}
                                 </span>
                               </div>
                               <hr className="border-b border-t-0 border-greyborder" />
@@ -1145,11 +1153,17 @@ const NewInvoice = () => {
                                   Amount Due
                                 </span>
                                 <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                                  {/* ${values.amount_due ?? 0} */}
-                                  {currencyFormatter(
-                                    values.amount_due ?? 0,
-                                    values.currency
-                                  )}
+                                  {values?.currency
+                                    ? formatCurrency(values.amount_due ?? 0, {
+                                        decimals:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultDecimals,
+                                        locale:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultLocale,
+                                        code: values.currency,
+                                      })
+                                    : values.amount_due}
                                 </span>
                               </div>
                               <hr className="border-b border-t-0 border-greyborder" />
@@ -1184,11 +1198,17 @@ const NewInvoice = () => {
                                   Balance Due
                                 </span>
                                 <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                                  {/* ${values.balance_due ?? 0} */}
-                                  {currencyFormatter(
-                                    values.balance_due ?? 0,
-                                    values.currency
-                                  )}
+                                  {values?.currency
+                                    ? formatCurrency(values.balance_due ?? 0, {
+                                        decimals:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultDecimals,
+                                        locale:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultLocale,
+                                        code: values.currency,
+                                      })
+                                    : values.balance_due}
                                 </span>
                               </div>
                             </div>
@@ -1352,11 +1372,17 @@ const NewInvoice = () => {
                                   Sub Total
                                 </span>
                                 <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                                  {/* ${values.sub_total} */}
-                                  {currencyFormatter(
-                                    values.sub_total,
-                                    values.currency
-                                  )}
+                                  {values?.currency
+                                    ? formatCurrency(values.sub_total ?? 0, {
+                                        decimals:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultDecimals,
+                                        locale:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultLocale,
+                                        code: values.currency,
+                                      })
+                                    : values.sub_total}
                                 </span>
                               </div>
 
@@ -1497,11 +1523,17 @@ const NewInvoice = () => {
                                   Amount Due
                                 </span>
                                 <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                                  {/* ${values.amount_due ?? 0} */}
-                                  {currencyFormatter(
-                                    values.amount_due ?? 0,
-                                    values.currency
-                                  )}
+                                  {values?.currency
+                                    ? formatCurrency(values.amount_due ?? 0, {
+                                        decimals:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultDecimals,
+                                        locale:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultLocale,
+                                        code: values.currency,
+                                      })
+                                    : values.amount_due}
                                 </span>
                               </div>
                               <hr className="border-b border-t-0 border-greyborder" />
@@ -1550,11 +1582,17 @@ const NewInvoice = () => {
                                   Balance Due
                                 </span>
                                 <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
-                                  {/* ${values.balance_due ?? 0} */}
-                                  {currencyFormatter(
-                                    values.balance_due ?? 0,
-                                    values.currency
-                                  )}
+                                  {values?.currency
+                                    ? formatCurrency(values.balance_due ?? 0, {
+                                        decimals:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultDecimals,
+                                        locale:
+                                          CURRENCY_LOCALE_MAP[values.currency]
+                                            .defaultLocale,
+                                        code: values.currency,
+                                      })
+                                    : values.balance_due}
                                 </span>
                               </div>
                             </div>
