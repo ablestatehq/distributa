@@ -32,6 +32,9 @@ export const {
   // Buckets
   VITE_APPWRITE_LOGOS_BUCKET_ID: LOGOS_BUCKET_ID,
   VITE_APPWRITE_AVATARS_BUCKET_ID: AVATARS_BUCKET_ID,
+
+  // Functions
+  VITE_APPWRITE_SEND_EMAIL_FUNCTION_ID: SEND_EMAIL_FUNCTION_ID,
 } = import.meta.env;
 
 // Part 1 of the comprehensive currency locale mapping

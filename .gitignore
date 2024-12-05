@@ -28,6 +28,7 @@ environments.txt
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+appwrite.json
 
 
 .vercel
