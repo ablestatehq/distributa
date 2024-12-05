@@ -1,4 +1,4 @@
-import { Client, Messaging, ID } from "node-appwrite";
+import { Client, Messaging, ID } from 'node-appwrite';
 
 export default async ({ req, res, error, log }) => {
   const client = new Client()
@@ -7,7 +7,6 @@ export default async ({ req, res, error, log }) => {
     .setKey(process.env.API_KEY);
 
   const messaging = new Messaging(client);
-
 
   // const {
   //   subject,
@@ -24,9 +23,33 @@ export default async ({ req, res, error, log }) => {
   // } = JSON.parse(req.body);
 
   try {
+    log(req.body);
+    const body = JSON.parse(req.body);
+    const {
+      subject,
+      content,
+      topics = [],
+      users = [],
+      targets = [],
+      cc = [],
+      bcc = [],
+      attachments = [],
+      draft = false,
+      html = false,
+      scheduled_at = '',
+    } = body;
 
-  log(req.body);
-
+    log(subject);
+    log(content);
+    log(JSON.stringify(topics));
+    log(JSON.stringify(users));
+    log(JSON.stringify(targets));
+    log(JSON.stringify(cc));
+    log(JSON.stringify(bcc));
+    log(JSON.stringify(attachments));
+    log(JSON.stringify(draft));
+    log(JSON.stringify(html));
+    log(JSON.stringify(scheduled_at));
     // const response = messaging.createEmail(
     //   ID.unique(),
     //   subject,
@@ -45,6 +68,7 @@ export default async ({ req, res, error, log }) => {
     // log(response);
 
     // if (response) return res.json({ success: true, data: response });
+    return res.json({ success: true });
   } catch (err) {
     error(JSON.stringify(err, null, 2));
 
