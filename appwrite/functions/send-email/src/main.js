@@ -24,7 +24,7 @@ export default async ({ req, res, error, log }) => {
       scheduled_at = '',
     } = body;
 
-    const response = messaging.createEmail(
+    const response = await messaging.createEmail(
       ID.unique(),
       subject,
       content,
