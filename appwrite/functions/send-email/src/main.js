@@ -2,9 +2,9 @@ import { Client, Messaging, ID } from 'node-appwrite';
 
 export default async ({ req, res, error, log }) => {
   const client = new Client()
-    .setEndpoint(process.env.PROJECT_ENDPOINT)
-    .setProject(process.env.PROJECT_ID)
-    .setKey(process.env.API_KEY);
+    .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
+    .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
+    .setKey(process.env.APPWRITE_FUNCTION_API_KEY);
 
   const messaging = new Messaging(client);
 

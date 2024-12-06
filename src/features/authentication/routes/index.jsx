@@ -57,46 +57,37 @@ export const authRoutes = [
         const email = formData.get("email");
         const password = formData.get("password");
 
-        // await appwrite.createAccount(email, password);
-        // const session = await appwrite.createSession(email, password);
+        await appwrite.createAccount(email, password);
+        const session = await appwrite.createSession(email, password);
 
-        // await appwrite.database.createDocument(
-        //   appwrite.getVariables().DATABASE_ID,
-        //   appwrite.getVariables().PROFILES_COLLECTION_ID,
-        //   session.userId,
-        //   {
-        //     email: email,
-        //     name: "",
-        //     owner: session.userId,
-        //   },
-        //   [
-        //     Permission.update(Role.user(session.userId)),
-        //     Permission.delete(Role.user(session.userId)),
-        //   ]
-        // );
-
-        const emailResponse = await appwrite.functions.createExecution(
-          SEND_EMAIL_FUNCTION_ID,
-          JSON.stringify({
-            targets: [email],
-            subject: "Welcome to Distributa",
-            content: "Welcome to Distributa, we're glad to have you here!",
-          })
+        await appwrite.database.createDocument(
+          appwrite.getVariables().DATABASE_ID,
+          appwrite.getVariables().PROFILES_COLLECTION_ID,
+          session.userId,
+          {
+            email: email,
+            name: "",
+            owner: session.userId,
+          },
+          [
+            Permission.update(Role.user(session.userId)),
+            Permission.delete(Role.user(session.userId)),
+          ]
         );
 
-        console.log("Email response: ", emailResponse);
+        if (session) {
+          const emailResponse = await appwrite.functions.createExecution(
+            SEND_EMAIL_FUNCTION_ID,
+            JSON.stringify({
+              targets: [email],
+              subject: "Welcome to Distributa",
+              content: "Welcome to Distributa, we're glad to have you here!",
+            })
+          );
 
-        // const messageBody = JSON.stringify({
-        //   targets: [email],
-        //   subject: "Welcome to Distributa",
-        //   content: "Welcome to Distributa, we're glad to have you here!",
-        // });
-        // console.log("JSON String: ", messageBody);
-
-        // console.log("parsed json: ", JSON.parse(messageBody));
-        return null;
-
-        // if (session) return redirect("/invoices", { replace: true });
+          console.log("Email response: ", emailResponse);
+          return redirect("/invoices", { replace: true });
+        }
       } catch (error) {
         console.log(JSON.stringify(error, null, 2));
         return json({ error: error.response });
