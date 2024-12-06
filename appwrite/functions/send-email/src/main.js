@@ -24,7 +24,7 @@ export default async ({ req, res, error, log }) => {
       scheduled_at = '',
     } = body;
 
-    const response = await messaging.createEmail(
+    const emailArgs = [
       ID.unique(),
       subject,
       content,
@@ -36,12 +36,21 @@ export default async ({ req, res, error, log }) => {
       attachments,
       draft,
       html,
-      scheduled_at
-    );
+    ];
+
+    if (scheduled_at) {
+      const scheduledDate = new Date(scheduled_at);
+
+      if (isNaN(scheduledDate.getTime())) {
+        throw new Error('Invalid schedule date format.');
+      }
+      emailArgs.push(scheduled_at);
+    }
+
+    const response = await messaging.createEmail(...emailArgs);
 
     log(JSON.stringify(response));
 
-    // if (response) return res.json({ success: true, data: response });
     return res.json({ success: true, data: response });
   } catch (err) {
     error(JSON.stringify(err, null, 2));

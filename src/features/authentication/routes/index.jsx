@@ -79,7 +79,7 @@ export const authRoutes = [
           const emailResponse = await appwrite.functions.createExecution(
             SEND_EMAIL_FUNCTION_ID,
             JSON.stringify({
-              targets: [email],
+              users: [session.userId],
               subject: "Welcome to Distributa",
               content: "Welcome to Distributa, we're glad to have you here!",
             })
