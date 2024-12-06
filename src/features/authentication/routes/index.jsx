@@ -3,6 +3,7 @@ import { AppwriteService as Appwrite } from "../../../services";
 import { json, redirect } from "react-router-dom";
 import { Permission, Role } from "appwrite";
 import { SEND_EMAIL_FUNCTION_ID } from "../../../data/constants";
+import { welcomeEmailTemplate } from "../../../lib/templates/email";
 
 const appwrite = new Appwrite();
 
@@ -30,7 +31,6 @@ export const authRoutes = [
         const from = url.searchParams.get("from") ?? "/invoices";
 
         const session = await appwrite.createSession(email, password);
-        const emailResponse = await appwrite.functions.createExecution();
         if (session) return redirect(from, { replace: true });
       } catch (error) {
         return json({ error: error.message });
@@ -80,8 +80,9 @@ export const authRoutes = [
             SEND_EMAIL_FUNCTION_ID,
             JSON.stringify({
               users: [session.userId],
-              subject: "Welcome to Distributa",
-              content: "Welcome to Distributa, we're glad to have you here!",
+              subject: welcomeEmailTemplate.subject,
+              content: welcomeEmailTemplate.getContent(),
+              html: true,
             })
           );
 
