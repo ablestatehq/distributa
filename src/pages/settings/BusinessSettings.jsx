@@ -46,7 +46,7 @@ const BusinessSettings = () => {
     submit(formData, {
       method: "POST",
       encType: "multipart/form-data",
-      action: "/settings/organisation",
+      action: "/settings/business",
     });
   };
 
@@ -55,7 +55,7 @@ const BusinessSettings = () => {
       toast.error(actionData.error);
     }
     if (actionData?.success === true) {
-      toast.success("Organisation details updated successfully");
+      toast.success("Business details updated successfully");
     }
   }, [actionData]);
 
