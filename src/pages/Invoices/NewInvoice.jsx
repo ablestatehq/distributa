@@ -8,7 +8,6 @@ import getValidNumber from "../../utils/getValidNumber";
 import { newInvoiceSchema } from "../../utils/validators";
 import cn from "../../utils/cn";
 import { useSubmit, useLoaderData, Await } from "react-router-dom";
-import { currencyFormatter } from "../../utils/currency.formatter";
 import { CURRENCY_LOCALE_MAP } from "../../data/constants";
 import {
   CommonSelect,
@@ -55,12 +54,12 @@ const NewInvoice = () => {
     currency: "UGX",
     billed_from: {
       name: "",
-      email: "",
+      email: null,
       address: "",
     },
     billed_to: {
       name: "",
-      email: "",
+      email: null,
       address: "",
     },
     title: "",
@@ -101,6 +100,8 @@ const NewInvoice = () => {
       price: parseFloat(item.price),
       quantity: parseInt(item.quantity),
     }));
+    values.billed_from.email = values.billed_from.email || null;
+    values.billed_to.email = values.billed_to.email || null;
 
     // Submit
     submit(JSON.stringify(values), {
@@ -143,9 +144,9 @@ const NewInvoice = () => {
               currencyOptions: { documents: currencies },
             }) => {
               if (organisation) {
-                initialValues.billed_from.name = organisation?.name;
-                initialValues.billed_from.email = organisation?.email ?? "";
-                initialValues.billed_from.address = organisation?.address;
+                initialValues.billed_from.name = organisation?.name ?? "";
+                initialValues.billed_from.email = organisation?.email ?? null;
+                initialValues.billed_from.address = organisation?.address ?? "";
 
                 if (organisation?.logo_url)
                   initialValues.logo = organisation?.logo_url;
@@ -307,6 +308,7 @@ const NewInvoice = () => {
                                       }
                                     )}
                                     placeholder="Email"
+                                    value={values?.billed_from?.email ?? ""}
                                   />
                                   <ErrorMessage name="billed_from.email">
                                     {(msg) => (
@@ -382,6 +384,7 @@ const NewInvoice = () => {
                                       }
                                     )}
                                     placeholder="Email"
+                                    value={values?.billed_to?.email ?? ""}
                                   />
                                   <ErrorMessage name="billed_to.email">
                                     {(msg) => (
