@@ -10,16 +10,18 @@ export const newInvoiceSchema = Yup.object({
   billed_from: Yup.object({
     name: Yup.string().required("Name is required"),
     email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
+      .nullable()
+      .transform((value) => (value === "" ? null : value))
+      .email("Invalid email format"),
     address: Yup.string().required("Address is required"),
   }),
 
   billed_to: Yup.object({
     name: Yup.string().required("Name is required"),
     email: Yup.string()
-      .email("Invalid email format")
-      .required("Email is required"),
+      .nullable()
+      .transform((value) => (value === "" ? null : value))
+      .email("Invalid email format"),
     address: Yup.string().required("Address is required"),
   }),
 
