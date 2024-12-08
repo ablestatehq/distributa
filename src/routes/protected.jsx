@@ -147,6 +147,97 @@ export const protectedRoutes = [
           }
         },
       },
+
+      // Receipts
+      {
+        path: "/receipts",
+        loader: async () => {
+          const invoicesPromise = InvoiceService.listInvoices();
+          return defer({ invoices: invoicesPromise });
+        },
+        element: <Invoices />,
+      },
+      {
+        path: "/receipts/:id",
+        loader: async ({ params }) => {
+          const invoicePromise = InvoiceService.getInvoice(params.id);
+          return defer({ invoice: invoicePromise });
+        },
+        element: <InvoicePreview />,
+      },
+      {
+        path: "/receipts/:id/edit",
+        loader: async ({ params }) => {
+          const invoicePromise = InvoiceService.getInvoice(params.id);
+          return defer({ invoice: invoicePromise });
+        },
+        action: async ({ request, params }) => {
+          try {
+            const data = await request.json();
+            const invoice = await InvoiceService.updateInvoice(params.id, data);
+            return { success: true, data: invoice };
+          } catch (error) {
+            throw error;
+          }
+        },
+        element: <EditInvoice />,
+      },
+      {
+        path: "/receipts/:id/preview",
+        loader: async ({ params }) => {
+          const invoicePromise = InvoiceService.getInvoice(params.id);
+          return defer({ invoice: invoicePromise });
+        },
+        element: <InvoicePreview />,
+      },
+      {
+        path: "/receipts/new",
+        element: <NewInvoice />,
+        loader: async () => {
+          const { $id: userId } = await appwrite.account.get();
+
+          const organisationPromise = appwrite.database.listDocuments(
+            appwrite.getVariables().DATABASE_ID,
+            appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
+            [Query.equal("created_by", userId)]
+          );
+          const currenciesPromise = appwrite.database.listDocuments(
+            appwrite.getVariables().DATABASE_ID,
+            appwrite.getVariables().CURRENCY_PREFERENCES_COLLECTION_ID,
+            [Query.equal("is_available", true), Query.equal("user_id", userId)]
+          );
+
+          const newInvoicePromise = Promise.all([
+            organisationPromise,
+            currenciesPromise,
+          ]).then(([organisation, currencies]) => {
+            return {
+              organisationData: organisation,
+              currencyOptions: currencies,
+            };
+          });
+
+          return defer({
+            newInvoiceInitialData: newInvoicePromise,
+          });
+        },
+        action: async ({ request }) => {
+          try {
+            const currentUrl = new URL(request.url);
+            const data = await request.json();
+            const invoice = await InvoiceService.createInvoice(data);
+
+            return redirect(
+              `/invoices/${invoice.$id}/preview?from=${encodeURIComponent(
+                currentUrl.pathname
+              )}`
+            );
+          } catch (error) {
+            throw error;
+          }
+        },
+      },
+      // end receipts
       {
         loader: async () => {
           const { $id: userId } = await appwrite.account.get();
@@ -387,11 +478,13 @@ export const protectedRoutes = [
             element: <BusinessSettings />,
             loader: async () => {
               const { $id: userId } = await appwrite.account.get();
-              const organisationPromise = appwrite.database.getDocument(
-                appwrite.getVariables().DATABASE_ID,
-                appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
-                userId
-              );
+              const organisationPromise = appwrite.database
+                .getDocument(
+                  appwrite.getVariables().DATABASE_ID,
+                  appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
+                  userId
+                )
+                .catch(() => null);
 
               return defer({ organisation: organisationPromise });
             },
