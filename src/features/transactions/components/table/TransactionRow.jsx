@@ -12,13 +12,19 @@ import {
 import { Query } from "appwrite";
 import formatCurrency from "../../../../utils/format.currency";
 import { useLoaderData, Await } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const TransactionRow = ({ transaction }) => {
+  const navigate = useNavigate();
+
   const [editModal, setEditModal] = useState(false);
   const [detailsModal, setDetailsModal] = useState(false);
 
   const toggleEditModal = () => setEditModal((edit) => !edit);
   const toggleDetailsModal = () => setDetailsModal((del) => !del);
+
+  const handleDetails = (transactionId) =>
+    navigate(`/transactions/${transactionId}`);
 
   const prefix = transaction?.flow_type === "income" ? "+" : "-";
 
@@ -106,7 +112,7 @@ const TransactionRow = ({ transaction }) => {
           </button>
           <button
             className="underline min-w-[58px] outline-none"
-            onClick={toggleDetailsModal}
+            onClick={() => handleDetails(transaction.$id)}
           >
             See Details
           </button>
