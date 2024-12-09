@@ -81,7 +81,9 @@ const Transactions = () => {
                                     income !== "N/A"
                                       ? formatCurrency(
                                           income,
-                                          currencyPreferences.preferredCurrency
+                                          currencyPreferences.preferredCurrency,
+                                          "",
+                                          true
                                         )
                                       : income}
                                   </h3>
@@ -107,7 +109,9 @@ const Transactions = () => {
                                     expense !== "N/A"
                                       ? formatCurrency(
                                           expense,
-                                          currencyPreferences.preferredCurrency
+                                          currencyPreferences.preferredCurrency,
+                                          "",
+                                          true
                                         )
                                       : expense}
                                   </h3>
