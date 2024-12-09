@@ -12,6 +12,7 @@ import {
   NewInvoice,
   EditInvoice,
   Transactions,
+  Transaction,
   CategorySettings,
   BillingSettings,
   ProfileSettings,
@@ -255,6 +256,43 @@ export const protectedRoutes = [
         },
         path: "/transactions",
         element: <Transactions />,
+      },
+      {
+        path: "transactions/:id",
+        loader: async ({ params }) => {
+          const transactionPromise = TransactionService.getTransaction(
+            params.id
+          );
+
+          const currencyPreferencePromise = appwrite.account
+            .get()
+            .then(({ $id: user_id }) => {
+              return appwrite.database.listDocuments(
+                appwrite.getVariables().DATABASE_ID,
+                appwrite.getVariables().CURRENCY_PREFERENCES_COLLECTION_ID,
+                [Query.equal("user_id", user_id)]
+              );
+            })
+            .then(({ total, documents }) => {
+              if (total > 0) {
+                return documents[0];
+              }
+              return null;
+            });
+
+          const transactionPageData = Promise.all([
+            transactionPromise,
+            currencyPreferencePromise,
+          ]).then(([transaction, currencyPreference]) => {
+            return {
+              transaction,
+              currencyPreference,
+            };
+          });
+
+          return defer({ data: transactionPageData });
+        },
+        element: <Transaction />,
       },
       {
         path: "/settings",

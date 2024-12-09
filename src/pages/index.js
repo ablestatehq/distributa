@@ -10,11 +10,13 @@ import ProfileSettings from "./settings/ProfileSettings";
 import PartiesSettings from "./settings/PartiesSettings";
 import BusinessSettings from "./settings/BusinessSettings";
 import CurrencySettings from "./settings/CurrencySettings";
+import Transaction from "./Transactions/Transaction";
 
 export {
   Invoices,
   NewInvoice,
   Transactions,
+  Transaction,
   Home,
   Settings,
   EditInvoice,
