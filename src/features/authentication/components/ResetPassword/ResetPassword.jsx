@@ -20,7 +20,7 @@ function ResetPassword() {
   if (isRedirecting) toast.success("Successfully updated password.");
 
   const handlePasswordReset = async (values) =>
-    submit(values, { method: "POST", action: "/reset-password" });
+    submit(values, { method: "POST", action: "/set-password" });
 
   const initialValues = {
     password: "",
