@@ -1,4 +1,4 @@
-import { Login, SignUp } from "../components";
+import { Login, SignUp, ForgotPassword, ResetPassword } from "../components";
 import { AppwriteService as Appwrite } from "../../../services";
 import { json, redirect } from "react-router-dom";
 import { Permission, Role } from "appwrite";
@@ -32,6 +32,74 @@ export const authRoutes = [
 
         const session = await appwrite.createSession(email, password);
         if (session) return redirect(from, { replace: true });
+      } catch (error) {
+        return json({ error: error.message });
+      }
+    },
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+    loader: async ({ request }) => {
+      try {
+        const url = new URL(request.url);
+        const from = url.searchParams.get("from") ?? "/invoices";
+        const user = await appwrite.getAccount();
+        if (user) return redirect(from, { replace: true });
+      } catch (error) {
+        return json({ error });
+      }
+    },
+    action: async ({ request }) => {
+      try {
+        const formData = await request.formData();
+        const email = formData.get("email");
+
+        const result = await appwrite.account.createRecovery(
+          email,
+          "https://distributa.ablestate.africa/set-password"
+        );
+
+        if (result)
+          return json({
+            success: true,
+            message: "Password reset link sent to your email",
+          });
+      } catch (error) {
+        return json({ error: error.message });
+      }
+    },
+  },
+  {
+    path: "/set-password",
+    element: <ResetPassword />,
+    loader: async ({ request }) => {
+      try {
+        const url = new URL(request.url);
+        const from = url.searchParams.get("from") ?? "/invoices";
+        const user = await appwrite.getAccount();
+        if (user) return redirect(from, { replace: true });
+      } catch (error) {
+        return json({ error });
+      }
+    },
+    action: async ({ request }) => {
+      try {
+        const url = new URL(request.url);
+        const userId = url.searchParams.get("userId");
+        const secret = url.searchParams.get("secret");
+
+        const formData = await request.formData();
+
+        const password = formData.get("password");
+
+        const result = await appwrite.account.updateRecovery(
+          userId,
+          secret,
+          password
+        );
+
+        if (result) return redirect("/login");
       } catch (error) {
         return json({ error: error.message });
       }
