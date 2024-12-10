@@ -24,7 +24,7 @@ const Transaction = ({ transaction }) => {
         <hr className="invisible h-8" />
       </section>
       <main className="flex flex-1 flex-col gap-y-4  max-w-4xl">
-        <Suspense fallback={<div>loading ...</div>}>
+        <Suspense fallback={<TransactionSkeleton />}>
           <Await resolve={loaderData?.data}>
             {({ transaction, currencyPreference }) => {
               const showReceiptCTA =
@@ -43,7 +43,7 @@ const Transaction = ({ transaction }) => {
                           console.log("Generate Receipt");
                         }}
                       >
-                        Generate Receipt
+                        Download Receipt
                       </Button>
                     </div>
                   )}
@@ -151,5 +151,30 @@ const Transaction = ({ transaction }) => {
     </ContentViewArea>
   );
 };
+
+function TransactionSkeleton() {
+  return (
+    <div className="py-4 flex flex-col gap-y-4">
+      <div className="h-4 w-24 bg-grey rounded animate-pulse"></div>
+
+      <div className="grid grid-cols-2 items-start">
+        <div className="h-6 w-3/4 bg-grey rounded animate-pulse"></div>
+        <div className="h-6 w-1/2 bg-grey rounded animate-pulse justify-self-end"></div>
+      </div>
+
+      <div className="h-4 w-full bg-grey rounded animate-pulse"></div>
+
+      {[1, 2, 3, 4, 5, 6, 7].map((index) => (
+        <div
+          key={index}
+          className="flex justify-between pb-2 pt-4 border-b border-b-grey-100"
+        >
+          <div className="h-4 w-24 bg-grey rounded animate-pulse"></div>
+          <div className="h-4 w-20 bg-grey rounded animate-pulse"></div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default Transaction;
