@@ -6,10 +6,15 @@ import Button from "../../../../components/common/forms/Button";
 import { useNavigationLoadingState } from "../../../../hooks";
 import { toast } from "react-toastify";
 import { resetPasswordSchema } from "../../utils/validator";
+import { useSearchParams } from "react-router-dom";
 
 function ResetPassword() {
   const submit = useSubmit();
   const response = useActionData();
+  const [searchParams] = useSearchParams();
+  
+  const secret = searchParams.get("secret");
+  const userId = searchParams.get("userId");
 
   const { isLoading, isReloading, isRedirecting, isSubmitting } =
     useNavigationLoadingState();
@@ -19,8 +24,10 @@ function ResetPassword() {
 
   if (isRedirecting) toast.success("Successfully updated password.");
 
-  const handlePasswordReset = async (values) =>
-    submit(values, { method: "POST", action: "/set-password" });
+  const handlePasswordReset = async (values) => {
+    const actionUrl = `/set-password?userId=${userId}&secret=${secret}`;
+    submit(values, { method: "POST", action: actionUrl });
+  };
 
   const initialValues = {
     password: "",
@@ -46,6 +53,7 @@ function ResetPassword() {
                 name="password"
                 label="Password"
                 placeholder="Password"
+                type="password"
               />
               <Input
                 id="password_confirmation"
