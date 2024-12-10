@@ -35,6 +35,9 @@ export const {
 
   // Functions
   VITE_APPWRITE_SEND_EMAIL_FUNCTION_ID: SEND_EMAIL_FUNCTION_ID,
+
+  // Frontend URL
+  VITE_FRONTEND_URL: FRONTEND_URL,
 } = import.meta.env;
 
 // Part 1 of the comprehensive currency locale mapping
