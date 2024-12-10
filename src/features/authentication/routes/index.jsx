@@ -4,6 +4,7 @@ import { json, redirect } from "react-router-dom";
 import { Permission, Role } from "appwrite";
 import { SEND_EMAIL_FUNCTION_ID } from "../../../data/constants";
 import { welcomeEmailTemplate } from "../../../lib/templates/email";
+import { FRONTEND_URL } from "../../../data/constants";
 
 const appwrite = new Appwrite();
 
@@ -57,7 +58,7 @@ export const authRoutes = [
 
         const result = await appwrite.account.createRecovery(
           email,
-          "https://distributa.ablestate.africa/set-password"
+          `${FRONTEND_URL}/set-password`
         );
 
         if (result)
@@ -90,8 +91,10 @@ export const authRoutes = [
         const secret = url.searchParams.get("secret");
 
         const formData = await request.formData();
-
         const password = formData.get("password");
+
+        if (!userId || !secret)
+          return json({ success: false, error: "Invalid request" });
 
         const result = await appwrite.account.updateRecovery(
           userId,
@@ -101,6 +104,7 @@ export const authRoutes = [
 
         if (result) return redirect("/login");
       } catch (error) {
+        console.log("Error: ", JSON.stringify(error, null, 2));
         return json({ error: error.message });
       }
     },
