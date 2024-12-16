@@ -366,7 +366,7 @@ export const protectedRoutes = [
                       { avatar_url: url, avatar_ref: file.$id }
                     );
 
-                    return redirect("/settings/profile");
+                    return redirect("/settings/account");
                   } catch (error) {
                     console.log("Error: ", error);
                     throw error;
@@ -399,7 +399,7 @@ export const protectedRoutes = [
                       );
                     }
 
-                    return redirect("/settings/profile");
+                    return redirect("/settings/account");
                   } catch (error) {
                     throw error;
                   }
@@ -431,7 +431,7 @@ export const protectedRoutes = [
                       }
                     );
 
-                    return redirect("/settings/profile");
+                    return redirect("/settings/account");
                   } catch (error) {
                     throw error;
                   }
