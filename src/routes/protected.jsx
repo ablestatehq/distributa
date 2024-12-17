@@ -6,7 +6,7 @@ import {
   BalancesService,
   CategoryService,
 } from "../services";
-import { redirect, defer, json } from "react-router-dom";
+import { redirect } from "react-router-dom";
 import {
   Invoices,
   NewInvoice,
@@ -24,6 +24,7 @@ import { SettingsLayout } from "../Layouts/components";
 import InvoicePreview from "../components/Modals/InvoicePreview";
 import { Permission, Role, ID, Query } from "appwrite";
 import CurrencyPreferenceService from "../services/currency.prefs.service";
+import { data } from "react-router-dom";
 
 const appwrite = new Appwrite();
 
@@ -41,14 +42,14 @@ export const protectedRoutes = [
         return redirect("/login");
       }
 
-      return defer({ user });
+      return { user };
     },
     children: [
       {
         path: "/invoices",
         loader: async () => {
           const invoicesPromise = InvoiceService.listInvoices();
-          return defer({ invoices: invoicesPromise });
+          return { invoices: invoicesPromise };
         },
         element: <Invoices />,
       },
@@ -56,7 +57,7 @@ export const protectedRoutes = [
         path: "/invoices/:id",
         loader: async ({ params }) => {
           const invoicePromise = InvoiceService.getInvoice(params.id);
-          return defer({ invoice: invoicePromise });
+          return { invoice: invoicePromise };
         },
         element: <InvoicePreview />,
       },
@@ -64,7 +65,7 @@ export const protectedRoutes = [
         path: "/invoices/:id/edit",
         loader: async ({ params }) => {
           const invoicePromise = InvoiceService.getInvoice(params.id);
-          return defer({ invoice: invoicePromise });
+          return { invoice: invoicePromise };
         },
         action: async ({ request, params }) => {
           try {
@@ -97,7 +98,7 @@ export const protectedRoutes = [
         path: "/invoices/:id/preview",
         loader: async ({ params }) => {
           const invoicePromise = InvoiceService.getInvoice(params.id);
-          return defer({ invoice: invoicePromise });
+          return { invoice: invoicePromise };
         },
         element: <InvoicePreview />,
       },
@@ -128,9 +129,9 @@ export const protectedRoutes = [
             };
           });
 
-          return defer({
+          return {
             newInvoiceInitialData: newInvoicePromise,
-          });
+          };
         },
         action: async ({ request }) => {
           try {
@@ -154,7 +155,7 @@ export const protectedRoutes = [
         path: "/receipts",
         loader: async () => {
           const invoicesPromise = InvoiceService.listInvoices();
-          return defer({ invoices: invoicesPromise });
+          return { invoices: invoicesPromise };
         },
         element: <Invoices />,
       },
@@ -162,7 +163,7 @@ export const protectedRoutes = [
         path: "/receipts/:id",
         loader: async ({ params }) => {
           const invoicePromise = InvoiceService.getInvoice(params.id);
-          return defer({ invoice: invoicePromise });
+          return { invoice: invoicePromise };
         },
         element: <InvoicePreview />,
       },
@@ -170,7 +171,7 @@ export const protectedRoutes = [
         path: "/receipts/:id/edit",
         loader: async ({ params }) => {
           const invoicePromise = InvoiceService.getInvoice(params.id);
-          return defer({ invoice: invoicePromise });
+          return { invoice: invoicePromise };
         },
         action: async ({ request, params }) => {
           try {
@@ -187,7 +188,7 @@ export const protectedRoutes = [
         path: "/receipts/:id/preview",
         loader: async ({ params }) => {
           const invoicePromise = InvoiceService.getInvoice(params.id);
-          return defer({ invoice: invoicePromise });
+          return { invoice: invoicePromise };
         },
         element: <InvoicePreview />,
       },
@@ -218,9 +219,9 @@ export const protectedRoutes = [
             };
           });
 
-          return defer({
+          return {
             newInvoiceInitialData: newInvoicePromise,
-          });
+          };
         },
         action: async ({ request }) => {
           try {
@@ -248,11 +249,11 @@ export const protectedRoutes = [
           const currencyPreferencesPromise =
             CurrencyPreferenceService.getPreferences(userId);
 
-          return defer({
+          return {
             transactions: transactionsPromise,
             currentMonthSummary: currentMonthSummaryPromise,
             currencyPreferences: currencyPreferencesPromise,
-          });
+          };
         },
         path: "/transactions",
         element: <Transactions />,
@@ -290,7 +291,7 @@ export const protectedRoutes = [
             };
           });
 
-          return defer({ data: transactionPageData });
+          return { data: transactionPageData };
         },
         element: <Transaction />,
       },
@@ -309,9 +310,9 @@ export const protectedRoutes = [
                 currentUser.$id
               );
 
-              return defer({
+              return {
                 profile: profilePromise,
-              });
+              };
             },
             children: [
               {
@@ -447,12 +448,12 @@ export const protectedRoutes = [
                       formData.get("current_password")
                     );
 
-                    return json({
+                    return {
                       success: true,
                       message: "Password updated successfully",
-                    });
+                    };
                   } catch (error) {
-                    return json({ error: error.message }, { status: 400 });
+                    return { error: error.message }, { status: 400 };
                   }
                 },
               },
@@ -505,9 +506,9 @@ export const protectedRoutes = [
                 availableCurrencies: available,
               }));
 
-              return defer({
+              return {
                 currencySettings: currencyDataPromise,
-              });
+              };
             },
             element: <CurrencySettings />,
           },
@@ -524,7 +525,7 @@ export const protectedRoutes = [
                 )
                 .catch(() => null);
 
-              return defer({ organisation: organisationPromise });
+              return { organisation: organisationPromise };
             },
             action: async ({ request }) => {
               const formData = await request.formData();
@@ -593,7 +594,7 @@ export const protectedRoutes = [
                     ]
                   );
 
-                  return json({ success: true, data: organisation });
+                  return { success: true, data: organisation };
                 }
 
                 if (!logo_url) {
@@ -618,9 +619,9 @@ export const protectedRoutes = [
                   data
                 );
 
-                return json({ success: true, data: organisation });
+                return { success: true, data: organisation };
               } catch (error) {
-                return json(
+                return data(
                   {
                     success: false,
                     error: error?.response?.message || "Unknown error ocurred.",
@@ -644,7 +645,7 @@ export const protectedRoutes = [
                 ]
               );
 
-              return defer({ parties: partiesPromise });
+              return { parties: partiesPromise };
             },
             children: [
               {
@@ -665,9 +666,9 @@ export const protectedRoutes = [
                       ]
                     );
 
-                    return json({ success: true, data: party });
+                    return { success: true, data: party };
                   } catch (error) {
-                    return json(
+                    return data(
                       { success: false, error: error.response.message },
                       { status: 400 }
                     );
@@ -685,7 +686,7 @@ export const protectedRoutes = [
                       params.id,
                       data
                     );
-                    return json({ success: true, data: party });
+                    return { success: true, data: party };
                   } catch (error) {
                     return json(
                       { success: false, error: error.message },
@@ -716,10 +717,10 @@ export const protectedRoutes = [
               const categoriesPromise = CategoryService.getCategoryTree();
               const categoryListPromise = CategoryService.listCategories();
 
-              return defer({
+              return {
                 categories: categoriesPromise,
                 categoryList: categoryListPromise,
-              });
+              };
             },
             path: "categories",
             element: <CategorySettings />,

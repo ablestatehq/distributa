@@ -1,6 +1,6 @@
 import { Login, SignUp, ForgotPassword, ResetPassword } from "../components";
 import { AppwriteService as Appwrite } from "../../../services";
-import { json, redirect } from "react-router-dom";
+import { redirect } from "react-router-dom";
 import { Permission, Role } from "appwrite";
 import { SEND_EMAIL_FUNCTION_ID } from "../../../data/constants";
 import { welcomeEmailTemplate } from "../../../lib/templates/email";
@@ -19,7 +19,7 @@ export const authRoutes = [
         const user = await appwrite.getAccount();
         if (user) return redirect(from, { replace: true });
       } catch (error) {
-        return json({ error });
+        return { error };
       }
     },
     action: async ({ request }) => {
@@ -34,7 +34,7 @@ export const authRoutes = [
         const session = await appwrite.createSession(email, password);
         if (session) return redirect(from, { replace: true });
       } catch (error) {
-        return json({ error: error.message });
+        return { error: error.message };
       }
     },
   },
@@ -48,7 +48,7 @@ export const authRoutes = [
         const user = await appwrite.getAccount();
         if (user) return redirect(from, { replace: true });
       } catch (error) {
-        return json({ error });
+        return { error };
       }
     },
     action: async ({ request }) => {
@@ -67,7 +67,7 @@ export const authRoutes = [
             message: "Password reset link sent to your email",
           });
       } catch (error) {
-        return json({ error: error.message });
+        return { error: error.message };
       }
     },
   },
@@ -81,7 +81,7 @@ export const authRoutes = [
         const user = await appwrite.getAccount();
         if (user) return redirect(from, { replace: true });
       } catch (error) {
-        return json({ error });
+        return { error };
       }
     },
     action: async ({ request }) => {
@@ -94,7 +94,7 @@ export const authRoutes = [
         const password = formData.get("password");
 
         if (!userId || !secret)
-          return json({ success: false, error: "Invalid request" });
+          return { success: false, error: "Invalid request" };
 
         const result = await appwrite.account.updateRecovery(
           userId,
@@ -105,7 +105,7 @@ export const authRoutes = [
         if (result) return redirect("/login");
       } catch (error) {
         console.log("Error: ", JSON.stringify(error, null, 2));
-        return json({ error: error.message });
+        return { error: error.message };
       }
     },
   },
@@ -119,7 +119,7 @@ export const authRoutes = [
         const user = await appwrite.getAccount();
         if (user) return redirect(from, { replace: true });
       } catch (error) {
-        return json({ error });
+        return { error };
       }
     },
     action: async ({ request }) => {
@@ -162,8 +162,7 @@ export const authRoutes = [
           return redirect("/invoices", { replace: true });
         }
       } catch (error) {
-        console.log(JSON.stringify(error, null, 2));
-        return json({ error: error.response });
+        return { error: error.response };
       }
     },
   },
