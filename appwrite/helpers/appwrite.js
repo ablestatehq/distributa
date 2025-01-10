@@ -146,7 +146,7 @@ const createCollection = async (databaseID, collectionName) => {
  * // }
  */
 
-/** 
+/**
  * @async
  * @function createAttribute
  * @param {string} databaseID - The id of the database
@@ -170,7 +170,13 @@ const createCollection = async (databaseID, collectionName) => {
  * // }
  */
 
-const createStringAttribute = async (databaseID, collectionID, attributeName, size, isRequired=false) => {
+const createStringAttribute = async (
+  databaseID,
+  collectionID,
+  attributeName,
+  size,
+  isRequired = false
+) => {
   const attribute = await databases.createStringAttribute(
     databaseID,
     collectionID,
@@ -179,7 +185,7 @@ const createStringAttribute = async (databaseID, collectionID, attributeName, si
     isRequired
   );
   return attribute;
-}
+};
 /**
  * @async
  * @function createFloatAttribute
@@ -201,7 +207,12 @@ const createStringAttribute = async (databaseID, collectionID, attributeName, si
  * //   "default": "default"
  * // }
  */
-const createFloatAttribute = async (databaseID, collectionID, attributeName, isRequired=false) => {
+const createFloatAttribute = async (
+  databaseID,
+  collectionID,
+  attributeName,
+  isRequired = false
+) => {
   const attribute = await databases.createFloatAttribute(
     databaseID,
     collectionID,
@@ -209,7 +220,7 @@ const createFloatAttribute = async (databaseID, collectionID, attributeName, isR
     isRequired
   );
   return attribute;
-}
+};
 const createUser = async (email, pass) => {
   const user = await users.createBcryptUser(ID.unique(), email, pass);
   return user;
@@ -245,12 +256,7 @@ const createTeam = async (name) => {
  * @description Creates a team membership in appwrite
  */
 const createTeamMembership = async (teamID, userEmail, roles) => {
-  const membership = await teams.createMembership(
-    teamID,
-    roles,
-    redirectUrl,
-    userEmail
-  );
+  const membership = await teams.createMembership(teamID, roles, userEmail);
   return membership;
 };
 const deleteDatabase = async (databaseID) => {

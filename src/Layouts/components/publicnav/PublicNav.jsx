@@ -28,14 +28,14 @@ function PublicNav() {
         </NavLink>
       </div>
       <nav className="hidden md:flex">
-        <NavLink
+        {/* <NavLink
           to="/expense"
           className={cn("mr-6 p-3", styles.font)}
           onMouseEnter={() => handleMouseEnter("/")}
           onMouseLeave={handleMouseLeave}
         >
           Expenses
-        </NavLink>
+        </NavLink> */}
         <NavLink
           to="/invoice"
           className={cn("mr-6 p-3", styles.font)}

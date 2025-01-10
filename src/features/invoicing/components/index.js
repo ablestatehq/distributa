@@ -1,2 +1,4 @@
 import Invoice from "./invoice";
-export { Invoice }
+import Document from "./document/Document";
+
+export { Invoice, Document };

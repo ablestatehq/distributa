@@ -70,10 +70,10 @@ Once the script completes execution, it will create the distributa database, inv
 In your project's environment configuration file (e.g., .env.local or .env.development), add the following lines:
 
 ```dotenv
-REACT_APP_APPWRITE_PROJECT_ENDPOINT=your-project-endpoint
-REACT_APP_APPWRITE_DATABASE_ID=your-distributa-database-id
-REACT_APP_APPWRITE_INVOICES_COLLECTION_ID=your-invoices-collection-id
-REACT_APP_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=your-distributions-collection-id
+VITE_APPWRITE_PROJECT_ENDPOINT=your-project-endpoint
+VITE_APPWRITE_DATABASE_ID=your-distributa-database-id
+VITE_APPWRITE_INVOICES_COLLECTION_ID=your-invoices-collection-id
+VITE_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=your-distributions-collection-id
 ```
 
 - Replace your-project-endpoint, your-distributa-database-id, your-invoices-collection-id, and your-distributions-collection-id with the actual values obtained from the previous steps.

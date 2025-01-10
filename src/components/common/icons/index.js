@@ -12,6 +12,12 @@ import FileText from "./FileText";
 import CircleX from "./CircleX";
 import Menu from "./Menu";
 import PlusSquare from "./PlusSquare";
+import Edit from "./Edit";
+import Delete from "./Delete";
+import Category from "./Category";
+import Warning from "./Warning";
+import Download from "./Download";
+import ClipBoard from "./ClipBoard";
 
 export {
   Facebook,
@@ -27,5 +33,11 @@ export {
   FileText,
   CircleX,
   Menu,
-  PlusSquare
+  PlusSquare,
+  Edit,
+  Delete,
+  Category,
+  Warning,
+  Download,
+  ClipBoard,
 };

@@ -15,8 +15,9 @@ const NavigationLink = ({
       className={({ isActive }) =>
         cn("flex w-full gap-x-4 py-5", {
           "bg-grey border border-greyborder rounded-lg": isActive,
+          "border border-transparent": !isActive,
           "px-8": children,
-          "justify-center": !children
+          "justify-center": !children,
         })
       }
       {...props}

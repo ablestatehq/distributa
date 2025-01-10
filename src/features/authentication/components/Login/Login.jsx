@@ -10,13 +10,12 @@ import { toast } from "react-toastify";
 function Login() {
   const submit = useSubmit();
   const response = useActionData();
-  if (response) console.log("Response: ", response);
 
   const { isLoading, isReloading, isRedirecting, isSubmitting } =
     useNavigationLoadingState();
 
   if (response?.error && isReloading)
-    toast.error(response?.error?.message ?? "Unknown error occured");
+    toast.error(response?.error?.response?.message || "Unknown error occured");
 
   if (isRedirecting) toast.success("Successfully logged in");
 
