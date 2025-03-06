@@ -69,13 +69,13 @@ const Content = ({ data }) => {
           </p>
         </div>
       </div>
-      <div className="flex flex-1">
+      <div className="flex">
         <div className="w-full h-fit">
           <table className="min-w-full table-full max-w-full overflow-x-scroll">
             <thead>
               <tr className="border-y-[0.56px] lg:border-y border-black">
                 <th className="text-start font-satoshi font-bold text-[0.362rem] lg:text-[0.625rem] w-28 leading-100 tracking-normal lg:py-2 py-1">
-                  Title
+                  Item
                 </th>
                 <th className="text-start font-satoshi font-bold text-[0.362rem] lg:text-[0.625rem] w-[2.75rem] leading-100 tracking-normal lg:py-2 py-1">
                   Quantity
@@ -124,7 +124,11 @@ const Content = ({ data }) => {
       <div className="grid grid-cols-2 gap-x-2 flex-shrink-0">
         <section className="flex flex-col gap-y-[0.88rem] lg:gap-y-6">
           <article className="flex flex-col gap-y-0.5 lg:gap-y-1">
-            <h2 className="font-satoshi font-bold text-[6.9px] lg:text-tiny leading-100 tracking-normal">
+            <h2
+              className={`font-satoshi font-bold text-[6.9px] lg:text-tiny leading-100 tracking-normal ${
+                data.notes ? "" : "invisible"
+              }`}
+            >
               Notes
             </h2>
             <p className="font-satoshi font-normal text-[0.216rem] lg:text-[0.375rem] leading-140 tracking-normal whitespace-pre-line">
@@ -132,7 +136,11 @@ const Content = ({ data }) => {
             </p>
           </article>
           <article className="flex flex-col gap-y-0.5">
-            <h2 className="font-satoshi font-bold text-[6.9px] lg:text-tiny leading-100 tracking-normal">
+            <h2
+              className={`font-satoshi font-bold text-[6.9px] lg:text-tiny leading-100 tracking-normal ${
+                data.terms ? "" : "invisible"
+              }`}
+            >
               Terms & conditions
             </h2>
             <p className="font-satoshi font-normal text-[0.216rem] lg:text-[0.375rem] leading-140 tracking-normal whitespance-pre-line">
