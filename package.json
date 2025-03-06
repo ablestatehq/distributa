@@ -68,6 +68,7 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.50.1",
     "jsdoc": "^4.0.3",
     "postcss": "^8.4.47",
     "process": "^0.11.10",
