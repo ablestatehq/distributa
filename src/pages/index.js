@@ -11,6 +11,7 @@ import PartiesSettings from "./settings/PartiesSettings";
 import BusinessSettings from "./settings/BusinessSettings";
 import CurrencySettings from "./settings/CurrencySettings";
 import Transaction from "./Transactions/Transaction";
+import Receipts from "./receipts/Receipts";
 
 export {
   Invoices,
@@ -26,4 +27,5 @@ export {
   PartiesSettings,
   BusinessSettings,
   CurrencySettings,
+  Receipts,
 };

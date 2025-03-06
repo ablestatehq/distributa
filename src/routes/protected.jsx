@@ -19,6 +19,7 @@ import {
   PartiesSettings,
   BusinessSettings,
   CurrencySettings,
+  Receipts
 } from "../pages";
 import { SettingsLayout } from "../Layouts/components";
 import InvoicePreview from "../components/Modals/InvoicePreview";
@@ -151,24 +152,26 @@ export const protectedRoutes = [
       },
 
       // Receipts
+
       {
-        path: "/receipts",
+        index: true,
+        path: "/receipts/incoming",
         loader: async () => {
           const invoicesPromise = InvoiceService.listInvoices();
-          return { invoices: invoicesPromise };
+          return { receipts: invoicesPromise };
         },
-        element: <Invoices />,
+        element: <Receipts />,
       },
       {
-        path: "/receipts/:id",
+        path: "/receipts/outgoing",
         loader: async ({ params }) => {
           const invoicePromise = InvoiceService.getInvoice(params.id);
           return { invoice: invoicePromise };
         },
-        element: <InvoicePreview />,
+        element: <Invoices />,
       },
       {
-        path: "/receipts/:id/edit",
+        path: "/receipts/incoming/:id/edit",
         loader: async ({ params }) => {
           const invoicePromise = InvoiceService.getInvoice(params.id);
           return { invoice: invoicePromise };
@@ -185,7 +188,24 @@ export const protectedRoutes = [
         element: <EditInvoice />,
       },
       {
-        path: "/receipts/:id/preview",
+        path: "/receipts/outgoing/:id/edit",
+        loader: async ({ params }) => {
+          const invoicePromise = InvoiceService.getInvoice(params.id);
+          return { invoice: invoicePromise };
+        },
+        action: async ({ request, params }) => {
+          try {
+            const data = await request.json();
+            const invoice = await InvoiceService.updateInvoice(params.id, data);
+            return { success: true, data: invoice };
+          } catch (error) {
+            throw error;
+          }
+        },
+        element: <EditInvoice />,
+      },
+      {
+        path: "/receipts/incoming/:id/preview",
         loader: async ({ params }) => {
           const invoicePromise = InvoiceService.getInvoice(params.id);
           return { invoice: invoicePromise };
@@ -193,7 +213,15 @@ export const protectedRoutes = [
         element: <InvoicePreview />,
       },
       {
-        path: "/receipts/new",
+        path: "/receipts/outgoing/:id/preview",
+        loader: async ({ params }) => {
+          const invoicePromise = InvoiceService.getInvoice(params.id);
+          return { invoice: invoicePromise };
+        },
+        element: <InvoicePreview />,
+      },
+      {
+        path: "/receipts/incoming/new",
         element: <NewInvoice />,
         loader: async () => {
           const { $id: userId } = await appwrite.account.get();
@@ -239,6 +267,54 @@ export const protectedRoutes = [
           }
         },
       },
+      {
+        path: "/receipts/outgoing/new",
+        element: <NewInvoice />,
+        loader: async () => {
+          const { $id: userId } = await appwrite.account.get();
+
+          const organisationPromise = appwrite.database.listDocuments(
+            appwrite.getVariables().DATABASE_ID,
+            appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
+            [Query.equal("created_by", userId)]
+          );
+          const currenciesPromise = appwrite.database.listDocuments(
+            appwrite.getVariables().DATABASE_ID,
+            appwrite.getVariables().CURRENCY_PREFERENCES_COLLECTION_ID,
+            [Query.equal("is_available", true), Query.equal("user_id", userId)]
+          );
+
+          const newInvoicePromise = Promise.all([
+            organisationPromise,
+            currenciesPromise,
+          ]).then(([organisation, currencies]) => {
+            return {
+              organisationData: organisation,
+              currencyOptions: currencies,
+            };
+          });
+
+          return {
+            newInvoiceInitialData: newInvoicePromise,
+          };
+        },
+        action: async ({ request }) => {
+          try {
+            const currentUrl = new URL(request.url);
+            const data = await request.json();
+            const invoice = await InvoiceService.createInvoice(data);
+
+            return redirect(
+              `/invoices/${invoice.$id}/preview?from=${encodeURIComponent(
+                currentUrl.pathname
+              )}`
+            );
+          } catch (error) {
+            throw error;
+          }
+        },
+      },
+
       // end receipts
       {
         loader: async () => {

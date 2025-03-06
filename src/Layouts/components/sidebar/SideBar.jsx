@@ -69,6 +69,24 @@ function SideBar() {
             exact={true}
           />
           <NavigationLink
+            to="/receipts/incoming"
+            Icon={collapseMenu ? ClipBoard : FileText}
+            children={collapseMenu || !isDesktop ? null : "Receipts"}
+            exact={true}
+          />
+          <div className="pl-10">
+            <NavigationLink
+              to="/receipts/incoming"
+              children={"Incoming receipts"}
+              exact={true}
+            />
+            <NavigationLink
+              to="/receipts/outgoing"
+              children={"Outgoing receipts"}
+              exact={true}
+            />
+          </div>
+          <NavigationLink
             to="/transactions"
             Icon={Book}
             children={collapseMenu || !isDesktop ? null : "My Transactions"}

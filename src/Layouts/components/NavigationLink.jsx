@@ -22,7 +22,7 @@ const NavigationLink = ({
       }
       {...props}
     >
-      {<Icon variation="black" />}
+      {Icon && <Icon variation="black" />}
       {children && <span className="">{children}</span>}
     </NavLink>
   );
