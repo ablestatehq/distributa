@@ -1,701 +1,1551 @@
-import React, { useState } from "react";
-import { Formik, Field, Form, FieldArray } from "formik";
+import { useState } from "react";
+import { Button } from "../../../../components/common/forms";
+import { Formik, Field, Form, FieldArray, ErrorMessage } from "formik";
 import { AiOutlineClose } from "react-icons/ai";
-import { currencyFormatter } from "../../../../utils/currency.formatter";
-import PDFDoc from "../pdf";
+import getBase64 from "../../../../utils/getBase64";
+import getValidNumber from "../../../../utils/getValidNumber";
+import { newInvoiceSchema } from "../../../../utils/validators";
+import cn from "../../../../utils/cn";
+import { Document } from "..";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-const initialValues = {
-  logo: "",
-  sender: "",
-  receiver: "",
-  shipping_address: "",
-  title: "INVOICE",
-  bill_number: 3,
-  issue_date: "",
-  due_date: "",
-  terms: "",
-  notes: "",
-  discount: "",
-  tax: "",
-  shipping: "",
-  paid: "",
-  balance_due: "",
-  paper_size: "A4",
-  orientation: "portrait",
-  currency: "USD",
-  items: [
-    {
-      title: "",
-      quantity: "",
-      measurement: "",
-      price: "",
-      amount: "",
-    },
-  ],
-};
 
-const subTotal = (values) => {
-  return values.items.reduce((acc, curr) => {
-    return acc + parseInt(curr.amount);
+const calculateSubTotal = (items) =>
+  items.reduce((acc, { quantity, price }) => {
+    const total = quantity * price;
+    return acc + total;
   }, 0);
-};
-const getBase64 = (file) => {
-  return new Promise((resolve) => {
-    let baseURL = "";
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      baseURL = reader.result;
-      resolve(baseURL);
-    };
-    reader.onerror = (error) => {
-      console.log("Error: ", error);
-    };
-  });
-};
 
+const calculateAmountDue = ({ tax, shipping, discount, sub_total }) =>
+  getValidNumber(sub_total) +
+  getValidNumber(tax) +
+  getValidNumber(shipping) -
+  getValidNumber(discount);
+
+const calculateBalanceDue = ({
+  sub_total,
+  discount,
+  tax,
+  shipping,
+  amount_paid,
+}) =>
+  getValidNumber(sub_total) -
+  getValidNumber(discount) +
+  getValidNumber(tax) +
+  getValidNumber(shipping) -
+  getValidNumber(amount_paid);
 const Invoice = () => {
-  const [tax, setShowTax] = useState(false);
-  const [discount, setShowDiscount] = useState(false);
-  const [shipping, setShowShipping] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
+  const [addItem, setAddItem] = useState(null);
 
-  const saveInvoice = (values) => {
-    const getInvoices = localStorage.getItem("invoices");
-    const oldInvoices = JSON.parse(getInvoices);
-    const newInvoices =
-      oldInvoices?.length > 0 ? [...oldInvoices, values] : [values];
-    localStorage.setItem("invoices", JSON.stringify(newInvoices));
-    console.log(newInvoices);
+  const initialValues = {
+    logo: null,
+    paper_size: "",
+    orientation: "",
+    currency: "",
+    billed_from: {
+      name: "",
+      email: "",
+      address: "",
+    },
+    billed_to: {
+      name: "",
+      email: "",
+      address: "",
+    },
+    title: "",
+    invoice_no: "",
+    issue_date: "",
+    due_date: "",
+    items: [
+      {
+        title: "Mackooks",
+        quantity: 1,
+        units: "Piece",
+        price: 0,
+      },
+    ],
+    sub_total: 0,
+    discount: "",
+    tax: "",
+    shipping: "",
+    amount_due: 0,
+    amount_paid: "",
+    balance_due: "",
+    notes: "",
+    terms: "",
+  };
+
+  const handleSubmit = (values) => {
+    // Type cast.
+    values.discount = parseFloat(values.discount)
+      ? parseFloat(values.discount)
+      : null;
+    values.tax = parseFloat(values.tax) ? parseFloat(values.tax) : null;
+    values.shipping = parseFloat(values.shipping)
+      ? parseFloat(values.shipping)
+      : null;
+    values.amount_paid = parseFloat(values.amount_paid ?? 0);
+    values.items = values.items.map((item) => ({
+      ...item,
+      price: parseFloat(item.price),
+      quantity: parseInt(item.quantity),
+    }));
+
+    // console.log("Values: ", values);
+
+    // Submit
+    // submit(JSON.stringify(values), {
+    //   method: "post",
+    //   encType: "application/json",
+    // });
   };
 
   return (
     <div className="h-fit w-full px-5 sm:px-10 md:px-0">
-      <h2 className="font-light text-md my-2">Generate Bill</h2>
-      <Formik
-        initialValues={initialValues}
-        onSubmit={async (values) => {
-          await new Promise((r) => setTimeout(r, 500));
-          alert(JSON.stringify(values, null, 2));
-        }}
-      >
-        {({ values, setFieldValue }) => (
-          <Form className="">
-            <div className="flex gap-x-5 flex-wrap items-end mb-2 sm:gap-y-2 xs:gap-y-2">
-              <div className="flex flex-col gap-y-1 w-32">
-                <label
-                  htmlFor="paper_size"
-                  className=" text-xs uppercase font-semibold text-gray-700"
-                >
-                  Paper size
-                </label>
-                <Field
-                  as="select"
-                  name="paper_size"
-                  id="paper_size"
-                  className="border border-gray-400 py-1.5 px-1 outline-none rounded text-xs font-light text-gray-700 focus:border-gray-700"
-                >
-                  <option value="A6">A6</option>
-                  <option value="A5">A5</option>
-                  <option value="A4">A4</option>
-                  <option value="Letter">Letter</option>
-                </Field>
-              </div>
-              <div className="flex flex-col gap-y-1 w-32">
-                <label
-                  htmlFor="orientation"
-                  className=" text-xs uppercase font-semibold text-gray-700"
-                >
-                  Orientation
-                </label>
-                <Field
-                  as="select"
-                  name="orientation"
-                  id="orientation"
-                  className="border border-gray-400 py-1.5 px-1 outline-none rounded text-xs font-light text-gray-700 focus:border-gray-700"
-                >
-                  <option value="portrait">Portrait</option>
-                  <option value="landscape">Landscape</option>
-                </Field>
-              </div>
-              <div className="flex flex-col gap-y-1">
-                <label
-                  htmlFor="currency"
-                  className=" text-xs uppercase font-semibold text-gray-700"
-                >
-                  Currency
-                </label>
-                <Field
-                  as="select"
-                  name="currency"
-                  className="border border-gray-400 py-1.5 px-1 outline-none rounded text-xs font-light text-gray-700 focus:border:gray-700"
-                >
-                  <option value="UGX">Uganda Shillings</option>
-                  <option value="KES">Kenya Shillings</option>
-                  <option value="USD">United States Dollar</option>
-                  <option value="GBP">Great Britain Pound</option>
-                </Field>
-              </div>
-              {subTotal(values) > 0 && (
-                <PDFDownloadLink
-                  className="btn btn-accent"
-                  document={<PDFDoc data={values} />}
-                  fileName={`#${values?.bill_number}.pdf` || "#invoice.pdf"}
-                >
-                  {({ loading }) =>
-                    loading ? "Loading document" : "↓ Download PDF"
-                  }
-                </PDFDownloadLink>
-              )}
-              <button
-                className="text-white bg-[#007BFF] hover:bg-[#0B5ED7] text-sm py-1 px-3 rounded-sm cursor-pointer duration-200 ease-in-out"
-                type="button"
-                onClick={() => saveInvoice(values)}
-              >
-                Save
-              </button>
-            </div>
-            <div className="border bg-white p-5 pb-10">
-              <div className="flex justify-between sm:flex-col-reverse xs:flex-col-reverse md:flex-row sm:gap-y-2 xs:gap-y-2">
-                <div className="flex flex-col justify-end">
-                  {values?.logo ? (
-                    <div className="relative">
-                      <div
-                        className="cursor-pointer p-0.5 absolute top-0 left-0 bg-transparent rounded flex justify-center items-center bg-gray-700"
-                        onClick={() => {
-                          setFieldValue("logo", null);
-                        }}
-                      >
-                        <AiOutlineClose size={18} color="white" />
+      <section className="flex h-fit flex-shrink-0 flex-col gap-y-2">
+        <header className="flex flex-col gap-y-2">
+          <h1 className="font-archivo font-normal text-xl lg:text-4xl leading-110 tracking-normal">
+            New Invoice
+          </h1>
+        </header>
+        <hr className="invisible h-8" />
+      </section>
+      <main className="flex w-full flex-col h-fit gap-y-4 lg:pt-6">
+        <Formik
+          initialValues={initialValues}
+          validationSchema={newInvoiceSchema}
+        >
+          {({ values, isValid, dirty, setFieldValue, touched, errors }) => {
+            return (
+              <Form className="flex flex-col gap-y-4">
+                {/* Header */}
+                <div className="flex justify-between items-start h-fit lg:items-end w-full p-4 bg-grey rounded lg:h-24 lg:min-h-fit flex-wrap gap-y-2">
+                  <section className="flex flex-1 lg:flex-none w-fit gap-x-4 items-start">
+                    {values?.logo ? (
+                      <div className="relative w-24 group">
+                        <button
+                          className="cursor-pointer p-1 absolute -top-3 -right-3 lg:-top-10 bg-grey w-fit h-fit rounded-full hidden lg:hidden lg:group-hover:flex justify-center items-center z-10 border border-greyborder"
+                          onClick={() => {
+                            setFieldValue("logo", null);
+                          }}
+                        >
+                          <AiOutlineClose
+                            size={15}
+                            className="text-greyborder group"
+                          />
+                        </button>
+                        <img
+                          src={values.logo}
+                          alt="Logo"
+                          className="static bg-white lg:absolute -top-7 w-24 h-24 object-cover border border-greyborder"
+                        />
                       </div>
-                      <img
-                        src={values.logo}
-                        width="100"
-                        height="100"
-                        alt="Logo"
-                        className=""
-                      />
-                    </div>
-                  ) : (
-                    <label
-                      htmlFor="logo"
-                      className="md:w-44 md:h-32 sm:w-60 sm:h-24 xs:w-60 xs:h-24 bg-slate-50 border rounded cursor-pointer flex justify-center items-center hover:bg-slate-100"
-                    >
-                      <input
-                        type="file"
-                        accept="image/*"
-                        id="logo"
-                        name="logo"
-                        className="hidden"
-                        placeholder=""
-                        onChange={(e) => {
-                          getBase64(e.currentTarget.files[0]).then((base64) => {
-                            setFieldValue("logo", base64);
-                          });
-                        }}
-                      />
-                      <span className="font-light text-sm">Add logo</span>
-                    </label>
-                  )}
-                </div>
-                <div className="flex flex-col justify-between">
-                  <Field
-                    type="text"
-                    name="title"
-                    placeholder="Title"
-                    className="text-xl outline-none px-2 py-1 text-right text-gray-900 rounded focus:border hover:border hover:border-gray-200 border border-transparent hover:cursor-pointer focus:border-gray-200 focus:cursor-text sm:text-start xs:text-start sm:mb-2 xs:mb-2"
-                  />
-                  <div className="flex flex-col">
-                    <label
-                      htmlFor="bill_number"
-                      className=" text-xs uppercase font-semibold text-gray-900 mb-1 xs:mb-2 sm:mb-2"
-                    >
-                      Number
-                    </label>
-                    <div className="flex justify-between xs:w-40 md:w-full">
-                      <div className="flex justify-center items-center w-fit px-2 text-lg border-l border-y rounded-l text-gray-800 text-light bg-slate-200">
-                        #
-                      </div>
-                      <Field
-                        type="text"
-                        name="bill_number"
-                        className="py-1.5 flex flex-grow outline-none px-2 text-right text-gray-900 border rounded-r focus:border-gray-800 font-light text-sm sm:text-start xs:text-start md:text-end"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 mt-4 sm:grid-cols-1 xs:grid-cols-1 md:grid-cols-2 gap-y-2">
-                <div className="flex flex-col">
-                  <Field
-                    as="textarea"
-                    placeholder="Who is the invoice from? (required)"
-                    className="outline-none px-1 py-1 border rounded resize-none placeholder:font-light text-sm w-72 text-gray-900 font-light md:w-72 sm:w-full xs:w-full"
-                    name="sender"
-                  />
-                  <div className="grid px-5 md:grid-cols-2 sm:grid-cols-1 xs:grid-cols-1 mt-2 gap-2">
-                    <div>
+                    ) : (
                       <label
-                        htmlFor="receiver"
-                        className="capitalize text-gray-700 text-sm font-light"
+                        htmlFor="logo"
+                        className={`${cn(
+                          "bg-white border border-greyborder w-24 h-24 flex justify-center items-center cursor-pointer p-2 lg:-mt-7",
+                          {
+                            "border-error": touched?.logo && errors?.logo,
+                          }
+                        )}`}
                       >
-                        bill to
+                        <input
+                          type="file"
+                          id="logo"
+                          name="logo"
+                          className="hidden group"
+                          accept="image/*"
+                          onChange={(event) => {
+                            getBase64(event.currentTarget.files[0]).then(
+                              (base64) => setFieldValue("logo", base64)
+                            );
+                          }}
+                        />
+                        <span className="text-center font-satoshi text-tiny leading-100 tracking-normal w-[3.75rem]">
+                          Add your logo
+                        </span>
                       </label>
-                      <Field
-                        as="textarea"
-                        id="receiver"
-                        placeholder="Who is the invoice to? (required)"
-                        className="outline-none px-1 py-1 border rounded resize-none placeholder:font-light text-sm  text-gray-900 font-light sm:w-full xs:w-full"
-                        name="receiver"
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="shipping_address"
-                        className="capitalize text-gray-700 text-sm font-light"
-                      >
-                        ship to
-                      </label>
-                      <Field
-                        as="textarea"
-                        id="shipping_address"
-                        placeholder="What is their shipping address? (optional)"
-                        className="outline-none px-1 py-1 border rounded resize-none placeholder:font-light text-sm text-gray-900 font-light sm:w-full xs:w-full"
-                        name="shipping address"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="">
-                  <div className="flex gap-y-1 gap-x-2 justify-end items-center mb-2">
-                    <label
-                      htmlFor="issue_date"
-                      className="text-sm font-light text-gray-700 w-fit flex items-center justify-end"
-                    >
-                      Date
-                    </label>
-                    <Field
-                      type="text"
-                      name="issue_date"
-                      className="py-1.5 outline-none px-2 md:text-right text-gray-900 border rounded  font-light text-sm sm:text-start xs:text-start w-40 h-fit"
-                    />
-                  </div>
-                  <div className="flex gap-y-1 gap-x-2 justify-end items-center mb-2">
-                    <label
-                      htmlFor="due_date"
-                      className="text-sm font-light text-gray-700 w-fit flex items-center justify-end"
-                    >
-                      Due Date
-                    </label>
-                    <Field
-                      type="text"
-                      name="due_date"
-                      className="py-1.5 outline-none px-2 md:text-right text-gray-900 border rounded  font-light text-sm sm:text-start xs:text-start w-40 h-fit"
-                    />
-                  </div>
-                </div>
-              </div>
-              <FieldArray name="items">
-                {(arrayHelpers) => (
-                  <div className="w-full my-2">
-                    <table className="w-full md:block sm:hidden xs:hidden">
-                      <thead className="w-full">
-                        <tr className="text-white w-full">
-                          <th className="hover:bg-[#2D3942] bg-gray-700 py-1.5 rounded-l-md font-light text-sm text-start px-2  hover:cursor-pointer">
-                            Title
-                          </th>
-                          <th className="hover:bg-[#2D3942] bg-gray-700 py-1.5 px-2 font-light text-sm text-start mx-0.5 hover:cursor-pointer">
-                            Quantity
-                          </th>
-                          <th className="hover:bg-[#2D3942] bg-gray-700 py-1.5 px-2 font-light text-sm text-start mx-0.5 hover:cursor-pointer">
-                            Units
-                          </th>
-                          <th className="hover:bg-[#2D3942] bg-gray-700 py-1.5 px-2 font-light text-sm text-start mx-0.5 hover:cursor-pointer">
-                            Price
-                          </th>
-                          <th className="hover:bg-[#2D3942] bg-gray-700 py-1.5 px-2 font-light text-sm text-start mx-0.5 rounded-r-md hover:cursor-pointer">
-                            Amount
-                          </th>
-                          <th className=""></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {values?.items &&
-                          values?.items?.length > 0 &&
-                          values.items.map((item, index) => (
-                            <tr key={index} className="group py-2">
-                              <td className="w-5/12 pr-1">
-                                <Field
-                                  name={`items.${index}.title`}
-                                  placeholder="Shoes"
-                                  type="text"
-                                  className="outline-none px-1 py-1 border rounded placeholder:font-light text-sm text-gray-900 font-light mt-1 w-full"
-                                />
-                              </td>
-                              <td className="w-1.5/12 pr-1">
-                                <Field
-                                  name={`items.${index}.quantity`}
-                                  placeholder="ex:4"
-                                  type="text"
-                                  className="outline-none px-1 py-1 border rounded placeholder:font-light text-sm text-gray-900 font-light mt-1 w-full"
-                                />
-                              </td>
-                              <td className="w-1.5/12 pr-1">
-                                <Field
-                                  name={`items.${index}.measurement`}
-                                  placeholder="ex:Lbs"
-                                  type="text"
-                                  className="outline-none px-1 py-1 border rounded placeholder:font-light text-sm text-gray-900 font-light mt-1 w-full"
-                                />
-                              </td>
-                              <td className="w-1.5/12">
-                                <Field
-                                  name={`items.${index}.price`}
-                                  placeholder="400"
-                                  type="text"
-                                  className="outline-none px-1 py-1 border rounded placeholder:font-light text-sm text-gray-900 font-light mt-1 w-full"
-                                />
-                              </td>
-                              <td className="w-2/12">
-                                <span className="text-sm font-light text-gray-900 mx-2">
-                                  {currencyFormatter(
-                                    (values.items[index].amount =
-                                      item.price * item.quantity),
-                                    values.currency
-                                  )}
-                                </span>
-                              </td>
-                              <td className="w-0.5/12">
-                                <button
-                                  type="button"
-                                  className={`${
-                                    values?.items?.length === 1
-                                      ? "invisible"
-                                      : "invisible group-hover:visible"
-                                  } text-red-500 text-xs font-light cursor-pointer}`}
-                                  onClick={() => arrayHelpers.remove(index)}
-                                  disabled={values.items.length === 1}
-                                >
-                                  <AiOutlineClose size={15} />
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                      </tbody>
-                    </table>
-                    <section className="w-full rounded border md:hidden">
-                      {values?.items &&
-                        values?.items?.length > 0 &&
-                        values.items.map((item, index) => (
-                          <div
-                            className={`pt-2 pb-4 px-5 relative ${
-                              index < values.items.length - 1 ? "border-b" : ""
-                            }`}
-                            key={index}
-                          >
-                            <Field
-                              type="text"
-                              name={`items.${index}.title`}
-                              placeholder="Title"
-                              className="outline-none px-1 py-1 text-gray-900 rounded focus:border hover:border hover:border-gray-200 border border-transparent hover:cursor-pointer focus:border-gray-200 focus:cursor-text text-start"
-                            />
-                            <div className="flex gap-x-1 items-center">
-                              <label
-                                htmlFor="due_date"
-                                className="text-sm font-light text-gray-500 w-fit flex items-center justify-end"
-                              >
-                                Amount:
-                              </label>
-                              <span className="text-sm font-light text-gray-900">
-                                {currencyFormatter(
-                                  (values.items[index].amount =
-                                    item.price * item.quantity),
-                                  values.currency
-                                )}
-                              </span>
-                            </div>
-                            <div className="flex items-center mb-2">
-                              <label
-                                htmlFor={`items.${index}.price`}
-                                className="flex flex-col"
-                              >
-                                <span className="text-sm font-light capitalize text-gray-500">
-                                  price
-                                </span>
-                                <Field
-                                  id={`items.${index}.price`}
-                                  name={`items.${index}.price`}
-                                  placeholder="Price"
-                                  type="text"
-                                  className="outline-none px-1 py-1 border rounded placeholder:font-light text-sm text-gray-900 font-light mt-1 w-24"
-                                />
-                              </label>
-                              <span className="mx-1.5 pt-5">
-                                <AiOutlineClose
-                                  size={15}
-                                  className="font-bold"
-                                />
-                              </span>
+                    )}
 
-                              <label
-                                htmlFor={`items.${index}.quantity`}
-                                className="flex flex-col"
-                              >
-                                <span className="text-sm font-light capitalize text-gray-500">
-                                  Quantity
-                                </span>
-                                <Field
-                                  id={`items.${index}.quantity`}
-                                  name={`items.${index}.quantity`}
-                                  placeholder="Qty"
-                                  type="text"
-                                  className="outline-none px-1 py-1 border rounded placeholder:font-light text-sm text-gray-900 font-light mt-1 w-24"
-                                />
-                              </label>
+                    <div className="flex-1 flex flex-col md:flex-row md:gap-x-4 md:items-start bg-grey gap-y-4">
+                      <div className="w-full md:w-32 flex flex-col gap-y-2">
+                        <label
+                          htmlFor="paper_size"
+                          className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                        >
+                          Paper size
+                        </label>
+                        <Field
+                          id="paper_size"
+                          name="paper_size"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer",
+                            {
+                              "border-error focus:border-error":
+                                touched?.paper_size && errors?.paper_size,
+                            }
+                          )}
+                          as="select"
+                        >
+                          <option value="">Select one</option>
+                          <option value="a6">A6</option>
+                          <option value="a5">A5</option>
+                          <option value="a4">A4</option>
+                          <option value="letter">Letter</option>
+                        </Field>
+                        <ErrorMessage name="paper_size">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
                             </div>
-                            <Field
-                              name={`items.${index}.description`}
-                              placeholder="Description of the service or product..."
-                              type="text"
-                              className="outline-none px-1 py-1 border rounded placeholder:font-light text-sm text-gray-900 font-light mt-1 w-full"
-                            />
-                            <button
-                              type="button"
-                              className={`text-gray-400 text-xs font-light cursor-pointer absolute top-3 p-0.5 right-3  border border-gray-400 rounded-full ${
-                                values.items.length === 1 ? "hidden" : ""
-                              } `}
-                              onClick={() => arrayHelpers.remove(index)}
-                              disabled={values.items.length === 1}
-                            >
-                              <AiOutlineClose size={12} />
-                            </button>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                      <div className="w-full md:w-32 flex flex-col gap-y-2">
+                        <label
+                          htmlFor="orientation"
+                          className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                        >
+                          Orientation
+                        </label>
+                        <Field
+                          id="orientation"
+                          name="orientation"
+                          className={cn(
+                            "w-full border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer",
+                            {
+                              "border-error focus:border-error":
+                                touched?.orientation && errors?.orientation,
+                            }
+                          )}
+                          as="select"
+                        >
+                          <option value="">Select one</option>
+                          <option value="portrait">Portrait</option>
+                          <option value="landscape">Landscape</option>
+                        </Field>
+                        <ErrorMessage name="orientation">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                      <div className="w-full md:w-32 flex flex-col gap-y-2">
+                        <label
+                          htmlFor="currency"
+                          className="font-satoshi font-medium text-small leading-100 tracking-normal"
+                        >
+                          Currency
+                        </label>
+                        <Field
+                          id="currency"
+                          name="currency"
+                          className={cn(
+                            "w-full border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny cursor-pointer",
+                            {
+                              "border-error focus:border-error":
+                                touched?.currency && errors?.currency,
+                            }
+                          )}
+                          as="select"
+                        >
+                          <option value="">Select one</option>
+                          <option value="UGX">Uganda Shillings</option>
+                          <option value="KSH">Kenyan Shillings</option>
+                          <option value="USD">United States Dollar</option>
+                          <option value="GBP">Great Britain Pound</option>
+                        </Field>
+                        <ErrorMessage name="currency">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                    </div>
+                  </section>
+                  <div className="pt-4 h-full">
+                    <Button
+                      type="button"
+                      className="hidden lg:block w-fit h-fit px-6 py-4 font-bold text-small"
+                      disabled={!(dirty && isValid)}
+                      onClick={() => {
+                        values.discount = parseFloat(values.discount)
+                          ? parseFloat(values.discount)
+                          : null;
+                        values.tax = parseFloat(values.tax)
+                          ? parseFloat(values.tax)
+                          : null;
+                        values.shipping = parseFloat(values.shipping)
+                          ? parseFloat(values.shipping)
+                          : null;
+                        values.amount_paid = parseFloat(
+                          values.amount_paid ?? 0
+                        );
+                        values.items = values.items.map((item) => ({
+                          ...item,
+                          price: parseFloat(item.price),
+                          quantity: parseInt(item.quantity),
+                        }));
+                      }}
+                    >
+                      <PDFDownloadLink
+                        // pointer events none if !isValid || !isDirty
+                        style={{
+                          pointerEvents: !(dirty && isValid) ? "none" : "auto",
+                        }}
+                        document={<Document data={values} />}
+                        fileName={
+                          `#${values?.invoice_no}.pdf` || "#invoice.pdf"
+                        }
+                      >
+                        Download PDF
+                      </PDFDownloadLink>
+                    </Button>
+                  </div>
+                </div>
+
+                <section className="grid grid-cols-1 lg:grid-cols-5 gap-x-2">
+                  <section className="lg:col-span-4 flex flex-col gap-y-4">
+                    {/* Billing From*/}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 bg-grey rounded p-4">
+                      <section className="grid grid-cols-2 gap-2">
+                        <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
+                          Billed From
+                        </h4>
+                        <div className="col-span-1 flex flex-col gap-y-2">
+                          <Field
+                            id="billed_from.name"
+                            name="billed_from.name"
+                            type="text"
+                            className={cn(
+                              "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                              {
+                                "border-error focus:border-error":
+                                  touched?.billed_from?.name &&
+                                  errors?.billed_from?.name,
+                              }
+                            )}
+                            placeholder="Name"
+                          />
+                          <ErrorMessage name="billed_from.name">
+                            {(msg) => (
+                              <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                {msg}
+                              </div>
+                            )}
+                          </ErrorMessage>
+                        </div>
+                        <div className="col-span-1 flex flex-col gap-y-2">
+                          <Field
+                            id="billed_from.email"
+                            name="billed_from.email"
+                            type="text"
+                            className={cn(
+                              "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                              {
+                                "border-error focus:border-error":
+                                  touched?.billed_from?.email &&
+                                  errors?.billed_from?.email,
+                              }
+                            )}
+                            placeholder="Email"
+                          />
+                          <ErrorMessage name="billed_from.email">
+                            {(msg) => (
+                              <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                {msg}
+                              </div>
+                            )}
+                          </ErrorMessage>
+                        </div>
+                        <div className="col-span-2 flex flex-col gap-y-2">
+                          <Field
+                            name="billed_from.address"
+                            id="billed_from.address"
+                            className={cn(
+                              "resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                              {
+                                "border-error focus:border-error":
+                                  touched?.billed_from?.address &&
+                                  errors?.billed_from?.address,
+                              }
+                            )}
+                            rows={3}
+                            placeholder="Address"
+                            as="textarea"
+                          />
+                          <ErrorMessage name="billed_from.address">
+                            {(msg) => (
+                              <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                {msg}
+                              </div>
+                            )}
+                          </ErrorMessage>
+                        </div>
+                      </section>
+                      <section className="grid grid-cols-2 gap-2">
+                        <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
+                          Billed To
+                        </h4>
+                        <div className="col-span-1 flex flex-col gap-y-2">
+                          <Field
+                            name="billed_to.name"
+                            id="billed_to.name"
+                            type="text"
+                            className={cn(
+                              "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                              {
+                                "border-error focus:border-error":
+                                  touched?.billed_to?.name &&
+                                  errors?.billed_to?.name,
+                              }
+                            )}
+                            placeholder="Name"
+                          />
+                          <ErrorMessage name="billed_to.name">
+                            {(msg) => (
+                              <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                {msg}
+                              </div>
+                            )}
+                          </ErrorMessage>
+                        </div>
+                        <div className="col-span-1 flex flex-col gap-y-2">
+                          <Field
+                            name="billed_to.email"
+                            id="billed_to.email"
+                            type="text"
+                            className={cn(
+                              "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                              {
+                                "border-error focus:border-error":
+                                  touched?.billed_to?.email &&
+                                  errors?.billed_to?.email,
+                              }
+                            )}
+                            placeholder="Email"
+                          />
+                          <ErrorMessage name="billed_to.email">
+                            {(msg) => (
+                              <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                {msg}
+                              </div>
+                            )}
+                          </ErrorMessage>
+                        </div>
+                        <div className="col-span-2 flex flex-col gap-y-2">
+                          <Field
+                            name="billed_to.address"
+                            id="billed_to.address"
+                            as="textarea"
+                            className={cn(
+                              "resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                              {
+                                "border-error focus:border-error":
+                                  touched?.billed_to?.address &&
+                                  errors?.billed_to?.address,
+                              }
+                            )}
+                            rows={3}
+                            placeholder="Address"
+                          />
+                          <ErrorMessage name="billed_to.address">
+                            {(msg) => (
+                              <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                {msg}
+                              </div>
+                            )}
+                          </ErrorMessage>
+                        </div>
+                      </section>
+                    </div>
+
+                    {/* Billed To */}
+                    <div className="bg-grey rounded p-4 flex flex-col gap-y-4 w-full lg:hidden">
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="title"
+                          className="font-satoshi font-medium text-tiny leading-100 tracking-normal"
+                        >
+                          Title
+                        </label>
+                        <Field
+                          id="title"
+                          name="title"
+                          type="text"
+                          placeholder="Title"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.title && errors?.title,
+                            }
+                          )}
+                        />
+                        <ErrorMessage name="title">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="title"
+                          className="font-satoshi font-medium text-tiny leading-100 tracking-normal"
+                        >
+                          # Invoice
+                        </label>
+                        <Field
+                          id="invoice_no"
+                          name="invoice_no"
+                          type="text"
+                          placeholder="00001"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.invoice_no && errors?.invoice_no,
+                            }
+                          )}
+                        />
+                        <ErrorMessage name="invoice_no">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="issue_date"
+                          className="font-satoshi font-medium text-tiny leading-100 tracking-normal"
+                        >
+                          Issue Date
+                        </label>
+                        <Field
+                          id="issue_date"
+                          name="issue_date"
+                          type="date"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.issue_date && errors?.issue_date,
+                            }
+                          )}
+                        />
+                        <ErrorMessage name="issue_date">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="due_date"
+                          className="font-satoshi font-medium text-tiny leading-100 tracking-normal"
+                        >
+                          Due Date
+                        </label>
+                        <Field
+                          id="due_date"
+                          name="due_date"
+                          type="date"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.due_date && errors?.due_date,
+                            }
+                          )}
+                        />
+                        <ErrorMessage name="due_date">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                    </div>
+
+                    {/* Items */}
+                    <FieldArray
+                      name="items"
+                      render={(arrayHelpers) => {
+                        return (
+                          <div className="bg-grey rounded p-4 w-full">
+                            <div className="overflow-x-auto max-h-fit">
+                              <table className="min-w-full table-auto max-w-full overflow-x-scroll">
+                                <thead>
+                                  <tr className="border-b border-b-greyborder">
+                                    <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
+                                      Title
+                                    </th>
+                                    <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
+                                      Quantity
+                                    </th>
+                                    <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
+                                      Units
+                                    </th>
+                                    <th className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2">
+                                      Price/Unit
+                                    </th>
+                                    <th
+                                      className="text-start font-satoshi font-normal text-tiny md:text-small leading-100 tracking-normal pb-2"
+                                      colSpan="2"
+                                    ></th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {values.items.map((_, index) => {
+                                    return editIndex === index ? (
+                                      <tr key={index}>
+                                        <td className="pr-4 py-2 align-text-top">
+                                          <div className="w-[4.5rem] md:min-w-[4.5rem] md:w-full flex flex-col gap-y-2">
+                                            <Field
+                                              name={`items.${index}.title`}
+                                              type="text"
+                                              className={cn(
+                                                "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal h-[2.5rem] p-3 placeholder-black",
+                                                {
+                                                  "border-error focus:border-error":
+                                                    touched?.items?.[index]
+                                                      ?.title &&
+                                                    errors?.items?.[index]
+                                                      ?.title,
+                                                }
+                                              )}
+                                              placeholder="Title"
+                                            />
+                                            <ErrorMessage
+                                              name={`items.${index}.title`}
+                                            >
+                                              {(msg) => (
+                                                <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                                  {msg}
+                                                </div>
+                                              )}
+                                            </ErrorMessage>
+                                          </div>
+                                        </td>
+                                        <td className="pr-4 py-2 align-text-top">
+                                          <div className="w-[4.5rem] md:min-w-[4.5rem] md:w-full flex flex-col gap-y-2">
+                                            <Field
+                                              name={`items.${index}.quantity`}
+                                              type="text"
+                                              className={cn(
+                                                "w-full h-[2.5rem] border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal p-3 placeholder-black",
+                                                {
+                                                  "border-error focus:border-error":
+                                                    touched?.items?.[index]
+                                                      ?.quantity &&
+                                                    errors?.items?.[index]
+                                                      ?.quantity,
+                                                }
+                                              )}
+                                              placeholder="Quantity"
+                                            />
+                                            <ErrorMessage
+                                              name={`items.${index}.quantity`}
+                                            >
+                                              {(msg) => (
+                                                <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                                  {msg}
+                                                </div>
+                                              )}
+                                            </ErrorMessage>
+                                          </div>
+                                        </td>
+                                        <td className="pr-4 py-2 align-text-top">
+                                          <div className="w-[4.5rem] md:min-w-[4.5rem] md:w-full flex flex-col gap-y-2">
+                                            <Field
+                                              name={`items.${index}.units`}
+                                              type="text"
+                                              className={cn(
+                                                "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal h-[2.5rem] p-3 placeholder-black",
+                                                {
+                                                  "border-error focus:border-error":
+                                                    touched?.items?.[index]
+                                                      ?.units &&
+                                                    errors?.items?.[index]
+                                                      ?.units,
+                                                }
+                                              )}
+                                              placeholder="Units"
+                                            />
+                                            <ErrorMessage
+                                              name={`items.${index}.units`}
+                                            >
+                                              {(msg) => (
+                                                <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                                  {msg}
+                                                </div>
+                                              )}
+                                            </ErrorMessage>
+                                          </div>
+                                        </td>
+                                        <td className="pr-4 py-2 align-text-top">
+                                          <div className="w-[4.5rem] md:min-w-[4.5rem] h-full md:w-full flex flex-col gap-y-2">
+                                            <Field
+                                              name={`items.${index}.price`}
+                                              type="text"
+                                              className={cn(
+                                                "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal h-[2.5rem] p-3 placeholder-black",
+                                                {
+                                                  "border-error focus:border-error":
+                                                    touched?.items?.[index]
+                                                      ?.price &&
+                                                    errors?.items?.[index]
+                                                      ?.price,
+                                                }
+                                              )}
+                                              placeholder="Price"
+                                            />
+                                            <ErrorMessage
+                                              name={`items.${index}.price`}
+                                            >
+                                              {(msg) => (
+                                                <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                                  {msg}
+                                                </div>
+                                              )}
+                                            </ErrorMessage>
+                                          </div>
+                                        </td>
+                                        <td
+                                          className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2 align-text-top"
+                                          colSpan={2}
+                                        >
+                                          <Button
+                                            type="button"
+                                            className="w-fit px-6 py-3 font-medium text-[0.5rem] lg:text-tiny outline-none underline"
+                                            kind="plain"
+                                            onClick={() => {
+                                              const sub_total =
+                                                calculateSubTotal(values.items);
+                                              const amount_due =
+                                                calculateAmountDue({
+                                                  ...values,
+                                                  sub_total,
+                                                });
+                                              const balance_due =
+                                                calculateBalanceDue({
+                                                  ...values,
+                                                  sub_total,
+                                                  amount_due,
+                                                });
+
+                                              setFieldValue(
+                                                "sub_total",
+                                                sub_total
+                                              );
+                                              setFieldValue(
+                                                "amount_due",
+                                                amount_due
+                                              );
+                                              setFieldValue(
+                                                "balance_due",
+                                                balance_due
+                                              );
+                                              setEditIndex(() => null);
+                                            }}
+                                            disabled={
+                                              !touched.items?.[index] ||
+                                              (errors.items?.[index] &&
+                                                touched.items?.[index])
+                                            }
+                                          >
+                                            Save
+                                          </Button>
+                                        </td>
+                                      </tr>
+                                    ) : addItem === index ? (
+                                      <tr key={index}>
+                                        <td className="pr-4 py-2 align-text-top">
+                                          <div className="w-[4.5rem] md:min-w-[4.5rem] md:w-full flex flex-col gap-y-2">
+                                            <Field
+                                              name={`items.${index}.title`}
+                                              type="text"
+                                              className={cn(
+                                                "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal h-[2.5rem] p-3 placeholder-black",
+                                                {
+                                                  "border-error focus:border-error":
+                                                    touched?.items?.[index]
+                                                      ?.title &&
+                                                    errors?.items?.[index]
+                                                      ?.title,
+                                                }
+                                              )}
+                                              placeholder="Title"
+                                            />
+                                            <ErrorMessage
+                                              name={`items.${index}.title`}
+                                            >
+                                              {(msg) => (
+                                                <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                                  {msg}
+                                                </div>
+                                              )}
+                                            </ErrorMessage>
+                                          </div>
+                                        </td>
+                                        <td className="pr-4 py-2 align-text-top">
+                                          <div className="w-[4.5rem] md:min-w-[4.5rem] md:w-full flex flex-col gap-y-2">
+                                            <Field
+                                              name={`items.${index}.quantity`}
+                                              type="text"
+                                              className={cn(
+                                                "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal h-[2.5rem] p-3 placeholder-black",
+                                                {
+                                                  "border-error focus:border-error":
+                                                    touched?.items?.[index]
+                                                      ?.quantity &&
+                                                    errors?.items?.[index]
+                                                      ?.quantity,
+                                                }
+                                              )}
+                                              placeholder="Quantity"
+                                            />
+                                            <ErrorMessage
+                                              name={`items.${index}.quantity`}
+                                            >
+                                              {(msg) => (
+                                                <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                                  {msg}
+                                                </div>
+                                              )}
+                                            </ErrorMessage>
+                                          </div>
+                                        </td>
+                                        <td className="pr-4 py-2 align-text-top">
+                                          <div className="w-[4.5rem] md:min-w-[4.5rem] md:w-full flex flex-col gap-y-2">
+                                            <Field
+                                              name={`items.${index}.units`}
+                                              type="text"
+                                              className={cn(
+                                                "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal h-[2.5rem] p-3 placeholder-black",
+                                                {
+                                                  "border-error focus:border-error":
+                                                    touched?.items?.[index]
+                                                      ?.units &&
+                                                    errors?.items?.[index]
+                                                      ?.units,
+                                                }
+                                              )}
+                                              placeholder="Units"
+                                            />
+                                            <ErrorMessage
+                                              name={`items.${index}.units`}
+                                            >
+                                              {(msg) => (
+                                                <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                                  {msg}
+                                                </div>
+                                              )}
+                                            </ErrorMessage>
+                                          </div>
+                                        </td>
+                                        <td className="pr-4 py-2 align-text-top">
+                                          <div className="w-[4.5rem] md:min-w-[4.5rem] md:w-full flex flex-col gap-y-2">
+                                            <Field
+                                              name={`items.${index}.price`}
+                                              className={cn(
+                                                "border border-greyborder focus:border-accent font-satoshi font-regular outline-none text-tiny leading-120 tracking-normal h-[2.5rem] p-3 placeholder-black",
+                                                {
+                                                  "border-error focus:border-error":
+                                                    touched?.items?.[index]
+                                                      ?.price &&
+                                                    errors?.items?.[index]
+                                                      ?.price,
+                                                }
+                                              )}
+                                              placeholder="Price"
+                                            />
+                                            <ErrorMessage
+                                              name={`items.${index}.price`}
+                                            >
+                                              {(msg) => (
+                                                <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                                                  {msg}
+                                                </div>
+                                              )}
+                                            </ErrorMessage>
+                                          </div>
+                                        </td>
+                                        <td
+                                          className="align-text-top font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2"
+                                          colSpan={2}
+                                        >
+                                          <Button
+                                            type="button"
+                                            className="w-fit px-6 py-3 font-medium text-[0.5rem] lg:text-tiny outline-none underline"
+                                            kind="plain"
+                                            onClick={() => {
+                                              const sub_total =
+                                                calculateSubTotal(values.items);
+                                              const amount_due =
+                                                calculateAmountDue({
+                                                  ...values,
+                                                  sub_total,
+                                                });
+                                              const balance_due =
+                                                calculateBalanceDue({
+                                                  ...values,
+                                                  sub_total,
+                                                  amount_due,
+                                                });
+
+                                              setFieldValue(
+                                                "sub_total",
+                                                sub_total
+                                              );
+                                              setFieldValue(
+                                                "amount_due",
+                                                amount_due
+                                              );
+                                              setFieldValue(
+                                                "balance_due",
+                                                balance_due
+                                              );
+                                              setAddItem(() => null);
+                                            }}
+                                            disabled={
+                                              !touched.items?.[index] ||
+                                              (errors.items?.[index] &&
+                                                touched.items?.[index])
+                                            }
+                                          >
+                                            Save
+                                          </Button>
+                                        </td>
+                                      </tr>
+                                    ) : (
+                                      <tr key={index}>
+                                        <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
+                                          {values.items[index]["title"]}
+                                        </td>
+                                        <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
+                                          {values.items[index]["quantity"]}
+                                        </td>
+                                        <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
+                                          {values.items[index]["units"]}
+                                        </td>
+                                        <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
+                                          {values.items[index]["price"]}
+                                        </td>
+                                        <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
+                                          <button
+                                            type="button"
+                                            className="font-satoshi font-normal underline text-error leading-100 tracking-normal capitalize text-tiny outline-none"
+                                            onClick={async () => {
+                                              const items = values.items.filter(
+                                                (_, currentIndex) =>
+                                                  index !== currentIndex
+                                              );
+
+                                              const sub_total =
+                                                calculateSubTotal(items);
+
+                                              const amount_due =
+                                                calculateAmountDue({
+                                                  ...values,
+                                                  items,
+                                                  sub_total,
+                                                });
+
+                                              const balance_due =
+                                                calculateBalanceDue({
+                                                  ...values,
+                                                  items,
+                                                  sub_total,
+                                                  amount_due,
+                                                });
+
+                                              if (sub_total >= 0) {
+                                                arrayHelpers.remove(index);
+                                                setFieldValue(
+                                                  "sub_total",
+                                                  sub_total
+                                                );
+                                                setFieldValue(
+                                                  "amount_due",
+                                                  amount_due
+                                                );
+                                                setFieldValue(
+                                                  "balance_due",
+                                                  balance_due
+                                                );
+                                              }
+                                            }}
+                                            disabled={values.items?.length <= 1}
+                                          >
+                                            Delete
+                                          </button>
+                                        </td>
+                                        <td className="text-start font-satoshi font-medium text-tiny leading-120 tracking-normal pr-4 py-2">
+                                          <button
+                                            type="button"
+                                            className="font-satoshi font-normal underline text-black leading-100 tracking-normal capitalize text-tiny"
+                                            onClick={() =>
+                                              setEditIndex(() => index)
+                                            }
+                                          >
+                                            Edit
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
+                            {!addItem && (
+                              <Button
+                                type="button"
+                                className="my-2 px-3 py-1.5 font-satoshi font-medium text-tiny leading-100 tracking-normal outline-none"
+                                onClick={() => {
+                                  const totalItems = values.items.length;
+                                  arrayHelpers.push({
+                                    title: "",
+                                    quantity: "",
+                                    units: "",
+                                    price: "",
+                                  });
+                                  setAddItem(() => totalItems);
+                                }}
+                              >
+                                Add Item
+                              </Button>
+                            )}
                           </div>
-                        ))}
-                    </section>
-                    <div className="mt-2">
-                      <button
-                        className="rounded py-1 px-2 text-sm bg-success text-white"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          arrayHelpers.push({
-                            title: "",
-                            quantity: "1",
-                            measurement: "",
-                            price: "",
-                            amount: "",
-                          });
-                        }}
-                      >
-                        + Add item
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </FieldArray>
-              <div className="flex gap-2 xs:flex-col sm:flex-col md:flex-row lg:flex:row">
-                <div className="xs:w-full md:w-1/2 lg:w-1/2">
-                  <div className="flex gap-y-1 gap-x-2 mb-2 flex-col">
-                    <label
-                      htmlFor="notes"
-                      className="text-sm font-light text-gray-500 w-fit flex items-center justify-end pl-4"
-                    >
-                      Notes
-                    </label>
-                    <Field
-                      as="textarea"
-                      name="notes"
-                      id="notes"
-                      placeholder="Notes - any relevant information not already covered"
-                      className="py-1.5 outline-none px-2 md:text-right text-gray-900 border rounded resize-none font-light text-sm sm:text-start xs:text-start h-fit"
+                        );
+                      }}
                     />
-                  </div>
-                  <div className="flex gap-y-1 gap-x-2 mb-2 flex-col">
-                    <label
-                      htmlFor="terms"
-                      className="text-sm font-light text-gray-500 w-fit flex items-center justify-end pl-4"
-                    >
-                      Terms
-                    </label>
-                    <Field
-                      as="textarea"
-                      name="terms"
-                      id="terms"
-                      placeholder="Terms and conditions - late fees, payment methods, delivery schedule"
-                      className="py-1.5 outline-none px-2 md:text-right text-gray-900 border rounded resize-none font-light text-sm sm:text-start xs:text-start h-fit"
-                    />
-                  </div>
-                </div>
-                <section className="xs:w-full md:w-1/2 lg:w-1/2">
-                  <div className="flex py-1 gap-x-2 items-center">
-                    <span className="w-1/2 text-end text-sm font-light text-gray-900 pr-2">
-                      Subtotal
-                    </span>
-                    <span className="text-sm font-light text-gray-900 w-48 text-end pr-2">
-                      {currencyFormatter(
-                        subTotal(values) || 0,
-                        values.currency
-                      )}
-                    </span>
-                  </div>
-                  <div className="flex justify-end gap-x-4 pr-8">
-                    {!discount && (
-                      <button
-                        className="text-success font-semibold text-sm"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setShowDiscount(true);
-                        }}
-                      >
-                        + Discount
-                      </button>
-                    )}
-                    {!tax && (
-                      <button
-                        className="text-success font-semibold text-sm"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setShowTax(true);
-                        }}
-                      >
-                        + Tax
-                      </button>
-                    )}
-                    {!shipping && (
-                      <button
-                        className="text-success font-semibold text-sm"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setShowShipping(true);
-                        }}
-                      >
-                        + Shipping
-                      </button>
-                    )}
-                  </div>
-                  <div className="flex py-1 gap-x-2">
-                    <span className="w-1/2 text-end text-sm font-light text-gray-900 pr-2">
-                      Total
-                    </span>
-                    <span className="text-sm font-light text-gray-900 w-48 text-end pr-2">
-                      {currencyFormatter(
-                        subTotal(values) -
-                          Number(values?.discount) +
-                          Number(values?.tax) +
-                          Number(values?.shipping) || 0,
-                        values.currency
-                      )}
-                    </span>
-                  </div>
-                  {discount && (
-                    <div className="flex py-1 items-center group">
-                      <label
-                        htmlFor="discount"
-                        className="w-1/2 text-end text-sm font-light text-gray-900 mr-2 pr-2"
-                      >
-                        Discount
-                      </label>
-                      <Field
-                        name="discount"
-                        id="discount"
-                        type="text"
-                        className="py-1.5 outline-none px-2 md:text-right text-gray-900 border rounded resize-none font-light text-sm w-48 h-fit mr-2"
-                      />
-                      <button
-                        className="invisible group-hover:visible text-red-500 text-xs font-light cursor-pointer"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setShowDiscount(false);
-                        }}
-                      >
-                        <AiOutlineClose size={12} />
-                      </button>
-                    </div>
-                  )}
-                  {tax && (
-                    <div className="flex py-1 items-center group">
-                      <label
-                        htmlFor="tax"
-                        className="w-1/2 text-end text-sm font-light text-gray-900 mr-2 pr-2"
-                      >
-                        Tax
-                      </label>
-                      <Field
-                        name="tax"
-                        id="tax"
-                        type="text"
-                        className="py-1.5 outline-none px-2 md:text-right text-gray-900 border rounded resize-none font-light text-sm w-48 h-fit mr-2"
-                      />
-                      <button
-                        className="invisible group-hover:visible text-red-500 text-xs font-light cursor-pointer"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setShowTax(false);
-                        }}
-                      >
-                        <AiOutlineClose size={12} />
-                      </button>
-                    </div>
-                  )}
-                  {shipping && (
-                    <div className="flex py-1 items-center group">
-                      <label
-                        htmlFor="shipping"
-                        className="w-1/2 text-end text-sm font-light text-gray-900 mr-2 pr-2"
-                      >
-                        Shipping
-                      </label>
-                      <Field
-                        name="shipping"
-                        id="shipping"
-                        type="text"
-                        className="py-1.5 outline-none px-2 md:text-right text-gray-900 border rounded resize-none font-light text-sm w-48 h-fit mr-2"
-                      />
-                      <button
-                        className="invisible group-hover:visible text-red-500 text-xs font-light cursor-pointer"
-                        onClick={(event) => {
-                          event.preventDefault();
-                          setShowShipping(false);
-                        }}
-                      >
-                        <AiOutlineClose size={12} />
-                      </button>
-                    </div>
-                  )}
 
-                  <div className="flex py-1 items-center">
-                    <label
-                      htmlFor="paid"
-                      className="w-1/2 text-end text-sm font-light text-gray-900 mr-2 pr-2"
-                    >
-                      Amount Paid
-                    </label>
-                    <Field
-                      name="paid"
-                      id="paid"
-                      type="text"
-                      className="py-1.5 outline-none px-2 md:text-right text-gray-900 border rounded resize-none font-light text-sm w-48 h-fit mr-2"
-                    />
-                  </div>
-                  <div className="flex py-1 gap-x-2">
-                    <span className="w-1/2 text-end text-sm font-light text-gray-900 pr-2">
-                      Balance Due
-                    </span>
-                    <span className="text-sm font-light text-gray-900 w-48 text-end pr-2">
-                      {currencyFormatter(
-                        subTotal(values) -
-                          Number(values?.discount) +
-                          Number(values?.tax) +
-                          Number(values?.shipping) -
-                          Number(values?.paid) || 0,
-                        values.currency
-                      )}
-                    </span>
-                  </div>
+                    {/* Small devices: Sub Total, Discount, Tax, Shipping, Amount Due, Amount Paid */}
+                    <div className="bg-grey rounded p-4 flex flex-col gap-y-4 w-full lg:hidden">
+                      <div className="flex justify-between py-2">
+                        <span className="font-satoshi font-normal text-tiny leading-100 tracking-normal">
+                          Sub Total
+                        </span>
+                        <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
+                          ${values.sub_total}
+                        </span>
+                      </div>
+                      <hr className="border-b border-t-0 border-greyborder" />
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="discount"
+                          className="font-satoshi font-normal text-tiny leading-100 tracking-normal"
+                        >
+                          Discount
+                        </label>
+                        <Field
+                          id="discount"
+                          name="discount"
+                          type="text"
+                          placeholder="Discount"
+                          className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          onChange={({ target: { name, value } }) => {
+                            setFieldValue(name, value);
+                            const amount_due = calculateAmountDue({
+                              ...values,
+                              discount: value,
+                            });
+                            const balance_due = calculateBalanceDue({
+                              ...values,
+                              discount: value,
+                              amount_due,
+                            });
+
+                            setFieldValue("amount_due", amount_due);
+                            setFieldValue("balance_due", balance_due);
+                          }}
+                        />
+                      </div>
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="tax"
+                          className="font-satoshi font-normal text-tiny leading-100 tracking-normal"
+                        >
+                          Tax
+                        </label>
+                        <Field
+                          id="tax"
+                          name="tax"
+                          type="text"
+                          placeholder="Tax"
+                          className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          onChange={({ target: { name, value } }) => {
+                            setFieldValue(name, value);
+                            const amount_due = calculateAmountDue({
+                              ...values,
+                              tax: value,
+                            });
+                            const balance_due = calculateBalanceDue({
+                              ...values,
+                              tax: value,
+                              amount_due,
+                            });
+
+                            setFieldValue("amount_due", amount_due);
+                            setFieldValue("balance_due", balance_due);
+                          }}
+                        />
+                      </div>
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="shipping"
+                          className="font-satoshi font-normal text-tiny leading-100 tracking-normal"
+                        >
+                          Shipping
+                        </label>
+                        <Field
+                          id="shipping"
+                          name="shipping"
+                          type="text"
+                          placeholder="Shipping"
+                          className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          onChange={({ target: { name, value } }) => {
+                            setFieldValue(name, value);
+                            const amount_due = calculateAmountDue({
+                              ...values,
+                              shipping: value,
+                            });
+                            const balance_due = calculateBalanceDue({
+                              ...values,
+                              shipping: value,
+                              amount_due,
+                            });
+
+                            setFieldValue("amount_due", amount_due);
+                            setFieldValue("balance_due", balance_due);
+                          }}
+                        />
+                      </div>
+
+                      <hr className="border-b border-t-0 border-greyborder" />
+                      <div className="flex justify-between py-2">
+                        <span className="font-satoshi font-normal text-tiny leading-100 tracking-normal">
+                          Amount Due
+                        </span>
+                        <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
+                          ${values.amount_due ?? 0}
+                        </span>
+                      </div>
+                      <hr className="border-b border-t-0 border-greyborder" />
+
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="amount_paid"
+                          className="font-satoshi font-normal text-tiny leading-100 tracking-normal"
+                        >
+                          Amount Paid
+                        </label>
+                        <Field
+                          id="amount_paid"
+                          name="amount_paid"
+                          type="text"
+                          placeholder="Amount Paid"
+                          className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                          onChange={({ target: { name, value } }) => {
+                            const balance_due = calculateBalanceDue({
+                              ...values,
+                              amount_paid: value,
+                            });
+                            setFieldValue("balance_due", balance_due);
+                            setFieldValue(name, value);
+                          }}
+                        />
+                      </div>
+
+                      <hr className="border-b border-t-0 border-greyborder" />
+                      <div className="flex justify-between py-2">
+                        <span className="font-satoshi font-normal text-tiny leading-100 tracking-normal">
+                          Balance Due
+                        </span>
+                        <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
+                          ${values.balance_due ?? 0}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Notes */}
+                    <div className="lg:col-span-4 grid grid-cols-1 lg:grid-cols-2 gap-4 bg-grey rounded p-4">
+                      <section className="flex flex-col gap-2">
+                        <label
+                          htmlFor="notes"
+                          className="font-satoshi font-regular text-tiny leading-100 tracking-normal"
+                        >
+                          Notes
+                        </label>
+                        <Field
+                          as="textarea"
+                          name="notes"
+                          id="notes"
+                          className="col-span-2 resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                          rows={3}
+                          placeholder="Notes"
+                        />
+                      </section>
+                      <section className="flex flex-col gap-2">
+                        <label
+                          htmlFor="terms"
+                          className="font-satoshi font-regular text-tiny leading-100 tracking-normal"
+                        >
+                          Terms & conditions
+                        </label>
+                        <Field
+                          as="textarea"
+                          name="terms"
+                          id="terms"
+                          className="col-span-2 resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                          rows={3}
+                          placeholder="Terms & Conditions"
+                        />
+                      </section>
+                    </div>
+                  </section>
+
+                  {/* Large Devices: Title, SubTotal, Discount, Tax, Shipping, Amount Paid, Amount Due*/}
+                  <section className="hidden lg:col-span-1 lg:flex lg:flex-col lg:gap-y-4">
+                    <div className="bg-grey rounded p-4 flex flex-col gap-y-4 w-full">
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="title"
+                          className="font-satoshi font-medium text-tiny leading-100 tracking-normal"
+                        >
+                          Title
+                        </label>
+                        <Field
+                          id="title"
+                          name="title"
+                          type="text"
+                          placeholder="Title"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.title && errors?.title,
+                            }
+                          )}
+                        />
+                        <ErrorMessage name="title">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="title"
+                          className="font-satoshi font-medium text-tiny leading-100 tracking-normal"
+                        >
+                          # Invoice
+                        </label>
+                        <Field
+                          id="invoice_no"
+                          name="invoice_no"
+                          type="text"
+                          placeholder="00001"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.invoice_no && errors?.invoice_no,
+                            }
+                          )}
+                        />
+                        <ErrorMessage name="invoice_no">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="issue_date"
+                          className="font-satoshi font-medium text-tiny leading-100 tracking-normal"
+                        >
+                          Issue Date
+                        </label>
+                        <Field
+                          id="issue_date"
+                          name="issue_date"
+                          type="date"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.issue_date && errors?.issue_date,
+                            }
+                          )}
+                        />
+                        <ErrorMessage name="issue_date">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="due_date"
+                          className="font-satoshi font-medium text-tiny leading-100 tracking-normal"
+                        >
+                          Due Date
+                        </label>
+                        <Field
+                          id="due_date"
+                          name="due_date"
+                          type="date"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.due_date && errors?.due_date,
+                            }
+                          )}
+                        />
+                        <ErrorMessage name="due_date">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                    </div>
+                    <div className="bg-grey rounded p-4 flex flex-col gap-y-4 w-full">
+                      <div className="flex justify-between py-2">
+                        <span className="font-satoshi font-normal text-tiny leading-100 tracking-normal">
+                          Sub Total
+                        </span>
+                        <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
+                          ${values.sub_total}
+                        </span>
+                      </div>
+
+                      <hr className="border-b border-t-0 border-greyborder" />
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="discount"
+                          className="font-satoshi font-normal text-tiny leading-100 tracking-normal"
+                        >
+                          Discount
+                        </label>
+                        <Field
+                          id="discount"
+                          name="discount"
+                          type="text"
+                          placeholder="Discount"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.discount && errors?.discount,
+                            }
+                          )}
+                          onChange={({ target: { name, value } }) => {
+                            setFieldValue(name, value);
+                            const amount_due = calculateAmountDue({
+                              ...values,
+                              discount: value,
+                            });
+                            const balance_due = calculateBalanceDue({
+                              ...values,
+                              discount: value,
+                              amount_due,
+                            });
+
+                            setFieldValue("amount_due", amount_due);
+                            setFieldValue("balance_due", balance_due);
+                          }}
+                        />
+                        <ErrorMessage name="discount">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="tax"
+                          className="font-satoshi font-normal text-tiny leading-100 tracking-normal"
+                        >
+                          Tax
+                        </label>
+                        <Field
+                          id="tax"
+                          name="tax"
+                          type="text"
+                          placeholder="Tax"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.tax && errors?.tax,
+                            }
+                          )}
+                          onChange={({ target: { name, value } }) => {
+                            setFieldValue(name, value);
+                            const amount_due = calculateAmountDue({
+                              ...values,
+                              tax: value,
+                            });
+                            const balance_due = calculateBalanceDue({
+                              ...values,
+                              tax: value,
+                              amount_due,
+                            });
+
+                            setFieldValue("amount_due", amount_due);
+                            setFieldValue("balance_due", balance_due);
+                          }}
+                        />
+                        <ErrorMessage name="tax">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="shipping"
+                          className="font-satoshi font-normal text-tiny leading-100 tracking-normal"
+                        >
+                          Shipping
+                        </label>
+                        <Field
+                          id="shipping"
+                          name="shipping"
+                          type="text"
+                          placeholder="Shipping"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.shipping && errors?.shipping,
+                            }
+                          )}
+                          onChange={({ target: { name, value } }) => {
+                            setFieldValue(name, value);
+                            const amount_due = calculateAmountDue({
+                              ...values,
+                              shipping: value,
+                            });
+                            const balance_due = calculateBalanceDue({
+                              ...values,
+                              shipping: value,
+                              amount_due,
+                            });
+
+                            setFieldValue("amount_due", amount_due);
+                            setFieldValue("balance_due", balance_due);
+                          }}
+                        />
+                        <ErrorMessage name="shipping">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+
+                      <hr className="border-b border-t-0 border-greyborder" />
+                      <div className="flex justify-between py-2">
+                        <span className="font-satoshi font-normal text-tiny leading-100 tracking-normal">
+                          Amount Due
+                        </span>
+                        <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
+                          ${values.amount_due ?? 0}
+                        </span>
+                      </div>
+                      <hr className="border-b border-t-0 border-greyborder" />
+
+                      <div className="w-full flex flex-col gap-y-2">
+                        <label
+                          htmlFor="amount_paid"
+                          className="font-satoshi font-normal text-tiny leading-100 tracking-normal"
+                        >
+                          Amount Paid
+                        </label>
+                        <Field
+                          id="amount_paid"
+                          name="amount_paid"
+                          type="text"
+                          placeholder="Amount Paid"
+                          className={cn(
+                            "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                            {
+                              "border-error focus:border-error":
+                                touched?.amount_paid && errors?.amount_paid,
+                            }
+                          )}
+                          onChange={({ target: { name, value } }) => {
+                            const balance_due = calculateBalanceDue({
+                              ...values,
+                              amount_paid: value,
+                            });
+                            setFieldValue("balance_due", balance_due);
+                            setFieldValue(name, value);
+                          }}
+                        />
+                        <ErrorMessage name="amount_paid">
+                          {(msg) => (
+                            <div className="font-normal font-satoshi text-tiny tracking-normal leading-150 text-error">
+                              {msg}
+                            </div>
+                          )}
+                        </ErrorMessage>
+                      </div>
+
+                      <hr className="border-b border-t-0 border-greyborder" />
+                      <div className="flex justify-between py-2">
+                        <span className="font-satoshi font-normal text-tiny leading-100 tracking-normal">
+                          Balance Due
+                        </span>
+                        <span className="font-satoshi font-medium text-tiny leading-120 tracking-normal">
+                          ${values.balance_due ?? 0}
+                        </span>
+                      </div>
+                    </div>
+                  </section>
                 </section>
-              </div>
-            </div>
-          </Form>
-        )}
-      </Formik>
+                <Button
+                  type="submit"
+                  // disabled={true}
+                  // disabled={!(isValid && dirty) || isSubmitting}
+                  className="font-satoshi font-bold text-small leading-100 tracking-normal py-3 lg:hidden"
+                >
+                  Create Invoice
+                </Button>
+              </Form>
+            );
+          }}
+        </Formik>
+      </main>
     </div>
   );
 };

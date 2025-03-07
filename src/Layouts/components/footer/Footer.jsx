@@ -1,12 +1,12 @@
 import React from "react";
 import { NavLink, Link } from "react-router-dom";
-import Logo from "../../../components/Logo/Logo";
+import Logo from "../../../components/common/Logos/Logo";
 import {
   Facebook,
   Instagram,
   Twitter,
   LinkedIn,
-} from "../../../components/icons";
+} from "../../../components/common/icons";
 
 function Footer() {
   return (

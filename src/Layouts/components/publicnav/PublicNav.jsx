@@ -1,8 +1,8 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
-import Logo from "../../../components/Logo/Logo";
+import Logo from "../../../components/common/Logos/Logo";
 import cn from "../../../utils/cn";
-import Button from "../../../components/forms/Button";
+import Button from "../../../components/common/forms/Button";
 
 function PublicNav() {
   const location = useLocation();
@@ -28,14 +28,14 @@ function PublicNav() {
         </NavLink>
       </div>
       <nav className="hidden md:flex">
-        <NavLink
+        {/* <NavLink
           to="/expense"
           className={cn("mr-6 p-3", styles.font)}
           onMouseEnter={() => handleMouseEnter("/")}
           onMouseLeave={handleMouseLeave}
         >
           Expenses
-        </NavLink>
+        </NavLink> */}
         <NavLink
           to="/invoice"
           className={cn("mr-6 p-3", styles.font)}

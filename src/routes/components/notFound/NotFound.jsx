@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "../../../components/forms/Button";
+import Button from "../../../components/common/forms/Button";
 import { useNavigate } from "react-router-dom";
 
 function NotFound() {
@@ -7,7 +7,7 @@ function NotFound() {
   const handleClick = () => navigate("/", { replace: true });
 
   return (
-    <main className="flex items-center min-h-screen container mx-auto lg:max-w-6xl">
+    <main className="flex items-center min-h-screen container mx-auto">
       <section className="flex flex-col w-[40.5rem] gap-y-2">
         <h1 className="font-archivo leading-110 tracking-normal text-4xl">
           404

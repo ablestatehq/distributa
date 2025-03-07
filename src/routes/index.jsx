@@ -6,7 +6,7 @@ import { PublicNav, Footer } from "../Layouts/components";
 
 function NotFoundLayout({ children }) {
   return (
-    <main className="flex flex-col min-h-screen container mx-auto lg:max-w-6xl">
+    <main className="flex flex-col min-h-screen container mx-auto max-w-6xl">
       <PublicNav />
       {children}
       <Footer />

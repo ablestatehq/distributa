@@ -171,16 +171,16 @@ const setup = async () => {
     
     2. Create a file named .env.local following information to your env.local file
     # Project Credentails
-    REACT_APP_APPWRITE_API_PROJECT_ID=${process.env.PROJECT_ID}
-    REACT_APP_APPWRITE_API_ENDPOINT=${process.env.PROJECT_ENDPOINT}
+    VITE_APPWRITE_API_PROJECT_ID=${process.env.PROJECT_ID}
+    VITE_APPWRITE_API_ENDPOINT=${process.env.PROJECT_ENDPOINT}
 
     # Database Credentails
-    REACT_APP_APPWRITE_DATABASE_ID=${database.$id}
-    REACT_APP_APPWRITE_INVOICES_COLLECTION_ID=${invoicesCollection.$id}
-    REACT_APP_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=${distributionsCollection.$id}
+    VITE_APPWRITE_DATABASE_ID=${database.$id}
+    VITE_APPWRITE_INVOICES_COLLECTION_ID=${invoicesCollection.$id}
+    VITE_APPWRITE_DISTRIBUTIONS_COLLECTION_ID=${distributionsCollection.$id}
 
     # Team Credentails
-    REACT_APP_APPWRITE_SYSTEM_TEAM_ID=${systemTeam.$id}
+    VITE_APPWRITE_SYSTEM_TEAM_ID=${systemTeam.$id}
     `;
 
     const filePath = path.join(__dirname, "./environments.txt");
