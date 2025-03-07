@@ -28,6 +28,7 @@ import {
   LOGOS_BUCKET_ID,
   AVATARS_BUCKET_ID,
   CURRENCY_PREFERENCES_COLLECTION_ID,
+  RECEIPTS_CCOLLECTION_ID,
 } from "../data/constants";
 
 const appwriteClient = new Appwrite();
@@ -87,6 +88,7 @@ class AppwriteService {
       PROFILES_COLLECTION_ID,
       PARTIES_COLLECTION_ID,
       CURRENCY_PREFERENCES_COLLECTION_ID,
+      RECEIPTS_CCOLLECTION_ID,
       LOGOS_BUCKET_ID,
       AVATARS_BUCKET_ID,
     };
