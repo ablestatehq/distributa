@@ -1,51 +1,90 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-function Footer() {
-	return (
-		<footer>
-			<section className="md:flex py-14">
-				<div className="w-3/4 flex flex-col gap-7">
-					<NavLink
-						className="text-primary-900 underline decoration-slate-500 font-bold"
-						to="/">
-						Distributa
-					</NavLink>
-					<article>
-						<p>
-							Simplfying the process,making it easy for <br />
-							you to track your expenses and generate <br />
-							professional invoices in minutes
-						</p>
-					</article>
+import { NavLink, Link } from "react-router-dom";
+import Logo from "../../../components/common/Logos/Logo";
+import {
+  Facebook,
+  Instagram,
+  Twitter,
+  LinkedIn,
+} from "../../../components/common/icons";
 
-					<figure className="flex flex-inline gap-5">
-						<img src="Facebook.png" />
-						<img src="Instagram.png" />
-						<img src="Twitter.png" />
-						<img src="LinkedIn.png" />
-					</figure>
-				</div>
-				<br className="py-4 md:hidden" />
-				<nav className="md:w-1/4 ms-auto flex flex-col md:items-end gap-2">
-					<h4 className="font-bold">Links</h4>
-					<NavLink to="#">Sign Up</NavLink>
-					<NavLink to="#">Login</NavLink>
-					<NavLink to="#">FAQS</NavLink>
-					<NavLink to="#">Support</NavLink>
-					<NavLink to="myinvoice.html">Invoice</NavLink>
-				</nav>
-			</section>
-			<section className="md:flex justify-between py-6 border-t-2 border-black">
-				<article>
-					<p>&copy; 2023. All rights reserved.</p>
-				</article>
-				<nav className="flex gap-x-12 text-right">
-					<NavLink to="#">Privacy Policy</NavLink>
-					<NavLink to="#">Terms of service</NavLink>
-				</nav>
-			</section>
-		</footer>
-	);
+function Footer() {
+  return (
+    <footer>
+      <section className="flex flex-col justify-between gap-y-16 md:flex-row py-16">
+        <div className="w-[19.75rem] flex flex-col gap-y-8">
+          <NavLink to="/">
+            <Logo className="w-[5.875rem] h-[1.10125rem] md:w-[5.85375rem] md:h-[0.96125rem]" />
+          </NavLink>
+          <article>
+            <p className="font-satoshi font-normal leading-150 tracking-normal">
+              Simplfying the process, making it easy for you to track your
+              expenses and generate professional invoices in minutes
+            </p>
+          </article>
+
+          <nav className="flex flex-inline gap-6">
+            <Link to="#">
+              <Facebook />
+            </Link>
+            <Link to="#">
+              <Instagram />
+            </Link>
+            <Link to="#">
+              <Twitter />
+            </Link>
+            <Link to="#">
+              <LinkedIn />
+            </Link>
+          </nav>
+        </div>
+        <nav className="w-fit flex flex-col md:items-start gap-y-3">
+          <h4 className="font-bold font-satoshi text-small leading-100 tracking-normal">
+            Links
+          </h4>
+          <NavLink
+            to="/signup"
+            className="font-satoshi text-small font-normal leading-100 tracking-normal"
+          >
+            Sign Up
+          </NavLink>
+          <NavLink
+            to="/login"
+            className="font-satoshi text-small font-normal leading-100 tracking-normal"
+          >
+            Login
+          </NavLink>
+          <NavLink
+            to="#"
+            className="font-satoshi text-small font-normal leading-100 tracking-normal"
+          >
+            FAQS
+          </NavLink>
+          <NavLink
+            to="#"
+            className="font-satoshi text-small font-normal leading-100 tracking-normal"
+          >
+            Support
+          </NavLink>
+          <NavLink
+            to="/invoice"
+            className="font-satoshi text-small font-normal leading-100 tracking-normal"
+          >
+            Invoice
+          </NavLink>
+        </nav>
+      </section>
+      <section className="flex flex-col gap-y-4 md:flex-row justify-between items-center py-6 border-t-2 border-black font-satishi font-normal text-small">
+        <article>
+          <p>&copy; {new Date().getFullYear()}. All rights reserved.</p>
+        </article>
+        <nav className="flex gap-x-12 text-right">
+          <NavLink to="#">Privacy Policy</NavLink>
+          <NavLink to="#">Terms of service</NavLink>
+        </nav>
+      </section>
+    </footer>
+  );
 }
 
 export default Footer;

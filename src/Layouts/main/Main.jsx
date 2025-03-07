@@ -1,17 +1,6 @@
-import { Outlet } from "react-router-dom";
-import { PublicNav } from "../components";
-import { Footer } from "../components";
-
-const Main = () => {
-	return (
-		<main className="container mx-auto">
-			<PublicNav />
-			{/* <div className="w-screen"> */}
-			<Outlet />
-			<Footer />
-			{/* </div> */}
-		</main>
-	);
+import cn from "../../utils/cn";
+const MainLayout = ({ className, children }) => {
+  return <main className={cn("h-screen w-screen", className)}>{children}</main>;
 };
 
-export default Main;
+export default MainLayout;

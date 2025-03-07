@@ -1,120 +1,129 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import {
+  FolderPlus,
+  UserPlus,
+  List,
+  Zap,
+  Book,
+  Database,
+} from "../../components/common/icons";
+import Instruction from "../../components/cards/Instruction";
+import Button from "../../components/common/forms/Button";
+import IconWrapper from "../../components/Home/IconWrapper";
+
 function Home() {
-	return (
-		<>
-			<section className="flex md:flex-row xs:flex-col-reverse py-10 md:gap-x-20 md:my-20">
-				<div className="md:w-1/2 flex flex-col text-center md:h-8/12 items-center justify-center p-5">
-					<h1 className="xs:font-bold md:text-5xl font-sans">
-						I want to track my expenses.
-					</h1>
-					<p className="md:text-2xl pt-6">
-						Your expenses and budget are stored in the cloud if
-						you're a member.
-					</p>
-					<Link
-						to="/expense"
-						className="py-4 px-14 mt-14 bg-primary-800 text-white text-center md:w-fit">
-						Start Now, It's Free
-					</Link>
-				</div>
-				<div className="md:w-1/2 bg-primary-800 text-center p-5 flex flex-col md:h-8/12 justify-center items-center">
-					<h1 className="xs:font-bold md:text-5xl font-sans">
-						I want to generate invoices.
-					</h1>
-					<p className="md:text-2xl pt-6">
-						Generate unlimited invoices for FREE. Invoices are
-						stored in the cloud for members.
-					</p>
-					<Link
-						to="/invoice"
-						className="py-4 px-14 mt-14 border-white border-solid border-2 text-white text-center md:w-fit">
-						Start Now, It's Free
-					</Link>
-				</div>
-			</section>
-			<section className="py-10">
-				<article>
-					<h2 className="text-3xl font-sans">
-						Generate and Share <br className="xs:hidden" />
-						Invoices In 3 Simple Steps
-					</h2>
-				</article>
-				<div className="grid md:grid-cols-3 gap-6 mt-6 xs:grid-cols-1">
-					<article className="bg-gray-200 p-5 rounded">
-						<img src="Icon1.png.png" />
-						<h3 className="py-4 text-xl font-bold">
-							Income details
-						</h3>
-						<p>Add the amount you earned.</p>
-					</article>
-					<article className="bg-gray-200 pt-4 pl-4 pb-5 rounded">
-						<img src="Icon2.png.png" />
-						<h3 className="py-4 text-xl font-bold">
-							Beneficiaries
-						</h3>
-						<p>
-							Enter the Name and Percentage/Amount of each person.{" "}
-							<br />
-							Made a mistake? No worries you can edit or delete.
-						</p>
-					</article>
-					<article className="bg-gray-200 pt-4 pl-4 pb-5 rounded">
-						<img src="Icon3.png.png" />
-						<h3 className="py-4 text-xl font-bold">Breakdown</h3>
-						<p>
-							See the break down of the amount. Click Restart to
-							<br />
-							start a fresh.
-						</p>
-					</article>
-				</div>
-			</section>
-			<section className="py-10">
-				<article>
-					<h2 className="text-3xl font-sans">
-						Track your <br className="xs:hidden" />
-						Money
-					</h2>
-				</article>
-				<div className="grid md:grid-cols-3 xs:grid-cols-1 gap-6 mt-6">
-					<article className="bg-gray-200 p-6 rounded">
-						<img src="Icon4.png.png" />
-						<h3 className="py-4 text-xl font-bold">
-							Improve Your Financial Health
-						</h3>
-						<p>
-							Awareness <br className="hidden" />
-							Understand and take informed decisions about{" "}
-							<br className="hidden" />
-							your spending habits.
-						</p>
-					</article>
+  const navigate = useNavigate();
 
-					<article className="bg-gray-200 p-6 rounded">
-						<img src="Icon5.png.png" />
-						<h3 className="py-4 text-xl font-bold">
-							Budgeting Assitance
-						</h3>
-						<p>
-							Create and stick to a budget by showing your
-							<br className="hidden" />
-							spending and indetifying areas of overspending.
-						</p>
-					</article>
-
-					<article className="bg-gray-200 p-6 rounded">
-						<img src="Icon6.png.png" />
-						<h3 className="py-4 text-xl font-bold">Saving Money</h3>
-						<p>
-							Indetify and cut unnecessary expenses to save{" "}
-							<br className="hidden" />
-							money.
-						</p>
-					</article>
-				</div>
-			</section>
-		</>
-	);
+  return (
+    <>
+      <section className="flex md:flex-row flex-col-reverse py-10 md:my-20">
+        <div className="md:w-1/2 bg-grey flex flex-col text-center items-center justify-center p-5 gap-y-4">
+          <h1 className="font-archivo font-normal text-xl md:text-4xl leading-110 tracking-normal capitalize">
+            I want to track my expenses.
+          </h1>
+          <p className="font-satoshi font-normal text-small md:text-large leading-150 tracking-normal">
+            Your expenses and budget are stored in the cloud if you're a member.
+          </p>
+          <Button
+            type="button"
+            className="font-bold px-5 md:px-16 py-[0.625rem] md:py-5 mt-4 font-satoshi text-large leading-100"
+            onClick={() => navigate("/expense")}
+          >
+            Start Now, It's Free
+          </Button>
+        </div>
+        <div className="md:w-1/2 bg-accent/90 flex flex-col text-center items-center justify-center py-16 gap-y-4">
+          <h1 className="font-archivo font-normal text-xl md:text-4xl leading-110 tracking-normal capitalize">
+            I want to generate invoices.
+          </h1>
+          <p className="font-satoshi font-normal text-small md:text-large leading-150 tracking-normal">
+            Generate unlimited invoices for FREE. Invoices are store in the
+            cloud for members.
+          </p>
+          <Button
+            type="button"
+            className="font-bold px-5 md:px-16 py-[0.625rem] md:py-5 mt-4 font-satoshi text-large leading-100"
+            onClick={() => navigate("/invoice")}
+            kind="plain"
+          >
+            Start Now, It's Free
+          </Button>
+        </div>
+      </section>
+      <section className="py-16">
+        <article>
+          <h2 className="font-archivo font-normal text-[1.75rem] md:text-3xl leading-120 tracking-normal md:w-[33.625rem]">
+            Generate and Share Invoices In 3 Simple Steps
+          </h2>
+        </article>
+        <section className="grid md:grid-cols-3 gap-8 mt-6 xs:grid-cols-1">
+          <Instruction
+            icon={
+              <IconWrapper>
+                <FolderPlus />
+              </IconWrapper>
+            }
+            title="Initiate Pool"
+            description="Add the amount you want to share."
+          />
+          <Instruction
+            icon={
+              <IconWrapper>
+                <UserPlus />
+              </IconWrapper>
+            }
+            title="Beneficiaries"
+            description="Enter the Name and Percentage of each person. Made a mistake? No worries you can edit or delete."
+          />
+          <Instruction
+            icon={
+              <IconWrapper>
+                <List />
+              </IconWrapper>
+            }
+            title="Breakdown"
+            description="Enter the Name and Percentage of each person. Made a mistake? No worries you can edit or delete."
+          />
+        </section>
+      </section>
+      <section className="py-16">
+        <article>
+          <h2 className="font-archivo font-normal text-[1.75rem] md:text-3xl leading-120 tracking-normal w-[21.375rem] md:w-[33.625rem]">
+            Use Our Expense Tracker To
+          </h2>
+        </article>
+        <section className="grid md:grid-cols-3 xs:grid-cols-1 gap-6 mt-6">
+          <Instruction
+            icon={
+              <IconWrapper>
+                <Zap />
+              </IconWrapper>
+            }
+            title="Improve Your Financial Awareness"
+            description="Understand and make informed decisions about your spending habits"
+          />
+          <Instruction
+            icon={
+              <IconWrapper>
+                <Book />
+              </IconWrapper>
+            }
+            title="Budgeting Assitance"
+            description="Create and stick to a budget by showing your spending and identifying areas of overspending."
+          />
+          <Instruction
+            icon={
+              <IconWrapper>
+                <Database />
+              </IconWrapper>
+            }
+            title="Saving money"
+            description="Identify and cut unnecessary expenses to save money."
+          />
+        </section>
+      </section>
+    </>
+  );
 }
 
 export default Home;

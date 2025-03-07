@@ -1,3 +1,177 @@
+/* Satoshi Fonts */
+
+/* Regular weight (400) */
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/satoshi/Satoshi-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Italic weight (400 italic) */
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/satoshi/Satoshi-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* Light weight (300) */
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/satoshi/Satoshi-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* Light Italic weight (300 italic) */
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/satoshi/Satoshi-LightItalic.ttf") format("truetype");
+  font-weight: 300;
+  font-style: italic;
+}
+
+/* Medium weight (500) */
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/satoshi/Satoshi-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* Bold weight (700) */
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/satoshi/Satoshi-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Bold Italic weight (700 italic) */
+@font-face {
+  font-family: "Satoshi";
+  src: url("./assets/fonts/satoshi/Satoshi-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* Archivo Fonts */
+
+/* Archivo Regular */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Archivo Italic */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* Archivo Light */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* Archivo Light Italic */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-LightItalic.ttf") format("truetype");
+  font-weight: 300;
+  font-style: italic;
+}
+
+/* Archivo Medium */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* Archivo Medium Italic */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-MediumItalic.ttf") format("truetype");
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* Archivo SemiBold */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* Archivo SemiBold Italic */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-SemiBoldItalic.ttf")
+    format("truetype");
+  font-weight: 600;
+  font-style: italic;
+}
+
+/* Archivo Bold */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Archivo Bold Italic */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* Archivo ExtraBold */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* Archivo ExtraBold Italic */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-ExtraBoldItalic.ttf")
+    format("truetype");
+  font-weight: 800;
+  font-style: italic;
+}
+
+/* Archivo Black */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* Archivo Black Italic */
+@font-face {
+  font-family: "Archivo";
+  src: url("./assets/fonts/archivo/Archivo-BlackItalic.ttf") format("truetype");
+  font-weight: 900;
+  font-style: italic;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
