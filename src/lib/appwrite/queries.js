@@ -1,4 +1,8 @@
 import { Query } from "appwrite";
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+} from "../../data/constants/pagination";
 
 /**
  * Creates pagination queries
@@ -8,9 +12,10 @@ import { Query } from "appwrite";
  * @returns {import('appwrite').Query[]}
  */
 export const createPaginationQueries = ({ page, pageSize }) => {
-  return pageSize && page
-    ? [Query.limit(pageSize), Query.offset(page * pageSize)]
-    : [];
+  return [
+    Query.limit(pageSize || DEFAULT_PAGE_SIZE),
+    Query.offset((page || DEFAULT_PAGE) * (pageSize || DEFAULT_PAGE_SIZE)),
+  ];
 };
 
 /**
