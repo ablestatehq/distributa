@@ -74,7 +74,7 @@ function SideBar() {
             children={collapseMenu || !isDesktop ? null : "Receipts"}
             exact={true}
           />
-          <div className="pl-10">
+          {/* <div className="pl-10">
             <NavigationLink
               to="/receipts/incoming"
               children={"Incoming receipts"}
@@ -85,7 +85,7 @@ function SideBar() {
               children={"Outgoing receipts"}
               exact={true}
             />
-          </div>
+          </div> */}
           <NavigationLink
             to="/transactions"
             Icon={Book}

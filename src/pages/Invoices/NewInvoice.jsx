@@ -138,9 +138,7 @@ const NewInvoice = () => {
         <Suspense fallback={<div></div>}>
           <Await resolve={loaderData?.newInvoiceInitialData}>
             {({
-              organisationData: {
-                documents: [organisation = null],
-              },
+              organisationData: organisation,
               currencyOptions: { documents: currencies },
             }) => {
               if (organisation) {

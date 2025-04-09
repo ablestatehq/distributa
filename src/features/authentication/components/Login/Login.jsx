@@ -15,7 +15,7 @@ function Login() {
     useNavigationLoadingState();
 
   if (response?.error && isReloading)
-    toast.error(response?.error?.response?.message || "Unknown error occured");
+    toast.error(response?.error || "Unknown error occured");
 
   if (isRedirecting) toast.success("Successfully logged in");
 

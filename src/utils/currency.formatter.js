@@ -10,7 +10,7 @@ export const currencyFormatter = (
 ) => {
   const formatter = new Intl.NumberFormat(languageCode, {
     style: "currency",
-    currency: countryCode,
+    currency: countryCode ?? "UGX",
   });
 
   return formatter.format(amount);
