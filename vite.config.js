@@ -11,6 +11,9 @@ export default defineConfig({
     sourcemap: true,
   },
   plugins: [react()],
+  define: {
+    "global.Buffer": Buffer, // Polyfill Buffer globally
+  },
   css: {
     postcss: { plugins: [tailwindcss()] },
   },
