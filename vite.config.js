@@ -11,6 +11,9 @@ export default defineConfig({
     sourcemap: true,
   },
   plugins: [react()],
+  resolve: {
+    extensions: [".js", ".jsx", ".json"],
+  },
   css: {
     postcss: { plugins: [tailwindcss()] },
   },

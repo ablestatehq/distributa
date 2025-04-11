@@ -3,7 +3,6 @@ import { ContentViewAreaWrapper } from "../../../Layouts/components";
 import InvoiceHeader from "../components/InvoiceHeader";
 import InvoicesSkeleton from "../components/InvoicesSkeleton";
 import InvoiceContent from "../components/InvoiceContent";
-import { useLoaderData } from "react-router-dom";
 
 export function InvoicesPage() {
   return (
