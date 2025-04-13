@@ -1,1 +1,3 @@
-export { InvoicesPage } from "./invoices";
+export { InvoicesPage } from "./Invoices.jsx";
+
+
