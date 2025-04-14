@@ -12,6 +12,7 @@ function Invoices() {
   const handleCreateNewInvoice = () => {
     navigate("/invoices/new");
   };
+  
 
   return (
     <ContentViewAreaWrapper>

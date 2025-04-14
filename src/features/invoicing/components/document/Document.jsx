@@ -95,9 +95,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
         style={[
           styles.page,
           { borderWidth: 1 },
-          includeBorder
-            ? { borderStyle: "solid", borderColor: "#000" }
-            : { border: "none" },
+          includeBorder ? { borderStyle: "solid", borderColor: "#000" } : {},
         ]}
       >
         <View style={[styles.header]}>
@@ -310,7 +308,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
         <View
           style={[
             {
-              flex: 1,
+              // flex: 1,
               flexDirection: "column",
               gap: figmaToReactPdfPoints(11),
             },
@@ -341,7 +339,7 @@ const PDFDoc = ({ data, includeBorder = false }) => {
                 },
               ]}
             >
-              Title
+              Item
             </Text>
             <Text
               style={[
@@ -504,58 +502,62 @@ const PDFDoc = ({ data, includeBorder = false }) => {
               },
             ]}
           >
-            <View style={[{ flexDirection: "column", gap: 4 }]}>
-              <Text
-                style={[
-                  styles.fontBold,
-                  {
-                    fontSize: figmaToReactPdfPoints(12),
-                    lineHeight: 1,
-                    letterSpacing: 0,
-                  },
-                ]}
-              >
-                Notes
-              </Text>
-              <Text
-                style={[
-                  styles.fontNormal,
-                  {
-                    fontSize: figmaToReactPdfPoints(6),
-                    lineHeight: 1.5,
-                    letterSpacing: 0,
-                  },
-                ]}
-              >
-                {notes}
-              </Text>
-            </View>
-            <View style={[{ flexDirection: "column", gap: 4 }]}>
-              <Text
-                style={[
-                  styles.fontBold,
-                  {
-                    fontSize: figmaToReactPdfPoints(12),
-                    lineHeight: 1,
-                    letterSpacing: 0,
-                  },
-                ]}
-              >
-                Terms & Conditions
-              </Text>
-              <Text
-                style={[
-                  styles.fontNormal,
-                  {
-                    fontSize: figmaToReactPdfPoints(6),
-                    lineHeight: 1.5,
-                    letterSpacing: 0,
-                  },
-                ]}
-              >
-                {terms}
-              </Text>
-            </View>
+            {notes ? (
+              <View style={[{ flexDirection: "column", gap: 4 }]}>
+                <Text
+                  style={[
+                    styles.fontBold,
+                    {
+                      fontSize: figmaToReactPdfPoints(12),
+                      lineHeight: 1,
+                      letterSpacing: 0,
+                    },
+                  ]}
+                >
+                  Notes
+                </Text>
+                <Text
+                  style={[
+                    styles.fontNormal,
+                    {
+                      fontSize: figmaToReactPdfPoints(6),
+                      lineHeight: 1.5,
+                      letterSpacing: 0,
+                    },
+                  ]}
+                >
+                  {notes}
+                </Text>
+              </View>
+            ) : null}
+            {terms ? (
+              <View style={[{ flexDirection: "column", gap: 4 }]}>
+                <Text
+                  style={[
+                    styles.fontBold,
+                    {
+                      fontSize: figmaToReactPdfPoints(12),
+                      lineHeight: 1,
+                      letterSpacing: 0,
+                    },
+                  ]}
+                >
+                  Terms & Conditions
+                </Text>
+                <Text
+                  style={[
+                    styles.fontNormal,
+                    {
+                      fontSize: figmaToReactPdfPoints(6),
+                      lineHeight: 1.5,
+                      letterSpacing: 0,
+                    },
+                  ]}
+                >
+                  {terms}
+                </Text>
+              </View>
+            ) : null}
           </View>
           <View
             style={[

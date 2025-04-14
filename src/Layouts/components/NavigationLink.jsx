@@ -1,4 +1,8 @@
 import { NavLink } from "react-router-dom";
+import {
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_PAGE,
+} from "../../data/constants/pagination";
 import cn from "../../utils/cn";
 
 const NavigationLink = ({
@@ -10,7 +14,10 @@ const NavigationLink = ({
 }) => {
   return (
     <NavLink
-      to={to}
+      to={{
+        pathname: to,
+        search: `?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`,
+      }}
       end={exact}
       className={({ isActive }) =>
         cn("flex w-full gap-x-4 py-5", {
@@ -22,7 +29,7 @@ const NavigationLink = ({
       }
       {...props}
     >
-      {<Icon variation="black" />}
+      {Icon && <Icon variation="black" />}
       {children && <span className="">{children}</span>}
     </NavLink>
   );

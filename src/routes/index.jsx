@@ -27,7 +27,12 @@ function Routes() {
       ),
     },
   ]);
-  return <RouterProvider router={router}></RouterProvider>;
+  return (
+    <RouterProvider
+      router={router}
+      hydrateFallback={<div>Loading root</div>}
+    ></RouterProvider>
+  );
 }
 
 export default Routes;

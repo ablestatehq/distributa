@@ -12,10 +12,7 @@ import NavigationLink from "../NavigationLink";
 import { useState } from "react";
 import cn from "../../../utils/cn";
 import useMediaQuery from "../../../hooks/useMediaQuery";
-import {
-  HiMiniChevronDoubleLeft,
-  HiMiniChevronDoubleRight,
-} from "react-icons/hi2";
+import { HiMiniChevronDoubleLeft } from "react-icons/hi2";
 
 function SideBar() {
   const { logout } = useAuth();
@@ -50,7 +47,6 @@ function SideBar() {
       <section className="flex flex-col gap-y-8">
         <button onClick={toggleCollapse} disabled={!isDesktop}>
           {collapseMenu || !isDesktop ? (
-            // <LogoCondensed className="fill-none w-[2.813rem] h-[2.063rem]" />
             <LogoCondensed className="fill-none w-[2.813rem] h-6" />
           ) : (
             <Logo
@@ -72,6 +68,24 @@ function SideBar() {
             children={collapseMenu || !isDesktop ? null : "New Invoice"}
             exact={true}
           />
+          <NavigationLink
+            to="/receipts/incoming"
+            Icon={collapseMenu ? ClipBoard : FileText}
+            children={collapseMenu || !isDesktop ? null : "Receipts"}
+            exact={true}
+          />
+          {/* <div className="pl-10">
+            <NavigationLink
+              to="/receipts/incoming"
+              children={"Incoming receipts"}
+              exact={true}
+            />
+            <NavigationLink
+              to="/receipts/outgoing"
+              children={"Outgoing receipts"}
+              exact={true}
+            />
+          </div> */}
           <NavigationLink
             to="/transactions"
             Icon={Book}
