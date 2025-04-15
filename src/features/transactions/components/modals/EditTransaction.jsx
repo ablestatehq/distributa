@@ -100,7 +100,7 @@ const EditTransaction = ({ transaction, handleClose }) => {
   }, [fetchData]);
 
   const groupCategoryByType = (categories) => {
-    const groupedCategories = categories.reduce((acc, category) => {
+    const groupedCategories = (categories || []).reduce((acc, category) => {
       const type = category.type || "other";
       if (!acc[type]) {
         acc[type] = [];
