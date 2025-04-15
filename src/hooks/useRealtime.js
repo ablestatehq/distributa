@@ -42,6 +42,6 @@ export default function useRealtime(collectionId, options = {}) {
       }
     );
 
-    return unsubscribe();
+    return () => unsubscribe();
   }, [collectionId, handlers]);
 }
