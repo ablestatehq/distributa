@@ -23,7 +23,7 @@ export function useCreateInvoice() {
       toast.error(fetcher.data.error);
       navigate(`/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`);
     }
-  }, [fetcher.state, fetcher.data, navigate]);
+  }, [fetcher?.state, fetcher?.data, navigate]);
 
   const actions = {
     createInvoice: useCallback(
@@ -34,7 +34,7 @@ export function useCreateInvoice() {
           encType: "application/json",
         });
       },
-      [fetcher, organisation, navigate]
+      [fetcher, organisation]
     ),
   };
 
