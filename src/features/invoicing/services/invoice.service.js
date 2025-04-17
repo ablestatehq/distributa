@@ -62,6 +62,7 @@ class InvoiceService extends BaseService {
             ),
           ]
         : []),
+      Query.orderDesc("$createdAt"),
     ];
 
     return this.listDocuments(filters, queries);
