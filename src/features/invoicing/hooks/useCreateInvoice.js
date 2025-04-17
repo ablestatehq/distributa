@@ -18,8 +18,10 @@ export function useCreateInvoice() {
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data?.success) {
       toast.success(fetcher.data.message);
+      navigate(`/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`);
     } else if (fetcher.state === "idle" && fetcher.data?.error) {
       toast.error(fetcher.data.error);
+      navigate(`/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`);
     }
   }, [fetcher.state, fetcher.data, navigate]);
 
@@ -31,9 +33,6 @@ export function useCreateInvoice() {
           action: "/invoices/new",
           encType: "application/json",
         });
-        navigate(
-          `/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`
-        );
       },
       [fetcher, organisation, navigate]
     ),
