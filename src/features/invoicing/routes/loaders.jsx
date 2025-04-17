@@ -21,22 +21,21 @@ export async function invoiceLoader({ params }) {
 export async function newInvoiceLoader() {
   const { $id: userId } = await account.get();
 
-  const organisationPromise =
-    organisationService.getOrganisationByUserId(userId);
-  const availableCurrenciesPromise =
-    currencyService.listAvailableCurrenciesByUserId(userId);
+  const organisation = organisationService.getOrganisationByUserId(userId);
+  const currencies = currencyService.listAvailableCurrenciesByUserId(userId);
 
-  const newInvoicePromise = Promise.all([
-    organisationPromise,
-    availableCurrenciesPromise,
-  ]).then(([organisation, currencies]) => {
-    return {
-      organisationData: organisation,
-      currencyOptions: currencies,
-    };
-  });
+  // const newInvoicePromise = Promise.all([
+  //   organisationPromise,
+  //   availableCurrenciesPromise,
+  // ]).then(([organisation, currencies]) => {
+  //   return {
+  //     organisationData: organisation,
+  //     currencyOptions: currencies,
+  //   };
+  // });
 
-  console.log("New Invoice promise: ", newInvoicePromise);
+  // console.log("New Invoice promise: ", newInvoicePromise);
 
-  return { newInvoiceInitialData: newInvoicePromise };
+  // return { newInvoiceInitialData: newInvoicePromise };
+  return { organisation, currencies };
 }
