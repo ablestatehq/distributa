@@ -10,7 +10,7 @@ export function InvoicesPage() {
       <section className="flex flex-col gap-y-2">
         <InvoiceHeader />
       </section>
-      <main className="flex-1 flex justify-center items-center overflow-auto">
+      <main className="flex flex-1 min-h-fit justify-center items-center">
         <Suspense fallback={<InvoicesSkeleton />}>
           <InvoiceContent />
         </Suspense>
