@@ -23,4 +23,14 @@ export default defineConfig({
     // this sets a default port to 3000
     port: 3000,
   },
+  test: {
+    environment: "jsdom", // Use jsdom for testing React components
+    globals: true, // Enable global APIs like `describe`, `it`
+    setupFiles: "./src/setupTests.js", // For custom setup (e.g., jest-dom)
+    css: true, // Include CSS for component styling (optional)
+    coverage: {
+      provider: "v8", // For coverage reports
+      reporter: ["text", "json", "html"],
+    },
+  },
 });
