@@ -1,17 +1,19 @@
 import { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useInvoiceData } from "./useInvoiceData";
 
 export function useInvoiceListItem(initialInvoice) {
   const { invoice, fetcher, isLoading } = useInvoiceData(initialInvoice);
   const [isEditing, setEditing] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   const actions = {
     viewDetails: useCallback(
       (e) => {
         e?.stopPropagation();
-        navigate(`/invoices/${invoice.$id}`);
+        navigate(`${currentPath}/${invoice.$id}`);
       },
       [navigate, invoice.$id]
     ),

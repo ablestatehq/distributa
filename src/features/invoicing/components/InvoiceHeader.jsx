@@ -3,7 +3,7 @@ import { Button } from "../../../components/common/forms";
 import { InvoiceFilters } from "./InvoiceFilters";
 
 function InvoiceHeader() {
-  const { navigateToCreate, applyFilters } = useInvoices();
+  const { navigateToCreate } = useInvoices();
 
   return (
     <header className="flex flex-col gap-y-2">

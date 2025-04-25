@@ -21,6 +21,8 @@ export function useInvoices() {
   let { invoices } = useLoaderData();
   const { documents, total } = use(invoices);
 
+  const currentPath = location.pathname;
+
   const pagination = useMemo(
     () => ({
       currentPage: filters.page,
@@ -57,16 +59,16 @@ export function useInvoices() {
 
   const navigateToEdit = (invoiceId) => {
     if (!invoiceId) return;
-    navigate(`/invoices/${invoiceId}/edit`);
+    navigate(`${currentPath}/edit`);
   };
 
   const navigateToPreview = (invoiceId) => {
     if (!invoiceId) return;
-    navigate(`/invoices/${invoiceId}/preview`);
+    navigate(`${currentPath}/${invoiceId}/preview`);
   };
 
   const navigateToCreate = () => {
-    navigate("/sales-invoices/new");
+    navigate(`${currentPath}/new`);
   };
 
   const getSearchParams = useCallback(() => {
@@ -75,10 +77,10 @@ export function useInvoices() {
 
   useRealtime(appwriteConfig.collections.invoices, {
     onCreated: () => {
-      fetcher.load(`${location.pathname}?${getSearchParams()}`);
+      fetcher.load(`${currentPath}?${getSearchParams()}`);
     },
     onUpdated: () => {
-      fetcher.load(`${location.pathname}?${getSearchParams()}`);
+      fetcher.load(`${currentPath}?${getSearchParams()}`);
     },
     onDeleted: () => {
       const newTotal = total - 1;
@@ -87,7 +89,7 @@ export function useInvoices() {
       if (pagination.currentPage >= newPages && newPages > 0) {
         handlePageChange(newPages - 1);
       } else {
-        fetcher.load(`${location.pathname}?${getSearchParams()}`);
+        fetcher.load(`${currentPath}?${getSearchParams()}`);
       }
     },
   });

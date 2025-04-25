@@ -45,6 +45,7 @@ const NewInvoice = () => {
     actions,
     availableCurrencies: currencies,
     organisation,
+    invoiceNumber,
   } = useCreateInvoice();
 
   const [editIndex, setEditIndex] = useState(0);
@@ -65,8 +66,8 @@ const NewInvoice = () => {
       email: null,
       address: "",
     },
-    title: "",
-    invoice_no: "",
+    title: "INVOICE",
+    invoice_no: invoiceNumber,
     issue_date: "",
     due_date: "",
     items: [
@@ -280,7 +281,7 @@ const NewInvoice = () => {
                               name="billed_from.name"
                               type="text"
                               className={cn(
-                                "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                                "border border-greyborder focus:border-accent outline-none p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny placeholder:text-black",
                                 {
                                   "border-error focus:border-error":
                                     touched?.billed_from?.name &&
@@ -303,7 +304,7 @@ const NewInvoice = () => {
                               name="billed_from.email"
                               type="text"
                               className={cn(
-                                "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                                "border border-greyborder focus:border-accent outline-none p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny placeholder:text-black",
                                 {
                                   "border-error focus:border-error":
                                     touched?.billed_from?.email &&
@@ -326,7 +327,7 @@ const NewInvoice = () => {
                               name="billed_from.address"
                               id="billed_from.address"
                               className={cn(
-                                "resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                                "resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny placeholder:text-black",
                                 {
                                   "border-error focus:border-error":
                                     touched?.billed_from?.address &&
@@ -356,7 +357,7 @@ const NewInvoice = () => {
                               id="billed_to.name"
                               type="text"
                               className={cn(
-                                "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                                "border border-greyborder focus:border-accent outline-none p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny placeholder:text-black",
                                 {
                                   "border-error focus:border-error":
                                     touched?.billed_to?.name &&
@@ -379,7 +380,7 @@ const NewInvoice = () => {
                               id="billed_to.email"
                               type="text"
                               className={cn(
-                                "border border-greyborder focus:border-accent outline-none p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                                "border border-greyborder focus:border-accent outline-none p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny placeholder:text-black",
                                 {
                                   "border-error focus:border-error":
                                     touched?.billed_to?.email &&
@@ -403,7 +404,7 @@ const NewInvoice = () => {
                               id="billed_to.address"
                               as="textarea"
                               className={cn(
-                                "resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black",
+                                "resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny placeholder:text-black",
                                 {
                                   "border-error focus:border-error":
                                     touched?.billed_to?.address &&
@@ -439,7 +440,7 @@ const NewInvoice = () => {
                             type="text"
                             placeholder="Title"
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.title && errors?.title,
@@ -466,8 +467,9 @@ const NewInvoice = () => {
                             name="invoice_no"
                             type="text"
                             placeholder="00001"
+                            disabled
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.invoice_no && errors?.invoice_no,
@@ -494,7 +496,7 @@ const NewInvoice = () => {
                             name="issue_date"
                             type="date"
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.issue_date && errors?.issue_date,
@@ -521,7 +523,7 @@ const NewInvoice = () => {
                             name="due_date"
                             type="date"
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.due_date && errors?.due_date,
@@ -1046,7 +1048,7 @@ const NewInvoice = () => {
                             name="discount"
                             type="text"
                             placeholder="Discount"
-                            className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                            className="w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black"
                             onChange={({ target: { name, value } }) => {
                               setFieldValue(name, value);
                               const amount_due = calculateAmountDue({
@@ -1076,7 +1078,7 @@ const NewInvoice = () => {
                             name="tax"
                             type="text"
                             placeholder="Tax"
-                            className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                            className="w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black"
                             onChange={({ target: { name, value } }) => {
                               setFieldValue(name, value);
                               const amount_due = calculateAmountDue({
@@ -1106,7 +1108,7 @@ const NewInvoice = () => {
                             name="shipping"
                             type="text"
                             placeholder="Shipping"
-                            className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                            className="w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black"
                             onChange={({ target: { name, value } }) => {
                               setFieldValue(name, value);
                               const amount_due = calculateAmountDue({
@@ -1158,7 +1160,7 @@ const NewInvoice = () => {
                             name="amount_paid"
                             type="text"
                             placeholder="Amount Paid"
-                            className="w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black"
+                            className="w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black"
                             onChange={({ target: { name, value } }) => {
                               const balance_due = calculateBalanceDue({
                                 ...values,
@@ -1204,7 +1206,7 @@ const NewInvoice = () => {
                             as="textarea"
                             name="notes"
                             id="notes"
-                            className="col-span-2 resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                            className="col-span-2 resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny placeholder:text-black"
                             rows={3}
                             placeholder="Notes"
                           />
@@ -1220,7 +1222,7 @@ const NewInvoice = () => {
                             as="textarea"
                             name="terms"
                             id="terms"
-                            className="col-span-2 resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny placeholder:text-black"
+                            className="col-span-2 resize-none border outline-none border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny placeholder:text-black"
                             rows={3}
                             placeholder="Terms & Conditions"
                           />
@@ -1244,7 +1246,7 @@ const NewInvoice = () => {
                             type="text"
                             placeholder="Title"
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.title && errors?.title,
@@ -1271,8 +1273,9 @@ const NewInvoice = () => {
                             name="invoice_no"
                             type="text"
                             placeholder="00001"
+                            disabled
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.invoice_no && errors?.invoice_no,
@@ -1299,7 +1302,7 @@ const NewInvoice = () => {
                             name="issue_date"
                             type="date"
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.issue_date && errors?.issue_date,
@@ -1326,7 +1329,7 @@ const NewInvoice = () => {
                             name="due_date"
                             type="date"
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.due_date && errors?.due_date,
@@ -1376,7 +1379,7 @@ const NewInvoice = () => {
                             type="text"
                             placeholder="Discount"
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.discount && errors?.discount,
@@ -1419,7 +1422,7 @@ const NewInvoice = () => {
                             type="text"
                             placeholder="Tax"
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.tax && errors?.tax,
@@ -1462,7 +1465,7 @@ const NewInvoice = () => {
                             type="text"
                             placeholder="Shipping"
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.shipping && errors?.shipping,
@@ -1527,7 +1530,7 @@ const NewInvoice = () => {
                             type="text"
                             placeholder="Amount Paid"
                             className={cn(
-                              "w-full border border-greyborder focus:border-accent p-3 bg-white font-satoshi font-regular text-tiny outline-none placeholder-black",
+                              "w-full border border-greyborder focus:border-accent p-3 bg-white disabled:text-greyborder font-satoshi font-regular text-tiny outline-none placeholder-black",
                               {
                                 "border-error focus:border-error":
                                   touched?.amount_paid && errors?.amount_paid,

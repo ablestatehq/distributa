@@ -137,6 +137,7 @@ const Transactions = () => {
                         type="button"
                         className="w-full px-6 py-3 font-bold text-small"
                         onClick={toggleCreateTransactionModal}
+                        disabled
                       >
                         Add New
                       </Button>
