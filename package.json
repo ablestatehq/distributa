@@ -6,6 +6,7 @@
   "dependencies": {
     "@fileforge/pdfreader": "^0.1.43",
     "@fileforge/react-print": "^0.1.150",
+    "@headlessui/react": "^2.2.2",
     "@jridgewell/sourcemap-codec": "^1.5.0",
     "@react-pdf/renderer": "^4.0.0",
     "@rollup/plugin-terser": "^0.4.4",
@@ -23,7 +24,9 @@
     "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
+    "focus-trap-react": "^11.0.3",
     "formik": "^2.4.6",
+    "framer-motion": "^12.8.0",
     "fs": "^0.0.1-security",
     "inquirer": "^12.5.0",
     "lodash": "^4.17.21",

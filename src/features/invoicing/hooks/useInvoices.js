@@ -66,7 +66,7 @@ export function useInvoices() {
   };
 
   const navigateToCreate = () => {
-    navigate("/invoices/new");
+    navigate("/sales-invoices/new");
   };
 
   const getSearchParams = useCallback(() => {

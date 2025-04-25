@@ -21,7 +21,7 @@ export const authRoutes = [
         const url = new URL(request.url);
         const from =
           url.searchParams.get("from") ??
-          `/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`;
+          `/sales-invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`;
         const user = await appwrite.getAccount();
         if (user) return redirect(from, { replace: true });
       } catch (error) {
@@ -35,7 +35,9 @@ export const authRoutes = [
         const password = formData.get("password");
 
         const url = new URL(request.url);
-        const from = url.searchParams.get("from") ?? `/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`;
+        const from =
+          url.searchParams.get("from") ??
+          `/sales-invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`;
 
         const session = await appwrite.createSession(email, password);
         if (session) return redirect(from, { replace: true });
@@ -50,7 +52,9 @@ export const authRoutes = [
     loader: async ({ request }) => {
       try {
         const url = new URL(request.url);
-        const from = url.searchParams.get("from") ?? `/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`;
+        const from =
+          url.searchParams.get("from") ??
+          `/sales-invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`;
         const user = await appwrite.getAccount();
         if (user) return redirect(from, { replace: true });
       } catch (error) {
@@ -83,7 +87,9 @@ export const authRoutes = [
     loader: async ({ request }) => {
       try {
         const url = new URL(request.url);
-        const from = url.searchParams.get("from") ?? `/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`;
+        const from =
+          url.searchParams.get("from") ??
+          `/sales-invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`;
         const user = await appwrite.getAccount();
         if (user) return redirect(from, { replace: true });
       } catch (error) {
@@ -121,7 +127,9 @@ export const authRoutes = [
     loader: async ({ request }) => {
       try {
         const url = new URL(request.url);
-        const from = url.searchParams.get("from") ?? `/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`;
+        const from =
+          url.searchParams.get("from") ??
+          `/sales-invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`;
         const user = await appwrite.getAccount();
         if (user) return redirect(from, { replace: true });
       } catch (error) {
@@ -165,7 +173,10 @@ export const authRoutes = [
           );
 
           console.log("Email response: ", emailResponse);
-          return redirect(`/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`, { replace: true });
+          return redirect(
+            `/sales-invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`,
+            { replace: true }
+          );
         }
       } catch (error) {
         return { error: error.response };

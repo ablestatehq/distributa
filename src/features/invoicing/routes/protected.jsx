@@ -1,4 +1,4 @@
-import { EditInvoice, Invoices, NewInvoice } from "../../../pages";
+import { EditInvoice, NewInvoice } from "../../../pages";
 import { invoicesLoader, invoiceLoader, newInvoiceLoader } from "./loaders";
 import { createInvoiceAction, updateInvoiceAction } from "./actions";
 import { InvoicePreview } from "../../../components/Modals";
@@ -6,7 +6,7 @@ import { InvoicesPage } from "../pages";
 
 export default [
   {
-    path: "/invoices",
+    path: "/sales-invoices",
     element: <InvoicesPage />,
     loader: invoicesLoader,
   },
@@ -27,7 +27,7 @@ export default [
     loader: invoiceLoader,
   },
   {
-    path: "/invoices/new",
+    path: "/sales-invoices/new",
     element: <NewInvoice />,
     loader: newInvoiceLoader,
     action: createInvoiceAction,

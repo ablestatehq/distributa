@@ -12,7 +12,7 @@ const InvoicePreview = () => {
   const location = useLocation();
 
   return createPortal(
-    <div className="fixed top-0 bg-white h-screen w-screen overflow-y-auto">
+    <div className="fixed top-0 bg-white h-screen w-screen overflow-y-auto z-50">
       <div className="flex flex-col h-full container mx-auto pt-16 lg:pt-8">
         <header className="flex flex-shrink-0 w-full justify-between px-5">
           <h1 className="font-archivo font-normal text-xl leading-110 tracking-normal">
