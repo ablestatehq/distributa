@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import useMediaQuery from "../../../../hooks/useMediaQuery";
-import { findParentForPath } from "../../../../config/navigation.config";
+import { findParentForPath } from "../../../../config/.js";
 
 /**
  * Custom hook for managing sidebar state

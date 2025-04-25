@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import {
   getNavigationTree,
   sidebarConfig,
-} from "../../../../config/navigation.config";
+} from "../../../../config/navigation.config.js";
 
 /**
  * Custom hook for managing sidebar navigation
