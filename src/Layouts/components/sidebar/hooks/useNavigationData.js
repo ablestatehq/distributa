@@ -4,7 +4,7 @@ import {
   getNavigationTree,
   getNavigationMap,
   sidebarConfig,
-} from "../../../../../config/navigation.config";
+} from "../../../../../config/navigation.config.js";
 
 /**
  * Custom hook to manage navigation data
