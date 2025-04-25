@@ -1,121 +1,114 @@
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../hooks";
-import Logo from "../../../components/common/Logos/Logo";
-import LogoCondensed from "../../../components/common/Logos/LogoCondensed";
-import {
-  FileText,
-  PlusSquare,
-  Book,
-  ClipBoard,
-} from "../../../components/common/icons";
-import NavigationLink from "../NavigationLink";
-import { useState } from "react";
+import React from "react";
+import { useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { FocusTrap } from "focus-trap-react";
+
+import { useSidebarState } from "./hooks/useSidebarState.js";
+import { useSidebarNavigation } from "./hooks/useSidebarNavigation.js";
+import { SidebarHeader } from "./SidebarHeader.jsx";
+import { SidebarNavigation } from "./SidebarNavigation.jsx";
+import { SidebarFooter } from "./SidebarFooter.jsx";
+import { MobileHeader } from "./MobileHeader.jsx";
+import { Overlay } from "../../common/Overlay.jsx";
+
 import cn from "../../../utils/cn";
-import useMediaQuery from "../../../hooks/useMediaQuery";
-import { HiMiniChevronDoubleLeft } from "react-icons/hi2";
 
-function SideBar() {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-  const [collapseMenu, setCollapseMenu] = useState(false);
-  const toggleCollapse = () =>
-    setCollapseMenu((prevCollapseState) => !prevCollapseState);
+/**
+ * Main sidebar component that handles the layout and state of the navigation sidebar
+ *
+ * @param {Object} props - Component props
+ * @param {Array<string>} props.userRoles - User roles for permission-based navigation
+ */
+function SideBar({ userRoles = ["admin", "user"] }) {
+  const location = useLocation();
+  const {
+    isOpen,
+    collapseMenu,
+    isDesktop,
+    expandedMenu,
+    sidebarRef,
+    toggleSidebar,
+    closeSidebar,
+    setCollapseMenu,
+    handleExpand,
+  } = useSidebarState(location);
 
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const { navigationTree } = useSidebarNavigation(userRoles, location);
+
+  // Configure FocusTrap options
+  const focusTrapOptions = {
+    clickOutsideDeactivates: true,
+    allowOutsideClick: (e) => {
+      const toggleButton = document.querySelector(
+        '[aria-label="Close main navigation"]'
+      );
+      return toggleButton && toggleButton.contains(e.target);
+    },
+  };
 
   return (
-    <aside
-      className={`relative h-full hidden md:flex flex-col justify-between py-16 border-r border-r-gray-100 flex-shrink-0 ${cn(
-        {
-          "px-8": isDesktop || !collapseMenu,
-          "px-4": !isDesktop || collapseMenu,
-        }
-      )}`}
-    >
-      <button
-        type="button"
-        className={cn(
-          "top-16 -right-3.5 bg-white border border-gray-100 p-1 rounded-full",
-          "transition duration-700",
-          collapseMenu ? "rotate-180" : "rotate-360",
-          isDesktop ? "absolute" : "hidden"
+    <>
+      {/* Mobile Header */}
+      {!isDesktop && (
+        <MobileHeader isOpen={isOpen} toggleSidebar={toggleSidebar} />
+      )}
+
+      {/* Overlay for mobile */}
+      <Overlay isVisible={!isDesktop && isOpen} onClick={closeSidebar} />
+
+      {/* Sidebar */}
+      <AnimatePresence mode="wait">
+        {(isOpen || isDesktop) && (
+          <FocusTrap
+            active={!isDesktop && isOpen}
+            focusTrapOptions={focusTrapOptions}
+          >
+            <motion.aside
+              ref={sidebarRef}
+              initial={{ x: isDesktop ? 0 : "100%" }}
+              animate={{ x: isOpen || isDesktop ? 0 : "100%" }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.3 }}
+              className={cn(
+                "fixed inset-y-0 right-0 bg-white border-r border-r-gray-100 z-40 min-w-fit flex flex-col",
+                isDesktop ? "relative py-16" : "shadow-lg pt-20 pb-16",
+                isDesktop && collapseMenu ? "w-16" : "w-64"
+              )}
+              role="region"
+              aria-label={
+                isDesktop ? "Sidebar navigation" : "Mobile navigation"
+              }
+            >
+              <div className="flex flex-col justify-between items-center h-full">
+                <section className="flex flex-col gap-y-8 px-4 w-full">
+                  {/* Sidebar Header with Logo */}
+                  <SidebarHeader
+                    isDesktop={isDesktop}
+                    collapseMenu={collapseMenu}
+                    setCollapseMenu={setCollapseMenu}
+                  />
+
+                  {/* Navigation Menu */}
+                  <SidebarNavigation
+                    navigationTree={navigationTree}
+                    expandedMenu={expandedMenu}
+                    collapseMenu={collapseMenu}
+                    isDesktop={isDesktop}
+                    onExpand={handleExpand}
+                    userRoles={userRoles}
+                  />
+                </section>
+
+                <SidebarFooter
+                  collapseMenu={collapseMenu}
+                  setIsOpen={closeSidebar}
+                />
+              </div>
+            </motion.aside>
+          </FocusTrap>
         )}
-        onClick={() => toggleCollapse()}
-      >
-        {<HiMiniChevronDoubleLeft size={20} />}
-      </button>
-      <section className="flex flex-col gap-y-8">
-        <button onClick={toggleCollapse} disabled={!isDesktop}>
-          {collapseMenu || !isDesktop ? (
-            <LogoCondensed className="fill-none w-[2.813rem] h-6" />
-          ) : (
-            <Logo
-              className="w-[5.758rem] h-[1.125rem] md:w-32 md:h-6"
-              variant="blue"
-            />
-          )}
-        </button>
-        <nav className="transition-all duration-100 flex flex-col gap-y-4 w-full text-center">
-          <NavigationLink
-            to="/invoices"
-            Icon={collapseMenu ? ClipBoard : FileText}
-            children={collapseMenu || !isDesktop ? null : "My invoices"}
-            exact={true}
-          />
-          <NavigationLink
-            to="/invoices/new"
-            Icon={PlusSquare}
-            children={collapseMenu || !isDesktop ? null : "New Invoice"}
-            exact={true}
-          />
-          <NavigationLink
-            to="/receipts/incoming"
-            Icon={collapseMenu ? ClipBoard : FileText}
-            children={collapseMenu || !isDesktop ? null : "Receipts"}
-            exact={true}
-          />
-          {/* <div className="pl-10">
-            <NavigationLink
-              to="/receipts/incoming"
-              children={"Incoming receipts"}
-              exact={true}
-            />
-            <NavigationLink
-              to="/receipts/outgoing"
-              children={"Outgoing receipts"}
-              exact={true}
-            />
-          </div> */}
-          <NavigationLink
-            to="/transactions"
-            Icon={Book}
-            children={collapseMenu || !isDesktop ? null : "My Transactions"}
-            exact={true}
-          />
-        </nav>
-      </section>
-      <div className="flex flex-col gap-y-4">
-        <button
-          className={cn("text-black w-fit px-8", {
-            "px-4": collapseMenu,
-          })}
-          onClick={async () => {
-            await logout();
-            navigate("/");
-          }}
-        >
-          Logout
-        </button>
-        <button
-          className={cn("text-black w-fit px-8", {
-            "px-4": collapseMenu,
-          })}
-          onClick={() => navigate("/settings/account")}
-        >
-          Settings
-        </button>
-      </div>
-    </aside>
+      </AnimatePresence>
+    </>
   );
 }
 

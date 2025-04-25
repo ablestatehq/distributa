@@ -23,6 +23,7 @@ export async function newInvoiceLoader() {
 
   const organisation = organisationService.getOrganisationByUserId(userId);
   const currencies = currencyService.listAvailableCurrenciesByUserId(userId);
+  const invoices = invoiceService.listInvoices();
 
   // const newInvoicePromise = Promise.all([
   //   organisationPromise,
@@ -37,5 +38,5 @@ export async function newInvoiceLoader() {
   // console.log("New Invoice promise: ", newInvoicePromise);
 
   // return { newInvoiceInitialData: newInvoicePromise };
-  return { organisation, currencies };
+  return { organisation, currencies, invoices };
 }

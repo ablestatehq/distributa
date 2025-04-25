@@ -8,20 +8,23 @@ import {
   DEFAULT_PAGE_SIZE,
 } from "../../../data/constants/pagination";
 import { toast } from "react-toastify";
+import { useInvoices } from "./useInvoices";
 
 export function useCreateInvoice() {
   const { organisation } = useOrganisationView();
   const { currencies: availableCurrencies } = useCurrencies();
+  const { total } = useInvoices();
+
   const fetcher = useFetcher();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data?.success) {
       toast.success(fetcher.data.message);
-      navigate(`/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`);
+      navigate(`/sales-invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`);
     } else if (fetcher.state === "idle" && fetcher.data?.error) {
       toast.error(fetcher.data.error);
-      navigate(`/invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`);
+      navigate(`/sales-invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`);
     }
   }, [fetcher?.state, fetcher?.data, navigate]);
 
@@ -30,7 +33,7 @@ export function useCreateInvoice() {
       (data) => {
         fetcher.submit(JSON.stringify(data), {
           method: "post",
-          action: "/invoices/new",
+          action: "/sales-invoices/new",
           encType: "application/json",
         });
       },
@@ -39,6 +42,7 @@ export function useCreateInvoice() {
   };
 
   return {
+    invoiceNumber: `INV-${total + 1}`,
     organisation,
     availableCurrencies,
     isLoading: fetcher.state === "submitting",
