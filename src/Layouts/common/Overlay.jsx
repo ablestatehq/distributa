@@ -18,7 +18,7 @@ export const Overlay = ({ isVisible, onClick, zIndex = 40 }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className={`fixed inset-0 bg-black/50 z-${zIndex}`}
+          className={`fixed inset-0 bg-black/10 z-${zIndex}`}
           onClick={onClick}
           aria-hidden="true"
         />
