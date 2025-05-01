@@ -8,9 +8,6 @@ import {
 } from "../services";
 import { redirect } from "react-router-dom";
 import {
-  Invoices,
-  NewInvoice,
-  EditInvoice,
   Transactions,
   Transaction,
   CategorySettings,
@@ -19,10 +16,8 @@ import {
   PartiesSettings,
   BusinessSettings,
   CurrencySettings,
-  Receipts,
 } from "../pages";
 import { SettingsLayout } from "../Layouts/components";
-import InvoicePreview from "../components/Modals/InvoicePreview";
 import { Permission, Role, ID, Query } from "appwrite";
 import CurrencyPreferenceService from "../services/currency.prefs.service";
 import { data } from "react-router-dom";
@@ -158,167 +153,167 @@ export const protectedRoutes = [
 
       // Receipts
 
-      {
-        index: true,
-        path: "/receipts/incoming",
-        loader: async () => {
-          const invoicesPromise = InvoiceService.listInvoices();
-          return { receipts: invoicesPromise };
-        },
-        element: <Receipts />,
-      },
-      {
-        path: "/receipts/outgoing",
-        loader: async ({ params }) => {
-          const invoicePromise = InvoiceService.getInvoice(params.id);
-          return { invoice: invoicePromise };
-        },
-        element: <Invoices />,
-      },
-      {
-        path: "/receipts/incoming/:id/edit",
-        loader: async ({ params }) => {
-          const invoicePromise = InvoiceService.getInvoice(params.id);
-          return { invoice: invoicePromise };
-        },
-        action: async ({ request, params }) => {
-          try {
-            const data = await request.json();
-            const invoice = await InvoiceService.updateInvoice(params.id, data);
-            return { success: true, data: invoice };
-          } catch (error) {
-            throw error;
-          }
-        },
-        element: <EditInvoice />,
-      },
-      {
-        path: "/receipts/outgoing/:id/edit",
-        loader: async ({ params }) => {
-          const invoicePromise = InvoiceService.getInvoice(params.id);
-          return { invoice: invoicePromise };
-        },
-        action: async ({ request, params }) => {
-          try {
-            const data = await request.json();
-            const invoice = await InvoiceService.updateInvoice(params.id, data);
-            return { success: true, data: invoice };
-          } catch (error) {
-            throw error;
-          }
-        },
-        element: <EditInvoice />,
-      },
-      {
-        path: "/receipts/incoming/:id/preview",
-        loader: async ({ params }) => {
-          const invoicePromise = InvoiceService.getInvoice(params.id);
-          return { invoice: invoicePromise };
-        },
-        element: <InvoicePreview />,
-      },
-      {
-        path: "/receipts/outgoing/:id/preview",
-        loader: async ({ params }) => {
-          const invoicePromise = InvoiceService.getInvoice(params.id);
-          return { invoice: invoicePromise };
-        },
-        element: <InvoicePreview />,
-      },
-      {
-        path: "/receipts/incoming/new",
-        element: <NewInvoice />,
-        loader: async () => {
-          const { $id: userId } = await appwrite.account.get();
+      // {
+      //   index: true,
+      //   path: "/receipts/incoming",
+      //   loader: async () => {
+      //     const invoicesPromise = InvoiceService.listInvoices();
+      //     return { receipts: invoicesPromise };
+      //   },
+      //   element: <Receipts />,
+      // },
+      // {
+      //   path: "/receipts/outgoing",
+      //   loader: async ({ params }) => {
+      //     const invoicePromise = InvoiceService.getInvoice(params.id);
+      //     return { invoice: invoicePromise };
+      //   },
+      //   element: <Invoices />,
+      // },
+      // {
+      //   path: "/receipts/incoming/:id/edit",
+      //   loader: async ({ params }) => {
+      //     const invoicePromise = InvoiceService.getInvoice(params.id);
+      //     return { invoice: invoicePromise };
+      //   },
+      //   action: async ({ request, params }) => {
+      //     try {
+      //       const data = await request.json();
+      //       const invoice = await InvoiceService.updateInvoice(params.id, data);
+      //       return { success: true, data: invoice };
+      //     } catch (error) {
+      //       throw error;
+      //     }
+      //   },
+      //   element: <EditInvoice />,
+      // },
+      // {
+      //   path: "/receipts/outgoing/:id/edit",
+      //   loader: async ({ params }) => {
+      //     const invoicePromise = InvoiceService.getInvoice(params.id);
+      //     return { invoice: invoicePromise };
+      //   },
+      //   action: async ({ request, params }) => {
+      //     try {
+      //       const data = await request.json();
+      //       const invoice = await InvoiceService.updateInvoice(params.id, data);
+      //       return { success: true, data: invoice };
+      //     } catch (error) {
+      //       throw error;
+      //     }
+      //   },
+      //   element: <EditInvoice />,
+      // },
+      // {
+      //   path: "/receipts/incoming/:id/preview",
+      //   loader: async ({ params }) => {
+      //     const invoicePromise = InvoiceService.getInvoice(params.id);
+      //     return { invoice: invoicePromise };
+      //   },
+      //   element: <InvoicePreview />,
+      // },
+      // {
+      //   path: "/receipts/outgoing/:id/preview",
+      //   loader: async ({ params }) => {
+      //     const invoicePromise = InvoiceService.getInvoice(params.id);
+      //     return { invoice: invoicePromise };
+      //   },
+      //   element: <InvoicePreview />,
+      // },
+      // {
+      //   path: "/receipts/incoming/new",
+      //   element: <NewInvoice />,
+      //   loader: async () => {
+      //     const { $id: userId } = await appwrite.account.get();
 
-          const organisationPromise = appwrite.database.listDocuments(
-            appwrite.getVariables().DATABASE_ID,
-            appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
-            [Query.equal("created_by", userId)]
-          );
-          const currenciesPromise = appwrite.database.listDocuments(
-            appwrite.getVariables().DATABASE_ID,
-            appwrite.getVariables().CURRENCY_PREFERENCES_COLLECTION_ID,
-            [Query.equal("is_available", true), Query.equal("user_id", userId)]
-          );
+      //     const organisationPromise = appwrite.database.listDocuments(
+      //       appwrite.getVariables().DATABASE_ID,
+      //       appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
+      //       [Query.equal("created_by", userId)]
+      //     );
+      //     const currenciesPromise = appwrite.database.listDocuments(
+      //       appwrite.getVariables().DATABASE_ID,
+      //       appwrite.getVariables().CURRENCY_PREFERENCES_COLLECTION_ID,
+      //       [Query.equal("is_available", true), Query.equal("user_id", userId)]
+      //     );
 
-          const newInvoicePromise = Promise.all([
-            organisationPromise,
-            currenciesPromise,
-          ]).then(([organisation, currencies]) => {
-            return {
-              organisationData: organisation,
-              currencyOptions: currencies,
-            };
-          });
+      //     const newInvoicePromise = Promise.all([
+      //       organisationPromise,
+      //       currenciesPromise,
+      //     ]).then(([organisation, currencies]) => {
+      //       return {
+      //         organisationData: organisation,
+      //         currencyOptions: currencies,
+      //       };
+      //     });
 
-          return {
-            newInvoiceInitialData: newInvoicePromise,
-          };
-        },
-        action: async ({ request }) => {
-          try {
-            const currentUrl = new URL(request.url);
-            const data = await request.json();
-            const invoice = await InvoiceService.createInvoice(data);
+      //     return {
+      //       newInvoiceInitialData: newInvoicePromise,
+      //     };
+      //   },
+      //   action: async ({ request }) => {
+      //     try {
+      //       const currentUrl = new URL(request.url);
+      //       const data = await request.json();
+      //       const invoice = await InvoiceService.createInvoice(data);
 
-            return redirect(
-              `/invoices/${invoice.$id}/preview?from=${encodeURIComponent(
-                currentUrl.pathname
-              )}`
-            );
-          } catch (error) {
-            throw error;
-          }
-        },
-      },
-      {
-        path: "/receipts/outgoing/new",
-        element: <NewInvoice />,
-        loader: async () => {
-          const { $id: userId } = await appwrite.account.get();
+      //       return redirect(
+      //         `/invoices/${invoice.$id}/preview?from=${encodeURIComponent(
+      //           currentUrl.pathname
+      //         )}`
+      //       );
+      //     } catch (error) {
+      //       throw error;
+      //     }
+      //   },
+      // },
+      // {
+      //   path: "/receipts/outgoing/new",
+      //   element: <NewInvoice />,
+      //   loader: async () => {
+      //     const { $id: userId } = await appwrite.account.get();
 
-          const organisationPromise = appwrite.database.listDocuments(
-            appwrite.getVariables().DATABASE_ID,
-            appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
-            [Query.equal("created_by", userId)]
-          );
-          const currenciesPromise = appwrite.database.listDocuments(
-            appwrite.getVariables().DATABASE_ID,
-            appwrite.getVariables().CURRENCY_PREFERENCES_COLLECTION_ID,
-            [Query.equal("is_available", true), Query.equal("user_id", userId)]
-          );
+      //     const organisationPromise = appwrite.database.listDocuments(
+      //       appwrite.getVariables().DATABASE_ID,
+      //       appwrite.getVariables().ORGANISTIONS_COLLECTION_ID,
+      //       [Query.equal("created_by", userId)]
+      //     );
+      //     const currenciesPromise = appwrite.database.listDocuments(
+      //       appwrite.getVariables().DATABASE_ID,
+      //       appwrite.getVariables().CURRENCY_PREFERENCES_COLLECTION_ID,
+      //       [Query.equal("is_available", true), Query.equal("user_id", userId)]
+      //     );
 
-          const newInvoicePromise = Promise.all([
-            organisationPromise,
-            currenciesPromise,
-          ]).then(([organisation, currencies]) => {
-            return {
-              organisationData: organisation,
-              currencyOptions: currencies,
-            };
-          });
+      //     const newInvoicePromise = Promise.all([
+      //       organisationPromise,
+      //       currenciesPromise,
+      //     ]).then(([organisation, currencies]) => {
+      //       return {
+      //         organisationData: organisation,
+      //         currencyOptions: currencies,
+      //       };
+      //     });
 
-          return {
-            newInvoiceInitialData: newInvoicePromise,
-          };
-        },
-        action: async ({ request }) => {
-          try {
-            const currentUrl = new URL(request.url);
-            const data = await request.json();
-            const invoice = await InvoiceService.createInvoice(data);
+      //     return {
+      //       newInvoiceInitialData: newInvoicePromise,
+      //     };
+      //   },
+      //   action: async ({ request }) => {
+      //     try {
+      //       const currentUrl = new URL(request.url);
+      //       const data = await request.json();
+      //       const invoice = await InvoiceService.createInvoice(data);
 
-            return redirect(
-              `/invoices/${invoice.$id}/preview?from=${encodeURIComponent(
-                currentUrl.pathname
-              )}`
-            );
-          } catch (error) {
-            throw error;
-          }
-        },
-      },
+      //       return redirect(
+      //         `/invoices/${invoice.$id}/preview?from=${encodeURIComponent(
+      //           currentUrl.pathname
+      //         )}`
+      //       );
+      //     } catch (error) {
+      //       throw error;
+      //     }
+      //   },
+      // },
 
       // end receipts
       {

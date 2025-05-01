@@ -1,7 +1,6 @@
 import { EditInvoice, NewInvoice } from "../../../pages";
 import { invoicesLoader, invoiceLoader, newInvoiceLoader } from "./loaders";
 import { createInvoiceAction, updateInvoiceAction } from "./actions";
-import { InvoicePreview } from "../../../components/Modals";
 import { InvoicesPage, InvoicePage } from "../pages";
 import ContentViewArea from "../../../Layouts/components/wrappers/ContentViewArea";
 
@@ -10,7 +9,9 @@ export default [
     path: "/external-invoices",
     element: (
       <ContentViewArea>
-        <div className="flex h-full w-full items-center justify-center">Coming soon</div>
+        <div className="flex h-full w-full items-center justify-center">
+          Coming soon
+        </div>
       </ContentViewArea>
     ),
   },
@@ -32,7 +33,7 @@ export default [
   },
   {
     path: "/sales-invoices/:id/preview",
-    element: <InvoicePreview />,
+    element: <InvoicePage />,
     loader: invoiceLoader,
   },
   {

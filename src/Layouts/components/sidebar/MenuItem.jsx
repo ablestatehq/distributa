@@ -63,8 +63,7 @@ export const MenuItem = memo(
               type="button"
               className={cn(
                 "p-3.5 rounded-lg transition-transform",
-                "hover:bg-gray-200",
-                isExpanded ? "rotate-180 duration-200" : ""
+                "hover:bg-gray-200"
               )}
               onClick={(e) => {
                 e.stopPropagation();
@@ -85,7 +84,14 @@ export const MenuItem = memo(
                   : `Expand ${item.label} submenu`
               }
             >
-              <HiChevronDown size={14} />
+              <HiChevronDown
+                size={14}
+                className={cn(
+                  isExpanded
+                    ? "rotate-180 duration-200 ease-in-out"
+                    : "duration-200 ease-in-out"
+                )}
+              />
             </button>
           )}
         </NavigationLink>
