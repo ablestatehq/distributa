@@ -22,7 +22,7 @@ export const SidebarNavigation = ({
 }) => {
   return (
     <nav aria-label="Main navigation">
-      <ul role="menu" className="flex flex-col gap-y-4 w-full">
+      <ul role="menu" className="flex flex-col gap-y-4 w-full pt-4 lg:pt-0">
         {navigationTree.map((item) => (
           <MenuItem
             key={item.id}
