@@ -57,9 +57,9 @@ export const usePdfRenderer = () => {
 
     const loadWorker = async () => {
       try {
-        console.log(
-          `Worker initialization attempt ${workerInitAttempts.current}`
-        );
+        // console.log(
+        //   `Worker initialization attempt ${workerInitAttempts.current}`
+        // );
 
         // Try to use the CDN worker directly for better HMR compatibility
         const cdnWorkerUrl = `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.min.js`;
@@ -67,7 +67,7 @@ export const usePdfRenderer = () => {
         // For production, you might want to check for a local worker first
         // but for development with HMR, using CDN is more reliable
         if (isMounted.current) {
-          console.log("Setting worker source to:", cdnWorkerUrl);
+          // console.log("Setting worker source to:", cdnWorkerUrl);
           setWorkerSrc(cdnWorkerUrl);
           globalWorkerSrc = cdnWorkerUrl; // Store in module scope for HMR persistence
         }

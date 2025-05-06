@@ -68,90 +68,6 @@ class InvoiceService extends BaseService {
     return this.listDocuments(filters, queries);
   }
 
-  //   async updateInvoice(invoiceId, payload) {
-  //     const billed_from = {
-  //       addresss: payload.billedfrom.address,
-  //       email: payload.billedfrom.email,
-  //       name: payload.billedfrom.name,
-  //     };
-
-  //     const billed_to = {
-  //       address: payload.billed_to.address,
-  //       email: payload.billed_to.email,
-  //       name: payload.billed_to.name,
-  //     };
-
-  //     const invoiceUpdatePayload = {
-  //       amount_due: payload.amount_due,
-  //       amount_paid: payload.amount_paid,
-  //       balance_due: payload.balance_due,
-  //       created_by: payload.created_by,
-  //       currency: payload.currency,
-  //       discount: payload.discount,
-  //       due_date: payload.due_date,
-  //       invoice_no: payload.invoice_no,
-  //       issue_date: payload.issue_date,
-  //       logo: payload.logo,
-  //       notes: payload.notes,
-  //       orientation: payload.orientation,
-  //       paper_size: payload.paper_size,
-  //       remote_id: payload.remote_id ?? null,
-  //       status: payload.status,
-  //       sub_total: payload.sub_total,
-  //       tax: payload.tax,
-  //       terms: payload.terms,
-  //       title: payload.title,
-  //     };
-
-  //     const invoice = await this.getInvoice(invoiceId);
-
-  //     const itemsToDelete = invoice.items.filter(
-  //       (item) => !updateData.items.find((i) => i.$id === item.$id)
-  //     );
-
-  //     const itemsToAdd = updateData.items.filter((item) => !item.$id);
-
-  //     const itemsToUpdate = updateData.items
-  //       .filter(
-  //         (item) => item.$id && !itemsToDelete.find((i) => i.$id === item.$id)
-  //       )
-  //       .map(({ price, quantity, title, units }) => ({
-  //         price,
-  //         quantity,
-  //         title,
-  //         units,
-  //       }));
-
-  //     const newItems = await Promise.all(
-  //       itemsToAdd.map((item) =>
-  //         this.database.createDocument(
-  //           appwriteConfig.databaseId,
-  //           appwriteConfig.collections.items,
-  //           ID.unique(),
-  //           item
-  //         )
-  //       )
-  //     ).map(({ $id }) => $id);
-
-  //     await Promise.all(
-  //       itemsToDelete.map(async ({ $id }) => {
-  //         await this.itemService.deleteItem($id);
-  //       })
-  //     );
-
-  //     return this.database.updateDocument(
-  //       appwriteConfig.databaseId,
-  //       appwriteConfig.collections.invoices,
-  //       invoiceId,
-  //       {
-  //         ...invoiceUpdatePayload,
-  //         billed_from,
-  //         billed_to,
-  //         items: [...itemsToUpdate, ...newItems],
-  //       }
-  //     );
-  //   }
-
   async updateInvoice(invoiceId, payload) {
     try {
       const existingInvoice = await this.getInvoice(invoiceId);
@@ -160,13 +76,15 @@ class InvoiceService extends BaseService {
       }
 
       const updatedItems = payload.items
-        ? await this.handleInvoiceItems(existingInvoice, payload.items || [])
+        ? await this.handleInvoiceItems(
+            existingInvoice.items,
+            payload.items || []
+          )
         : existingInvoice.items;
 
       const billingInfo = this.createBillingInfo(existingInvoice, payload);
 
       const updatePayload = {
-        ...existingInvoice,
         ...this.createInvoiceUpdatePayload(payload),
         ...billingInfo,
         items: updatedItems,

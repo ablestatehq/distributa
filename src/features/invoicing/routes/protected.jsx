@@ -1,7 +1,17 @@
-import { EditInvoice, NewInvoice } from "../../../pages";
-import { invoicesLoader, invoiceLoader, newInvoiceLoader } from "./loaders";
+import { EditInvoice } from "../../../pages";
+import {
+  invoicesLoader,
+  invoiceLoader,
+  newInvoiceLoader,
+  editInvoiceLoader,
+} from "./loaders";
 import { createInvoiceAction, updateInvoiceAction } from "./actions";
-import { InvoicesPage, InvoicePage } from "../pages";
+import {
+  InvoicesPage,
+  InvoicePage,
+  NewInvoicePage,
+  EditInvoicePage,
+} from "../pages";
 import ContentViewArea from "../../../Layouts/components/wrappers/ContentViewArea";
 
 export default [
@@ -27,8 +37,8 @@ export default [
   },
   {
     path: "/sales-invoices/:id/edit",
-    element: <EditInvoice />,
-    loader: invoiceLoader,
+    element: <EditInvoicePage />,
+    loader: editInvoiceLoader,
     action: updateInvoiceAction,
   },
   {
@@ -38,7 +48,7 @@ export default [
   },
   {
     path: "/sales-invoices/new",
-    element: <NewInvoice />,
+    element: <NewInvoicePage />,
     loader: newInvoiceLoader,
     action: createInvoiceAction,
   },
