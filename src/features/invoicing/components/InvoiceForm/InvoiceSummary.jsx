@@ -4,12 +4,12 @@ import {
   FormikCalculatedField,
   FormikCalculatedInputField,
 } from "../../../../components/common/forms/FormikFields";
-import { useInvoiceCalculationsContext } from "../../../../pages/Invoices/hooks/useInvoiceCalculationsContext";
+import { useInvoiceCalculations } from "../../hooks";
 
 const InvoiceSummary = () => {
   const { values } = useFormikContext();
   const { formatAmount, handleSummaryFieldChange, handleAmountPaidChange } =
-    useInvoiceCalculationsContext();
+    useInvoiceCalculations();
 
   // Handlers for specific fields
   const handleDiscountChange = (name, value, values, setFieldValue) => {

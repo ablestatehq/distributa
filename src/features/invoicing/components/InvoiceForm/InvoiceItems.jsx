@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FieldArray, useFormikContext } from "formik";
 import { FormikTextField } from "../../../../components/common/forms/FormikFields";
 import { Button } from "../../../../components/common/forms";
-import { useInvoiceCalculationsContext } from "../../../../pages/Invoices/hooks/useInvoiceCalculationsContext";
+import { useInvoiceCalculations } from "../../hooks";
 
 const InvoiceItems = ({ mode }) => {
   const { values } = useFormikContext();
@@ -110,7 +110,7 @@ const ItemFieldWrapper = ({ children }) => {
 
 const EditableRow = ({ index, setEditIndex }) => {
   const { touched, errors } = useFormikContext();
-  const { updateCalculations } = useInvoiceCalculationsContext();
+  const { updateCalculations } = useInvoiceCalculations();
 
   return (
     <tr key={index}>
@@ -176,7 +176,7 @@ const EditableRow = ({ index, setEditIndex }) => {
 
 const DisplayRow = ({ index, setEditIndex, arrayHelpers, addItem }) => {
   const { values } = useFormikContext();
-  const { updateCalculations } = useInvoiceCalculationsContext();
+  const { updateCalculations } = useInvoiceCalculations();
 
   return (
     <tr>
