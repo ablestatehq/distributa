@@ -1,5 +1,5 @@
 // Export existing components
-export { default as Invoice } from "./invoice";
+// export { default as Invoice } from "./invoice";
 export { default as Document } from "./document/Document";
 
 // Export new components
