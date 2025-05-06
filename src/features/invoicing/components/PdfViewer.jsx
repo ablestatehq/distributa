@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Worker, Viewer } from "@react-pdf-viewer/core";
+import { Worker, Viewer, SpecialZoomLevel } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import PdfLoader from "../../../components/common/loaders/PdfLoader";
 import PdfError from "./PdfError";
@@ -79,7 +79,7 @@ const PdfViewer = ({
   };
 
   return (
-    <div className="h-full w-full pdf-viewer-container">
+    <div className="h-full w-full overflow-hidden">
       <Worker workerUrl={workerSrc} onError={handleWorkerError}>
         {isNavigating ? (
           <PdfLoader />
@@ -91,7 +91,6 @@ const PdfViewer = ({
             }}
             renderError={renderError}
             renderLoader={() => <PdfLoader />}
-            className="custom-pdf-viewer"
           />
         )}
       </Worker>
