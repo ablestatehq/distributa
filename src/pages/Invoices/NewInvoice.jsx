@@ -98,6 +98,8 @@ const NewInvoice = () => {
   }
 
   const handleSubmit = (values, { resetForm }) => {
+    console.log("Form values: ", values)
+
     // Type cast.
     values.discount = parseFloat(values.discount)
       ? parseFloat(values.discount)
@@ -115,9 +117,9 @@ const NewInvoice = () => {
     values.billed_from.email = values.billed_from.email || null;
     values.billed_to.email = values.billed_to.email || null;
 
-    actions.createInvoice(values);
-    setEditIndex(() => 0);
-    resetForm({ values: initialValues });
+    // actions.createInvoice(values);
+    // setEditIndex(() => 0);
+    // resetForm({ values: initialValues });
   };
 
   const orientationOptions = [
@@ -269,7 +271,8 @@ const NewInvoice = () => {
 
                   <section className="grid grid-cols-1 lg:grid-cols-5 gap-x-2">
                     <section className="lg:col-span-4 flex flex-col gap-y-4">
-                      {/* Billing From*/}
+                      {/* Billing */}
+                      {/* I am here now */}
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 bg-grey rounded p-4">
                         <section className="grid grid-cols-2 gap-2">
                           <h4 className="col-span-2 font-satoshi font-medium text-small leading-100 tracking-normal">
@@ -425,7 +428,7 @@ const NewInvoice = () => {
                         </section>
                       </div>
 
-                      {/* Billed To */}
+                      {/* Mobile Devices: Invoice Details */}
                       <div className="bg-grey rounded p-4 flex flex-col gap-y-4 w-full lg:hidden">
                         <div className="w-full flex flex-col gap-y-2">
                           <label
@@ -1345,6 +1348,7 @@ const NewInvoice = () => {
                           </ErrorMessage>
                         </div>
                       </div>
+                      {/* I'm starting here */}
                       <div className="bg-grey rounded p-4 flex flex-col gap-y-4 w-full">
                         <div className="flex justify-between py-2">
                           <span className="font-satoshi font-normal text-tiny leading-100 tracking-normal">

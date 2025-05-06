@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
  * @param {Function} props.onClick - Click handler for the overlay
  * @param {number} [props.zIndex=30] - Z-index for the overlay
  */
-export const Overlay = ({ isVisible, onClick, zIndex = 30 }) => {
+export const Overlay = ({ isVisible, onClick, zIndex = 40 }) => {
   return (
     <AnimatePresence>
       {isVisible && (
@@ -18,7 +18,7 @@ export const Overlay = ({ isVisible, onClick, zIndex = 30 }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className={`fixed inset-0 bg-black/50 z-${zIndex}`}
+          className={`fixed inset-0 bg-black/10 z-${zIndex}`}
           onClick={onClick}
           aria-hidden="true"
         />

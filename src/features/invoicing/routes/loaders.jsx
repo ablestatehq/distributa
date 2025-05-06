@@ -18,6 +18,15 @@ export async function invoiceLoader({ params }) {
   return { invoice: invoicePromise };
 }
 
+export async function editInvoiceLoader({ params }) {
+  const { $id: userId } = await account.get();
+
+  const invoice = invoiceService.getInvoice(params.id);
+  const currencies = currencyService.listAvailableCurrenciesByUserId(userId);
+
+  return { invoice, currencies };
+}
+
 export async function newInvoiceLoader() {
   const { $id: userId } = await account.get();
 
@@ -25,18 +34,5 @@ export async function newInvoiceLoader() {
   const currencies = currencyService.listAvailableCurrenciesByUserId(userId);
   const invoices = invoiceService.listInvoices();
 
-  // const newInvoicePromise = Promise.all([
-  //   organisationPromise,
-  //   availableCurrenciesPromise,
-  // ]).then(([organisation, currencies]) => {
-  //   return {
-  //     organisationData: organisation,
-  //     currencyOptions: currencies,
-  //   };
-  // });
-
-  // console.log("New Invoice promise: ", newInvoicePromise);
-
-  // return { newInvoiceInitialData: newInvoicePromise };
   return { organisation, currencies, invoices };
 }

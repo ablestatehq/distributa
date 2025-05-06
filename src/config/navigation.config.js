@@ -1,5 +1,5 @@
 import { FiHome, FiBox, FiUsers, FiPieChart, FiSettings } from "react-icons/fi";
-import { ClipBoard, FileText } from "../components/common/icons";
+import { ClipBoard, FileText, Book } from "../components/common/icons";
 
 // Icon registry
 export const iconRegistry = {
@@ -10,6 +10,7 @@ export const iconRegistry = {
   users: FiUsers,
   pieChart: FiPieChart,
   settings: FiSettings,
+  book: Book,
 };
 
 // Navigation config
@@ -24,7 +25,7 @@ export const sidebarConfig = {
       id: "invoices",
       path: "/sales-invoices",
       label: "Invoices",
-      icon: "clipboard",
+      icon: "fileText",
       type: "parent",
       hasPagination: true,
       tooltip: "Manage all invoices",
@@ -35,7 +36,7 @@ export const sidebarConfig = {
       id: "sales-invoices",
       path: "/sales-invoices",
       label: "Sales Invoices",
-      icon: "clipboard",
+      icon: "fileText",
       type: "child",
       parentId: "invoices",
       hasPagination: true,
@@ -47,7 +48,7 @@ export const sidebarConfig = {
       id: "external-invoices",
       path: "/external-invoices",
       label: "External Invoices",
-      icon: "clipboard",
+      icon: "fileText",
       type: "child",
       parentId: "invoices",
       hasPagination: true,
@@ -94,7 +95,7 @@ export const sidebarConfig = {
       id: "transactions",
       path: "/transactions",
       label: "Transactions",
-      icon: "clipboard",
+      icon: "book",
       type: "parent",
       hasPagination: true,
       tooltip: "View transactions",

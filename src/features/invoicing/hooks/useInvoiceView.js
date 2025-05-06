@@ -1,5 +1,5 @@
 import { useCallback, use } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, useLocation } from "react-router-dom";
 import { useInvoiceData } from "./useInvoiceData";
 
 export function useInvoiceView() {
@@ -8,13 +8,17 @@ export function useInvoiceView() {
   const { invoice, fetcher, isLoading } = useInvoiceData(resolvedInvoice);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const parentPath = location.pathname.split("/")[1];
 
   const actions = {
     updateDetails: useCallback(
       (data) => {
-        fetcher.submit(data, {
+        fetcher.submit(JSON.stringify(data), {
           method: "patch",
-          action: `/invoices/${invoice.$id}/edit`,
+          action: `/${parentPath}/${invoice.$id}/edit`,
+          encType: "application/json",
         });
       },
       [fetcher, invoice.$id]
@@ -25,7 +29,7 @@ export function useInvoiceView() {
           { status: newStatus, payment_date: paymentDate },
           {
             method: "post",
-            action: `/invoices/${invoice.$id}/edit-status`,
+            action: `/${parentPath}/${invoice.$id}/edit-status`,
           }
         );
       },
@@ -35,22 +39,23 @@ export function useInvoiceView() {
     deleteInvoice: useCallback(() => {
       fetcher.submit(null, {
         method: "delete",
-        action: `/invoices/${invoice.$id}/delete`,
+        action: `/${parentPath}/${invoice.$id}/delete`,
       });
     }, [fetcher, invoice.$id]),
 
     navigateToEdit: useCallback(() => {
-      navigate(`/invoices/${invoice.$id}/edit`);
+      navigate(`/${parentPath}/${invoice.$id}/edit`);
     }, [navigate, invoice.$id]),
 
     navigateToView: useCallback(() => {
-      navigate(`/invoices/${invoice.$id}`);
+      navigate(`/${parentPath}/${invoice.$id}`);
     }, [navigate, invoice.$id]),
   };
 
   return {
     invoice,
     isLoading,
+    isSubmitting: fetcher.state === "submitting",
     actions,
   };
 }

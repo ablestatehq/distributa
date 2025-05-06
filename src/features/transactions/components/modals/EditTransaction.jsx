@@ -383,8 +383,8 @@ const EditTransaction = ({ transaction, handleClose }) => {
   };
 
   return createPortal(
-    <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
-      <section className="w-96 lg:w-[36rem] h-fit max-h-full overflow-y-auto flex flex-col bg-white">
+    <main className="fixed top-0 left-0 bg-black bg-opacity-10 h-screen w-screen flex justify-center items-end lg:items-center z-[70]">
+      <section className="w-96 lg:w-[36rem] h-fit max-h-full overflow-y-auto flex flex-col bg-white relative z-50">
         <header className="flex justify-between w-full bg-grey p-4">
           <h5 className="font-archivo font-normal text-small leading-150 tracking-normal">
             Edit Current Transaction

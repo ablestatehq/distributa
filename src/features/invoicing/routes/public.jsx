@@ -1,10 +1,10 @@
-import { Invoice } from "../components";
+import { InvoicePage } from "../pages";
 import { invoiceLoader } from "./loaders";
 
 export default [
   {
     path: "invoice",
-    element: <Invoice />,
+    element: <InvoicePage />,
   },
   {
     path: "invoice/shared/:id",

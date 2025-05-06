@@ -1,8 +1,17 @@
-import { EditInvoice, NewInvoice } from "../../../pages";
-import { invoicesLoader, invoiceLoader, newInvoiceLoader } from "./loaders";
+import { EditInvoice } from "../../../pages";
+import {
+  invoicesLoader,
+  invoiceLoader,
+  newInvoiceLoader,
+  editInvoiceLoader,
+} from "./loaders";
 import { createInvoiceAction, updateInvoiceAction } from "./actions";
-import { InvoicePreview } from "../../../components/Modals";
-import { InvoicesPage, InvoicePage } from "../pages";
+import {
+  InvoicesPage,
+  InvoicePage,
+  NewInvoicePage,
+  EditInvoicePage,
+} from "../pages";
 import ContentViewArea from "../../../Layouts/components/wrappers/ContentViewArea";
 
 export default [
@@ -10,7 +19,9 @@ export default [
     path: "/external-invoices",
     element: (
       <ContentViewArea>
-        <div className="flex h-full w-full items-center justify-center">Coming soon</div>
+        <div className="flex h-full w-full items-center justify-center">
+          Coming soon
+        </div>
       </ContentViewArea>
     ),
   },
@@ -26,18 +37,18 @@ export default [
   },
   {
     path: "/sales-invoices/:id/edit",
-    element: <EditInvoice />,
-    loader: invoiceLoader,
+    element: <EditInvoicePage />,
+    loader: editInvoiceLoader,
     action: updateInvoiceAction,
   },
   {
     path: "/sales-invoices/:id/preview",
-    element: <InvoicePreview />,
+    element: <InvoicePage />,
     loader: invoiceLoader,
   },
   {
     path: "/sales-invoices/new",
-    element: <NewInvoice />,
+    element: <NewInvoicePage />,
     loader: newInvoiceLoader,
     action: createInvoiceAction,
   },

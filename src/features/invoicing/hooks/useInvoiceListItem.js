@@ -18,6 +18,14 @@ export function useInvoiceListItem(initialInvoice) {
       [navigate, invoice.$id]
     ),
 
+    navigateToEdit: useCallback(
+      (e) => {
+        e?.stopPropagation();
+        navigate(`${currentPath}/${invoice.$id}/edit`);
+      },
+      [navigate, invoice.$id]
+    ),
+
     toggleEdit: useCallback((e) => {
       e?.stopPropagation();
       setEditing((prev) => !prev);
@@ -33,7 +41,7 @@ export function useInvoiceListItem(initialInvoice) {
           { status: newStatus, paymentDate },
           {
             method: "PATCH",
-            action: `/invoices/${invoice.$id}/edit-status`,
+            action: `${currentPath}/${invoice.$id}/edit-status`,
           }
         );
         setEditing(false);
@@ -45,8 +53,8 @@ export function useInvoiceListItem(initialInvoice) {
       (e) => {
         e?.stopPropagation();
         fetcher.submit(null, {
-          method: "delete",
-          action: `/invoices/${invoice.$id}/delete`,
+          method: "DELETE",
+          action: `${currentPath}/${invoice.$id}/delete`,
         });
       },
       [fetcher, invoice.$id]

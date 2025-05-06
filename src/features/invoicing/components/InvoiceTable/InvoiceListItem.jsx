@@ -46,8 +46,8 @@ const InvoiceListItem = memo(({ invoice: initialInvoice, index }) => {
         <button
           type="button"
           className="font-satoshi font-normal underline text-black leading-100 tracking-normal capitalize text-tiny"
-          onClick={actions.toggleEdit}
-          disabled={invoice?.status === "paid"}
+          onClick={actions.navigateToEdit}
+          // disabled={invoice?.status === "paid"}
         >
           <Edit />
         </button>
