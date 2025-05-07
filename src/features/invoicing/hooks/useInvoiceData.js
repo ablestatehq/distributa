@@ -7,17 +7,19 @@ export function useInvoiceData(initialInvoiceData) {
   const fetcher = useFetcher();
 
   useEffect(() => {
-    if (fetcher.state === "idle" && fetcher.data?.success) {
+    if (
+      (fetcher.state === "idle" || fetcher.state == "loading") &&
+      fetcher.data?.success
+    ) {
       toast.success(fetcher.data.message);
-
-      //   if (fetcher?.data?.invoice && fetcher.data.invoice?.$id === invoice.$id) {
-      //     setInvoice((prev) => ({ ...prev, ...invoice.data.invoice }));
-      //   }
 
       if (fetcher?.data?.invoice) {
         setInvoice((prev) => ({ ...prev, ...fetcher.data.invoice }));
       }
-    } else if (fetcher.data?.error) {
+    } else if (
+      (fetcher.state === "idle" || fetcher.state == "loading") &&
+      fetcher.data?.error
+    ) {
       toast.error(fetcher.data.error);
     }
   }, [fetcher.state, fetcher.data]);
