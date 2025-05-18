@@ -1,0 +1,55 @@
+/* PDF Viewer Custom Styles */
+
+/* Override the default PDF viewer background and controls */
+.react-pdf__Document {
+  background-color: white !important;
+}
+
+.react-pdf__Page {
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+
+/* Remove the page shadows and borders */
+.react-pdf__Page__canvas {
+  box-shadow: none !important;
+  border: none !important;
+  margin: 0 auto !important;
+}
+
+/* Hide the page annotations layer if needed */
+.react-pdf__Page__annotations {
+  display: none !important;
+}
+
+/* Hide the text layer if needed */
+.react-pdf__Page__textContent {
+  display: none !important;
+}
+
+/* Custom scrollbar for the PDF viewer */
+.pdf-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.pdf-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.pdf-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.pdf-container::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Ensure the PDF viewer takes full height */
+.pdf-container {
+  height: 100%;
+  overflow: auto;
+  background-color: white;
+}

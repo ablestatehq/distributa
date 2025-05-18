@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "tailwindcss";
+import path from "path";
 
 export default defineConfig({
   // depending on your application, base can also be "/"
@@ -10,9 +11,16 @@ export default defineConfig({
     assetsDir: "assets",
     sourcemap: true,
   },
+  optimizeDeps: {
+    include: ["@react-pdf-viewer/core", "pdfjs-dist", "react-pdf"],
+    exclude: [],
+  },
   plugins: [react()],
   resolve: {
     extensions: [".js", ".jsx", ".json"],
+    alias: {
+      // No problematic alias for PDF.js
+    },
   },
   css: {
     postcss: { plugins: [tailwindcss()] },
@@ -22,6 +30,10 @@ export default defineConfig({
     open: true,
     // this sets a default port to 3000
     port: 3000,
+    fs: {
+      // Allow serving files from one level up to the project root
+      allow: [".."],
+    },
   },
   test: {
     environment: "jsdom", // Use jsdom for testing React components

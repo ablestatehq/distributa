@@ -1,7 +1,7 @@
 import { useOrganisationView } from "../../organisations/hooks";
 import { useCurrencies } from "../../currencies/hooks/useCurrencies";
 import { useCallback } from "react";
-import { useFetcher, useNavigate } from "react-router-dom";
+import { useFetcher, useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import {
   DEFAULT_PAGE,
@@ -17,14 +17,18 @@ export function useCreateInvoice() {
 
   const fetcher = useFetcher();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const parentPath = location.pathname.split("/")[1];
 
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data?.success) {
       toast.success(fetcher.data.message);
-      navigate(`/sales-invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`);
+      navigate(
+        `/${parentPath}?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`
+      );
     } else if (fetcher.state === "idle" && fetcher.data?.error) {
-      toast.error(fetcher.data.error);
-      navigate(`/sales-invoices?page=${DEFAULT_PAGE}&pageSize=${DEFAULT_PAGE_SIZE}`);
+      toast.error(fetcher.data.message);
     }
   }, [fetcher?.state, fetcher?.data, navigate]);
 
@@ -33,7 +37,7 @@ export function useCreateInvoice() {
       (data) => {
         fetcher.submit(JSON.stringify(data), {
           method: "post",
-          action: "/sales-invoices/new",
+          action: `/${parentPath}/new`,
           encType: "application/json",
         });
       },
