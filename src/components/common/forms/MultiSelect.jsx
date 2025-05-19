@@ -3,21 +3,22 @@ import { useField } from "formik";
 import Select from "react-select";
 import clsx from "clsx";
 import { selectStyles } from "./selectStyles";
-import { DropdownIndicator } from "./selectComponents";
+import { DropdownIndicator, ClearIndicator } from "./selectComponents";
 
-const CustomSelect = ({
+const MultiSelect = ({
   label,
   options,
   loading,
   disabled,
   handleChange,
-  isClearable = false,
-  isSearchable = false,
-  placeholder = "Select One",
+  isClearable = true,
+  isSearchable = true,
+  placeholder = "Select options...",
   ...props
 }) => {
-  const [field, meta] = useField(props);
+  const [field, meta, helpers] = useField(props);
   const { error, touched } = meta;
+  const { setValue } = helpers;
 
   const {
     placeholderStyles,
@@ -40,6 +41,23 @@ const CustomSelect = ({
     reactSelectStyles,
   } = selectStyles;
 
+  // Handle multi-select change
+  const onChange = (selectedOptions) => {
+    const values = selectedOptions
+      ? selectedOptions.map((option) => option.value)
+      : [];
+    setValue(values);
+    if (handleChange) {
+      handleChange(values);
+    }
+  };
+
+  // Convert field.value array to array of option objects
+  const getValue = () => {
+    if (!field.value || field.value.length === 0) return [];
+    return options.filter((option) => field.value.includes(option.value));
+  };
+
   return (
     <div className="w-full flex flex-col gap-y-2">
       {label ? (
@@ -52,19 +70,23 @@ const CustomSelect = ({
       ) : null}
       <Select
         {...field}
-        onChange={handleChange}
-        value={options.find((option) => option.value === field.value)}
-        closeMenuOnSelect={true}
+        id={props.name}
+        name={props.name}
+        onChange={onChange}
+        value={getValue()}
+        closeMenuOnSelect={false}
         isClearable={isClearable}
         isLoading={loading}
         isDisabled={disabled}
         isSearchable={isSearchable}
+        isMulti={true}
         options={options}
         unstyled
         placeholder={placeholder}
         styles={reactSelectStyles}
         components={{
           DropdownIndicator,
+          ClearIndicator,
         }}
         classNames={{
           control: ({ isFocused }) =>
@@ -108,4 +130,4 @@ const CustomSelect = ({
   );
 };
 
-export default CustomSelect;
+export default MultiSelect;

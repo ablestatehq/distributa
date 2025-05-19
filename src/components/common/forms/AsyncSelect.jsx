@@ -1,23 +1,62 @@
-import React from "react";
 import { useField } from "formik";
-import Select from "react-select";
+import AsyncSelect from "react-select/async";
 import clsx from "clsx";
 import { selectStyles } from "./selectStyles";
-import { DropdownIndicator } from "./selectComponents";
+import { DropdownIndicator, LoadingMessage } from "./selectComponents";
+import { useEffect, useState } from "react";
 
-const CustomSelect = ({
+const CustomAsyncSelect = ({
   label,
-  options,
-  loading,
+  loadOptions,
+  defaultOptions = true,
+  cacheOptions = true,
   disabled,
   handleChange,
   isClearable = false,
-  isSearchable = false,
-  placeholder = "Select One",
+  isSearchable = true,
+  placeholder = "Search...",
+  debounceTimeout = 300,
+  getOptionValue = (option) => option.value,
   ...props
 }) => {
-  const [field, meta] = useField(props);
+  const [field, meta, helpers] = useField(props);
   const { error, touched } = meta;
+  const { setValue } = helpers;
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  useEffect(() => {
+    const loadInitialValue = async () => {
+      if (field.value && loadOptions) {
+        try {
+          const options = await loadOptions("");
+
+          const currentOption = options.find(
+            (option) => getOptionValue(option) === field.value
+          );
+
+          if (currentOption) {
+            setSelectedOption(currentOption);
+          }
+        } catch (error) {
+          console.error("Error loading initial value:", error);
+        }
+      }
+    };
+
+    loadInitialValue();
+  }, [field.value, loadOptions, getOptionValue]);
+
+  // Custom onChange handler that updates both the form value and the selected option
+  const onChangeHandler = (selected) => {
+    setSelectedOption(selected);
+
+    if (handleChange) {
+      handleChange(selected);
+    } else {
+      // Default behavior if no custom handler is provided
+      setValue(selected ? getOptionValue(selected) : "");
+    }
+  };
 
   const {
     placeholderStyles,
@@ -50,21 +89,25 @@ const CustomSelect = ({
           {label}
         </label>
       ) : null}
-      <Select
+      <AsyncSelect
         {...field}
-        onChange={handleChange}
-        value={options.find((option) => option.value === field.value)}
+        onChange={onChangeHandler}
+        loadOptions={loadOptions}
+        defaultOptions={defaultOptions}
+        cacheOptions={cacheOptions}
         closeMenuOnSelect={true}
         isClearable={isClearable}
-        isLoading={loading}
         isDisabled={disabled}
         isSearchable={isSearchable}
-        options={options}
+        debounceTimeout={debounceTimeout}
+        getOptionValue={getOptionValue}
+        value={selectedOption}
         unstyled
         placeholder={placeholder}
         styles={reactSelectStyles}
         components={{
           DropdownIndicator,
+          LoadingMessage,
         }}
         classNames={{
           control: ({ isFocused }) =>
@@ -108,4 +151,4 @@ const CustomSelect = ({
   );
 };
 
-export default CustomSelect;
+export default CustomAsyncSelect;
