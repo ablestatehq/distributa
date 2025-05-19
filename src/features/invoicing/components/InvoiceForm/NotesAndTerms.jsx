@@ -1,4 +1,3 @@
-import React from "react";
 import { FormikTextAreaField } from "../../../../components/common/forms/FormikFields";
 
 const NotesAndTerms = () => {

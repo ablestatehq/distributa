@@ -1,11 +1,14 @@
-import { EditInvoice } from "../../../pages";
 import {
   invoicesLoader,
   invoiceLoader,
   newInvoiceLoader,
   editInvoiceLoader,
 } from "./loaders";
-import { createInvoiceAction, updateInvoiceAction } from "./actions";
+import {
+  createInvoiceAction,
+  updateInvoiceAction,
+  deleteInvoiceAction,
+} from "./actions";
 import {
   InvoicesPage,
   InvoicePage,
@@ -16,7 +19,7 @@ import ContentViewArea from "../../../Layouts/components/wrappers/ContentViewAre
 
 export default [
   {
-    path: "/external-invoices",
+    path: "/purchase-invoices",
     element: (
       <ContentViewArea>
         <div className="flex h-full w-full items-center justify-center">
@@ -40,6 +43,10 @@ export default [
     element: <EditInvoicePage />,
     loader: editInvoiceLoader,
     action: updateInvoiceAction,
+  },
+  {
+    path: "/sales-invoices/:id/delete",
+    action: deleteInvoiceAction,
   },
   {
     path: "/sales-invoices/:id/preview",

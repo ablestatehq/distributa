@@ -1,27 +1,9 @@
 import React from "react";
 import { useField } from "formik";
-import { components } from "react-select";
 import Select from "react-select";
 import clsx from "clsx";
-
-function DropdownIndicator(props) {
-  return (
-    <components.DropdownIndicator {...props}>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 16 16"
-        className="w-4 h-4 fill-none"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="m4 6 4 4 4-4"
-          className="stroke-[#cccccc] stroke-1"
-        ></path>
-      </svg>
-    </components.DropdownIndicator>
-  );
-}
+import { selectStyles } from "./selectStyles";
+import { DropdownIndicator } from "./selectComponents";
 
 const CustomSelect = ({
   label,
@@ -29,44 +11,34 @@ const CustomSelect = ({
   loading,
   disabled,
   handleChange,
+  isClearable = false,
+  isSearchable = false,
+  placeholder = "Select One",
   ...props
 }) => {
   const [field, meta] = useField(props);
   const { error, touched } = meta;
 
-  const placeholderStyles =
-    "px-3 py-3.5 font-satoshi font-normal text-tiny leading-100 tracking-normal";
-  const selectInputStyles = "";
-  const valueContainerStyles =
-    "font-satoshi font-normal  text-tiny leading-100 tracking-normal ";
-  const singleValueStyles = "";
-  const multiValueStyles =
-    "bg-gray-100 rounded items-center py-0.5 pl-2 pr-1 gap-1.5";
-  const multiValueLabelStyles = "leading-6 py-0.5";
-  const multiValueRemoveStyles =
-    "border border-gray-200 bg-white hover:bg-red-50 hover:text-red-800 text-gray-500 hover:border-red-300 rounded-md";
-  const indicatorsContainerStyles = "";
-  const clearIndicatorStyles =
-    "text-gray-500 p-1 rounded-md hover:bg-red-50 hover:text-red-800";
-  const indicatorSeparatorStyles = "none";
-  const dropdownIndicatorStyles = "py-3 px-1.5";
-  const menuStyles = "bg-[#F5F5F5] max-h-[200px] overflow-y-auto";
-  const menuListStyles =
-    "h-20 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100";
-  const groupHeadingStyles = "ml-3 mt-2 mb-1 text-gray-500 text-sm";
-  const optionStyles = {
-    base: "hover:cursor-pointer  font-satoshi text-tiny leading-100 tracking-normal",
-    focus: "bg-gray-100 active:bg-secondary-50",
-    selected: "font-satoshi text-tiny bg-accent-50 hover:bg-accent-50 ",
-  };
-  const controlStyles = {
-    base: "font-satoshi text-tiny leading-100 tracking-normal bg-white disabled:placeholder:text-greyborder",
-    focus: "border-secondary-500 ring-none",
-    nonFocus: "border-secondary-100",
-  };
-
-  const noOptionsMessageStyles =
-    "text-black text-center p-3 font-satoshi text-[0.5rem] leading-100 tracking-normal";
+  const {
+    placeholderStyles,
+    selectInputStyles,
+    valueContainerStyles,
+    singleValueStyles,
+    multiValueStyles,
+    multiValueLabelStyles,
+    multiValueRemoveStyles,
+    indicatorsContainerStyles,
+    clearIndicatorStyles,
+    indicatorSeparatorStyles,
+    dropdownIndicatorStyles,
+    menuStyles,
+    menuListStyles,
+    groupHeadingStyles,
+    optionStyles,
+    controlStyles,
+    noOptionsMessageStyles,
+    reactSelectStyles,
+  } = selectStyles;
 
   return (
     <div className="w-full flex flex-col gap-y-2">
@@ -83,32 +55,14 @@ const CustomSelect = ({
         onChange={handleChange}
         value={options.find((option) => option.value === field.value)}
         closeMenuOnSelect={true}
-        isClearable={false}
+        isClearable={isClearable}
         isLoading={loading}
         isDisabled={disabled}
-        isSearchable={false}
+        isSearchable={isSearchable}
         options={options}
         unstyled
-        placeholder="Select One"
-        styles={{
-          input: (base) => ({
-            ...base,
-            "input:focus": {
-              boxShadow: "none",
-            },
-            margin: 0,
-            padding: 0,
-          }),
-          multiValueLabel: (base) => ({
-            ...base,
-            whiteSpace: "normal",
-            overflow: "visible",
-          }),
-          control: (base) => ({
-            ...base,
-            transition: "none",
-          }),
-        }}
+        placeholder={placeholder}
+        styles={reactSelectStyles}
         components={{
           DropdownIndicator,
         }}

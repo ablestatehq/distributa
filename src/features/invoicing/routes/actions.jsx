@@ -1,4 +1,5 @@
 import { invoiceService } from "../services/invoice.service";
+import { parseInvoiceParams } from "../utils/url-params";
 
 export const createInvoiceAction = async ({ request }) => {
   try {
@@ -19,10 +20,8 @@ export const createInvoiceAction = async ({ request }) => {
 };
 
 export const updateInvoiceAction = async ({ request, params }) => {
-  console.log("Reached Invoice Action: ", request.url);
   try {
     const payload = await request.json();
-    console.log("payload: ", payload);
     const invoice = await invoiceService.updateInvoice(params.id, payload);
 
     return {
@@ -64,10 +63,11 @@ export const updateInvoiceStatus = async ({ request, params }) => {
 export const deleteInvoiceAction = async ({ request, params }) => {
   try {
     const url = new URL(request.url);
-    const currentPage = parseInt(url.searchParams.get("page") || "0");
-    const pageSize = parseInt(url.searchParams.get("pageSize") || "10");
+    const invoiceParams = parseInvoiceParams(url.searchParams);
 
-    const { total } = await invoiceService.getInvoices(currentPage, pageSize);
+    console.log("Invoice params: ", invoiceParams);
+
+    const { total } = await invoiceService.listInvoices(invoiceParams);
 
     await invoiceService.deleteInvoice(params.id);
 

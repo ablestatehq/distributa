@@ -2,17 +2,59 @@ import { Suspense, useState, useCallback, useEffect } from "react";
 import { Button } from "../../components/common/forms";
 import { Warning } from "../../components/common/icons";
 import { CreateParty } from "../../components/Modals";
-import { useLoaderData, Await } from "react-router-dom";
+import {
+  useLoaderData,
+  Await,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { UserPlus } from "../../components/common/icons";
 import { DATABASE_ID, PARTIES_COLLECTION_ID } from "../../data/constants";
 import { appwrite } from "../../lib/appwrite";
 import PartyRow from "../../features/parties/components/table/PartyRow";
 
 const PartiesSettings = () => {
-  const [createParty, setCreateParty] = useState(false);
-
   const data = useLoaderData();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const [createParty, setCreateParty] = useState(false);
+  const [newPartyInfo, setNewPartyInfo] = useState(null);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const returnToTransaction = searchParams.get("return_to_transaction");
+    if (returnToTransaction === "true") setCreateParty(() => true);
+  }, [location]);
+
+  useEffect(() => {
+    if (
+      newPartyInfo &&
+      location.search.includes("return_to_transaction=true")
+    ) {
+      const { id, name } = newPartyInfo;
+
+      navigate(
+        `/transactions?party_id=${id}&party_name=${encodeURIComponent(
+          name
+        )}&return_from_parties=true`,
+        { replace: true }
+      );
+
+      setNewPartyInfo(null);
+    }
+  }, [newPartyInfo, location.search, navigate]);
+
   const toggleCreateParty = () => setCreateParty((createParty) => !createParty);
+
+  const handlePartyCreated = (partyId, partyName) => {
+    console.log("Party created:", partyId, partyName);
+    setNewPartyInfo({
+      id: partyId,
+      name: partyName,
+    });
+    toggleCreateParty();
+  };
 
   return (
     <main className="flex min-h-full h-full w-full flex-col">
@@ -50,7 +92,15 @@ const PartiesSettings = () => {
           )}
         </Await>
       </Suspense>
-      {createParty && <CreateParty handleClose={toggleCreateParty} />}
+      {createParty && (
+        <CreateParty
+          handleClose={toggleCreateParty}
+          onPartyCreated={handlePartyCreated}
+          isFromTransaction={location.search.includes(
+            "return_to_transaction=true"
+          )}
+        />
+      )}
     </main>
   );
 };

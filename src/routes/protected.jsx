@@ -1,7 +1,6 @@
 import { PrivateRoute } from "./components";
 import {
   AppwriteService as Appwrite,
-  InvoiceService,
   TransactionService,
   BalancesService,
   CategoryService,
@@ -333,6 +332,31 @@ export const protectedRoutes = [
         },
         path: "/transactions",
         element: <Transactions />,
+      },
+      {
+        path: "/transactions/new",
+        action: async ({ request }) => {
+          const data = await request.json();
+          try {
+            await TransactionService.createTransaction(data);
+            await BalancesService.updateBalances(
+              parseFloat(data.amount),
+              data.flow_type,
+              data.date,
+              data.category
+            );
+
+            return { success: true, message: "Party created successfully" };
+          } catch (error) {
+            return {
+              error: true,
+              message:
+                error?.response?.message ||
+                error?.message ||
+                "Failed to create transaction",
+            };
+          }
+        },
       },
       {
         path: "transactions/:id",
@@ -742,12 +766,19 @@ export const protectedRoutes = [
                       ]
                     );
 
-                    return { success: true, data: party };
+                    return {
+                      success: true,
+                      party,
+                      message: "Party created successfully",
+                    };
                   } catch (error) {
-                    return data(
-                      { success: false, error: error.response.message },
-                      { status: 400 }
-                    );
+                    return {
+                      error: true,
+                      message:
+                        error?.response?.message ||
+                        error?.message ||
+                        "Failed to create party",
+                    };
                   }
                 },
               },
@@ -806,10 +837,21 @@ export const protectedRoutes = [
                 action: async ({ request }) => {
                   try {
                     const data = await request.json();
-                    await CategoryService.createCategory(data);
-                    return redirect("/settings/categories");
+                    const category = await CategoryService.createCategory(data);
+
+                    return {
+                      success: true,
+                      category: category,
+                      message: "Category created successfully",
+                    };
                   } catch (error) {
-                    throw error;
+                    return {
+                      error: true,
+                      message:
+                        error?.response.message ||
+                        error?.message ||
+                        "Failed to create category",
+                    };
                   }
                 },
               },

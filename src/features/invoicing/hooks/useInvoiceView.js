@@ -28,7 +28,7 @@ export function useInvoiceView() {
         fetcher.submit(
           { status: newStatus, payment_date: paymentDate },
           {
-            method: "post",
+            method: "patch",
             action: `/${parentPath}/${invoice.$id}/edit-status`,
           }
         );

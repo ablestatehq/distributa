@@ -13,10 +13,14 @@ const Input = ({ label, className, ...props }) => {
   };
 
   const [field, meta] = useField(props);
+  const hasError = meta.touched && meta.error;
 
   return (
     <div className="flex flex-col gap-y-2">
-      <label htmlFor={props.name} className={cn(styles.font, styles.label)}>
+      <label
+        htmlFor={props.id || props.name}
+        className={cn(styles.font, styles.label)}
+      >
         {label}
       </label>
       <input
@@ -29,11 +33,11 @@ const Input = ({ label, className, ...props }) => {
           styles.input,
           styles.placeholder,
           {
-            "border-error focus:border-error": meta.touched && meta.error,
+            "border-error focus:border-error": hasError,
           }
         )}
       />
-      {meta?.touched && meta?.error ? (
+      {hasError ? (
         <p className={`${styles.font} ${styles.errorText}`}>{meta.error}</p>
       ) : null}
     </div>

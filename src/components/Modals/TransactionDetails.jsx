@@ -14,7 +14,7 @@ const TransactionDetails = ({ handleClose, transaction }) => {
   const loaderData = useLoaderData();
 
   return createPortal(
-    <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
+    <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center z-[70]">
       <section className="w-full lg:w-96 h-fit max-h-full overflow-y-auto flex flex-col bg-white">
         <header className="flex justify-between w-full bg-grey p-4">
           <h5 className="font-archivo font-normal text-small leading-150 tracking-normal">

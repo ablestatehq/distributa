@@ -4,12 +4,18 @@ import cn from "../../utils/cn";
 import { createPortal } from "react-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { useFetcher } from "react-router-dom";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { toast } from "react-toastify";
 import { createPartySchema } from "../../utils/validators";
 
-const CreateParty = ({ handleClose }) => {
+const CreateParty = ({
+  handleClose,
+  onPartyCreated = null,
+  isFromTransaction = false,
+}) => {
   const fetcher = useFetcher();
+  const processedResponseRef = useRef(false);
+  const isSubmitting = fetcher.state === "submitting";
 
   const initialValues = {
     name: "",
@@ -19,31 +25,54 @@ const CreateParty = ({ handleClose }) => {
     address: "",
   };
 
-  const handleSubmit = async (values) => {
-    try {
-      fetcher.submit(JSON.stringify(values), {
-        method: "post",
-        action: "/settings/parties/new",
-        encType: "application/json",
-      });
-    } catch (error) {
-      throw error;
-    }
-  };
+  const handleFormResult = useCallback(() => {
+    if (
+      fetcher.state === "idle" &&
+      fetcher.data &&
+      !processedResponseRef.current
+    ) {
+      processedResponseRef.current = true;
 
-  useEffect(() => {
-    if (fetcher?.state === "idle" && fetcher?.data) {
-      if (fetcher.data?.success) {
-        toast.success("Party created successfully");
+      if (fetcher.data.success) {
+        toast.success(fetcher.data.message);
+
+        if (fetcher.data?.party && onPartyCreated) {
+          const { $id: partyId, name } = fetcher.data.party;
+          onPartyCreated(partyId, name);
+        }
+
         handleClose();
-      } else if (fetcher.data.success === false) {
-        toast.error(fetcher.data.message || "An error occurred");
+      } else if (fetcher.data.error) {
+        toast.error(fetcher.data.error);
+      }
+
+      if (fetcher.state === "submitting") {
+        processedResponseRef.current = false;
       }
     }
-  }, [fetcher.state, fetcher.data, fetcher.formAction, fetcher.formData]);
+  }, [fetcher.state, fetcher.data, handleClose, onPartyCreated]);
+
+  useEffect(() => {
+    handleFormResult();
+  }, [handleFormResult]);
+
+  const handleSubmit = useCallback(
+    (values) => {
+      try {
+        fetcher.submit(JSON.stringify(values), {
+          method: "POST",
+          action: "/settings/parties/new",
+          encType: "application/json",
+        });
+      } catch (error) {
+        toast.error("Failed to create party");
+      }
+    },
+    [fetcher]
+  );
 
   return createPortal(
-    <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center">
+    <main className="fixed top-0 bg-black bg-opacity-45 h-screen w-screen flex justify-center items-end lg:items-center z-[70]">
       <section className="w-96 lg:w-[36rem] h-fit max-h-full overflow-y-auto flex flex-col bg-white">
         <header className="flex justify-between w-full bg-grey p-4">
           <h5 className="font-archivo font-normal text-small leading-150 tracking-normal">
@@ -53,13 +82,20 @@ const CreateParty = ({ handleClose }) => {
             <CircleX variation="black" className="w-4 h-4" />
           </button>
         </header>
+
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
           validationSchema={createPartySchema}
         >
-          {({ values, touched, errors, dirty, setFieldValue, isValid }) => (
+          {({ values, touched, errors, setFieldValue }) => (
             <Form>
+              {isFromTransaction && (
+                <p className="mt-8 mb-3 mx-4 lg:mx-16 bg-accent-50 border border-accent-200 font-satoshi text-tiny text-accent-800 leading-150 p-4 rounded-lg">
+                  Creating a new party for your transaction. After creating,
+                  you'll be returned to your transaction form.
+                </p>
+              )}
               <div className="w-full grid grid-cols-2 p-4 lg:px-16 gap-x-4">
                 <button
                   type="button"
@@ -220,13 +256,9 @@ const CreateParty = ({ handleClose }) => {
                 <Button
                   type="submit"
                   className="font-bold text-small col-span-2"
-                  disabled={
-                    fetcher.state === "submitting" || !(dirty && isValid)
-                  }
+                  disabled={isSubmitting}
                 >
-                  {fetcher.state === "submitting"
-                    ? "Creating Party ..."
-                    : "Create"}
+                  {isSubmitting ? "Creating Party ..." : "Create"}
                 </Button>
               </div>
             </Form>

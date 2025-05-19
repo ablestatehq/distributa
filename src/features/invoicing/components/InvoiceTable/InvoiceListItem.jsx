@@ -23,7 +23,7 @@ const InvoiceListItem = memo(({ invoice: initialInvoice, index }) => {
       <td className="w-full min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start capitalize">
         {invoice?.status}
       </td>
-      <td className="w-auto font-satoshi font-medium text-tiny leading-100 tracking-normal lg:px-4 py-3 text-start relative">
+      {/* <td className="w-auto font-satoshi font-medium text-tiny leading-100 tracking-normal lg:px-4 py-3 text-start relative">
         <button
           type="button"
           className="outline-none"
@@ -31,7 +31,7 @@ const InvoiceListItem = memo(({ invoice: initialInvoice, index }) => {
         >
           <Edit />
         </button>
-      </td>
+      </td> */}
       <td className="w-auto min-w-[5.2rem] lg:min-w-[8.2rem] font-satoshi font-medium text-tiny leading-100 tracking-normal px-2 lg:px-4 py-3 text-start">
         {invoice?.amount_due}
       </td>
