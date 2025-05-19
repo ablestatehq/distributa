@@ -1,5 +1,10 @@
-import { Suspense, useState } from "react";
-import { useLoaderData, Await } from "react-router-dom";
+import { Suspense, useState, useEffect } from "react";
+import {
+  useLoaderData,
+  Await,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { Button } from "../../components/common/forms";
 import { CreateCategory } from "../../components/Modals";
 import { CategoryRow } from "../../features/settings/components";
@@ -7,10 +12,48 @@ import { Category } from "../../components/common/icons";
 
 const CategorySettings = () => {
   const data = useLoaderData();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [createCategory, setCreateCategory] = useState(false);
+  const [newCategoryInfo, setNewCategoryInfo] = useState(null);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const returnToTransaction = searchParams.get("return_to_transaction");
+    if (returnToTransaction === "true") setCreateCategory(true);
+  }, [location]);
+
+  useEffect(() => {
+    if (
+      newCategoryInfo &&
+      location.search.includes("return_to_transaction=true")
+    ) {
+      const { id, name, type } = newCategoryInfo;
+
+      navigate(
+        `/transactions?category_id=${id}&category_name=${encodeURIComponent(
+          name
+        )}&category_type=${encodeURIComponent(
+          type
+        )}&return_from_categories=true`,
+        { replace: true }
+      );
+
+      setNewCategoryInfo(null);
+    }
+  }, [newCategoryInfo, location.search, navigate]);
 
   const toggleCreateCategory = () => setCreateCategory((prev) => !prev);
+
+  const handleCategoryCreated = (categoryId, categoryName, categoryType) => {
+    setNewCategoryInfo({
+      id: categoryId,
+      name: categoryName,
+      type: categoryType,
+    });
+    toggleCreateCategory();
+  };
 
   return (
     <section className="flex h-full w-full flex-col gap-y-2">
@@ -120,7 +163,15 @@ const CategorySettings = () => {
           }}
         </Await>
       </Suspense>
-      {createCategory && <CreateCategory handleClose={toggleCreateCategory} />}
+      {createCategory && (
+        <CreateCategory
+          handleClose={toggleCreateCategory}
+          onCategoryCreated={handleCategoryCreated}
+          isFromTransaction={location.search.includes(
+            "return_to_transaction=true"
+          )}
+        />
+      )}
     </section>
   );
 };

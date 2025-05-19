@@ -1,7 +1,7 @@
 import { ContentViewAreaWrapper } from "../../Layouts/components";
 import { Button } from "../../components/common/forms";
 import { Book } from "../../components/common/icons";
-import { useLoaderData, Await } from "react-router-dom";
+import { useLoaderData, useLocation, Await } from "react-router-dom";
 import { CreateTransaction, TransactionDetails } from "../../components/Modals";
 import { useState, useCallback, useEffect, Suspense, useMemo } from "react";
 import { groupBy, map, sumBy } from "lodash";
@@ -13,18 +13,67 @@ import formatCurrency from "../../utils/format.currency";
 
 const Transactions = () => {
   const loaderData = useLoaderData();
+  const location = useLocation();
 
   const [createTransaction, setCreateTransaction] = useState(false);
   const [showTransactionDetails, setShowTransactionDetails] = useState(false);
   const [transactionDetails, setTransactionDetails] = useState(null);
+  const [categoryInfo, setCategoryInfo] = useState(null);
+  const [partyInfo, setPartyInfo] = useState(null);
 
-  const toggleCreateTransactionModal = () =>
-    setCreateTransaction((createTransaction) => !createTransaction);
+  const toggleCreateTransactionModal = useCallback(() => {
+    setCreateTransaction((prevState) => !prevState);
+    if (createTransaction) {
+      setCategoryInfo(null);
+    }
+  }, [createTransaction]);
 
-  const toggleTransactionDetailsModal = () =>
-    setShowTransactionDetails(
-      (showTransactionDetails) => !showTransactionDetails
-    );
+  const toggleTransactionDetailsModal = useCallback(() => {
+    setShowTransactionDetails((prevState) => !prevState);
+  }, []);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+
+    // Category Info
+    const categoryId = searchParams.get("category_id");
+    const categoryName = searchParams.get("category_name");
+    const categoryType = searchParams.get("category_type");
+
+    // Party Info
+    const partyId = searchParams.get("party_id");
+    const partyName = searchParams.get("party_name");
+
+    const returnToTransaction = searchParams.get("return_to_transaction");
+
+    if (
+      (categoryId && categoryName && categoryType) ||
+      (partyId && partyName) ||
+      returnToTransaction === "true"
+    ) {
+      if (window.history && window.history.replaceState) {
+        const newUrl = `${window.location.pathname}${window.location.hash}`;
+        window.history.replaceState({}, "", newUrl);
+      }
+
+      if (categoryId && categoryName && categoryType) {
+        setCategoryInfo(() => ({
+          id: categoryId,
+          name: categoryName,
+          type: categoryType,
+        }));
+      }
+
+      if (partyId && partyName) {
+        setPartyInfo(() => ({
+          id: partyId,
+          name: partyName,
+        }));
+      }
+
+      setCreateTransaction(true);
+    }
+  }, [location]);
 
   return (
     <ContentViewAreaWrapper>
@@ -137,7 +186,7 @@ const Transactions = () => {
                         type="button"
                         className="w-full px-6 py-3 font-bold text-small"
                         onClick={toggleCreateTransactionModal}
-                        disabled
+                        // disabled
                       >
                         Add New
                       </Button>
@@ -195,7 +244,11 @@ const Transactions = () => {
         </div>
       </section>
       {createTransaction && (
-        <CreateTransaction handleClose={toggleCreateTransactionModal} />
+        <CreateTransaction
+          handleClose={toggleCreateTransactionModal}
+          categoryInfo={categoryInfo}
+          partyInfo={partyInfo}
+        />
       )}
       {showTransactionDetails && transactionDetails && (
         <TransactionDetails
@@ -271,7 +324,6 @@ function TransactionList({ data }) {
     const unsubscribe = appwrite.client.subscribe(
       `databases.${DATABASE_ID}.collections.${TRANSACTIONS_COLLECTION_ID}.documents`,
       (response) => {
-        console.log(response.events);
         if (
           response.events.includes(
             "databases.*.collections.*.documents.*.create"
